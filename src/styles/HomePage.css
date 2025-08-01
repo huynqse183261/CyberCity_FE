@@ -1,0 +1,36 @@
+/* Global Styles for HomePage */
+.homepage {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden; /* Ẩn các phần tử tràn ra ngoài */
+}
+
+/* Floating particles effect - chỉ trong phạm vi homepage */
+.homepage .particle {
+  position: absolute;
+  background: rgba(0, 212, 255, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: float 6s infinite linear;
+  z-index: 1;
+  top: auto;
+  bottom: 0;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
