@@ -2,6 +2,13 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import AdminDashboard from './pages/AdminDashboard'
+import ProductManagement from './pages/ProductManagement'
+import OrderManagement from './pages/OrderManagement'
+import TeamManagement from './pages/TeamManagement'
+import MessagesManagement from './pages/MessagesManagement'
+import PricingManagement from './pages/PricingManagement'
+import InvoiceManagement from './pages/InvoiceManagement'
 import './App.css'
 
 function App() {
@@ -12,6 +19,13 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/products" element={<ProductManagement />} />
+          <Route path="/admin/orders" element={<OrderManagement />} />
+          <Route path="/admin/team" element={<TeamManagement />} />
+          <Route path="/admin/messages" element={<MessagesManagement />} />
+          <Route path="/admin/pricing" element={<PricingManagement />} />
+          <Route path="/admin/invoices" element={<InvoiceManagement />} />
         </Routes>
       </Router>
     </div>
