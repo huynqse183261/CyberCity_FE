@@ -12,7 +12,8 @@ const Navigation: React.FC = () => {
           <li><a href="#linux">Linux</a></li>
           <li><a href="#pentest-tools">Pentesting</a></li>
           <li><a href="#source">Khóa học</a></li>
-          <li><a href="#contact">Liên hệ</a></li>
+          <li><Link to="/gioi-thieu">Giới thiệu</Link></li>
+          <li><Link to="/lien-he">Liên hệ</Link></li>
         </ul>
         <div className="nav-buttons">
           <Link to="/login" className="cta-button">Đăng nhập</Link>
