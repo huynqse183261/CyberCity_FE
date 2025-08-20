@@ -88,6 +88,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       label: 'Đội ngũ',
       onClick: () => navigate('/admin/team'),
     },
+    {
+      key: '/admin/teacher',
+      icon: <SettingOutlined />,
+      label: 'Teacher Admin',
+      onClick: () => navigate('/admin/teacher'),
+    },
   ];
 
   const handleLogout = () => {
