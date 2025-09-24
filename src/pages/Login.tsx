@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -92,9 +93,7 @@ const Login: React.FC = () => {
     // Simulate login process
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
-      alert('Đăng nhập thành công! Chuyển hướng đến trang chủ...');
-      // Here you would typically handle successful login
-      // e.g., redirect to dashboard, update auth state, etc.
+      navigate('/linux-lab');
     } catch (error) {
       alert('Đăng nhập thất bại. Vui lòng thử lại!');
     } finally {

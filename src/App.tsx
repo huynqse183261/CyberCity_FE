@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import HomeLogin from './pages/LinuxLabPage'
+import LinuxPage from './pages/LinuxPage'
+import LinuxModule1 from './pages/LinuxModule1'
 
 // Admin pages
 import AdminDashboard from './pages/AdminDashboard'
@@ -40,6 +43,9 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/linux-lab" element={<HomeLogin />} />
+          <Route path="/linux" element={<LinuxPage />} />
+          <Route path="/linux/module-1" element={<LinuxModule1 />} />
 
           {/* Luồng admin */}
           <Route path="/admin" element={<AdminDashboard />} />
