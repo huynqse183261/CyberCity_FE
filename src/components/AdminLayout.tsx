@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Button, Space, Input, Badge, Avatar, Typography } from 'antd';
+import { Layout, Menu, Button, Space, Input, Badge, Avatar, Typography, message } from 'antd';
 import {
   DashboardOutlined,
   ShoppingOutlined,
@@ -15,6 +15,7 @@ import {
   DollarOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/AdminDashboard.css';
 
 const { Header, Sider, Content } = Layout;
@@ -29,6 +30,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   // Handle responsive design
   React.useEffect(() => {
@@ -96,9 +98,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     },
   ];
 
-  const handleLogout = () => {
-    // Add logout logic here
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      message.success('Đăng xuất thành công!');
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      message.error('Có lỗi xảy ra khi đăng xuất!');
+    }
   };
 
   return (
@@ -191,10 +199,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               <Button type="text" icon={<BellOutlined />} />
             </Badge>
             <Space>
-              <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
+              <Avatar src={user?.avatar || "https://api.dicebear.com/7.x/miniavs/svg?seed=admin"} />
               <div>
-                <div style={{ fontWeight: 500 }}>Huy Nguyễn</div>
-                <Text type="secondary" style={{ fontSize: '12px' }}>Admin</Text>
+                <div style={{ fontWeight: 500 }}>{user?.fullName || 'Admin'}</div>
+                <Text type="secondary" style={{ fontSize: '12px' }}>{user?.role || 'Admin'}</Text>
               </div>
             </Space>
           </Space>

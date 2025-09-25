@@ -1,14 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import authService from '../api/authService';
+import { message } from 'antd';
 import '../styles/Login.css';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { login, user, isAuthenticated } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      console.log('User authenticated, redirecting...', user);
+      const roleRoutes = {
+        'admin': '/admin',
+        'teacher': '/teacher', 
+        'student': '/student'
+      };
+      const redirectPath = roleRoutes[user.role as keyof typeof roleRoutes];
+      console.log('Redirecting to:', redirectPath, 'for role:', user.role);
+      if (redirectPath) {
+        navigate(redirectPath);
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   useEffect(() => {
     // Create floating particles
@@ -84,18 +105,44 @@ const Login: React.FC = () => {
     e.preventDefault();
     
     if (!email || !password) {
-      alert('Vui lòng điền đầy đủ thông tin!');
+      message.error('Vui lòng điền đầy đủ thông tin!');
       return;
     }
 
     setIsLoading(true);
 
-    // Simulate login process
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      navigate('/linux-lab');
+      // Use authentication service to login
+      const result = await login(email, password);
+      
+      if (result.success) {
+        message.success('Đăng nhập thành công!');
+        
+        // Get current user immediately after successful login
+        const currentUser = authService.getCurrentUser();
+        console.log('Login successful, current user:', currentUser);
+        
+        if (currentUser) {
+          // Immediate redirect based on role
+          const roleRoutes = {
+            'admin': '/admin',
+            'teacher': '/teacher', 
+            'student': '/student'
+          };
+          
+          const redirectPath = roleRoutes[currentUser.role as keyof typeof roleRoutes];
+          console.log('Redirecting to:', redirectPath, 'for role:', currentUser.role);
+          navigate(redirectPath);
+        } else {
+          console.warn('User data not available after login');
+          navigate('/');
+        }
+      } else {
+        message.error(result.message || 'Đăng nhập thất bại!');
+      }
     } catch (error) {
-      alert('Đăng nhập thất bại. Vui lòng thử lại!');
+      console.error('Login error:', error);
+      message.error('Đăng nhập thất bại. Vui lòng thử lại!');
     } finally {
       setIsLoading(false);
     }
@@ -106,7 +153,7 @@ const Login: React.FC = () => {
       {/* Animated background particles */}
       <div className="particles"></div>
 
-      <div className="login-container">
+                <div className="login-container">
         <div className="security-badge">Bảo mật</div>
         
         <div className="logo-section">

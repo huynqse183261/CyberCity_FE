@@ -1,13 +1,15 @@
 import React from 'react';
-import { Layout, Menu, Avatar, Input, Badge, Dropdown } from 'antd';
+import { Layout, Menu, Avatar, Input, Badge, Dropdown, message } from 'antd';
 import {
   DashboardOutlined,
   FileTextOutlined,
   UserOutlined,
   SettingOutlined,
   BellOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const { Sider, Content, Header } = Layout;
 
@@ -23,13 +25,25 @@ const sidebarMenu = [
 
 const TeacherLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const pathname = window.location.pathname;
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      message.success('Đăng xuất thành công!');
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      message.error('Có lỗi xảy ra khi đăng xuất!');
+    }
+  };
 
   const userMenu = (
     <Menu
       items={[
         { key: 'profile', label: 'Thông tin cá nhân' },
-        { key: 'logout', label: 'Đăng xuất' },
+        { key: 'logout', label: 'Đăng xuất', icon: <LogoutOutlined />, onClick: handleLogout },
       ]}
     />
   );
@@ -40,10 +54,15 @@ const TeacherLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         <div style={{ padding: '2rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
           <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>💻 EduTech System</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <Avatar style={{ background: 'linear-gradient(45deg, #3498db, #2980b9)', width: 50, height: 50 }}>TM</Avatar>
+            <Avatar 
+              style={{ background: 'linear-gradient(45deg, #3498db, #2980b9)', width: 50, height: 50 }}
+              src={user?.avatar}
+            >
+              {user?.fullName?.charAt(0) || 'T'}
+            </Avatar>
             <div>
-              <div style={{ fontWeight: 600 }}>Thầy Minh</div>
-              <div style={{ fontSize: '0.85rem', opacity: 0.8 }}>Linux & Design</div>
+              <div style={{ fontWeight: 600 }}>{user?.fullName || 'Teacher'}</div>
+              <div style={{ fontSize: '0.85rem', opacity: 0.8 }}>{user?.email}</div>
             </div>
           </div>
         </div>

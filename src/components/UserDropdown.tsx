@@ -1,9 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { message } from 'antd';
 import type { UserDropdownProps } from '../models/LinuxLabTypes';
 
 const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -18,14 +23,20 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
     };
   }, []);
 
-  const handleMenuItemClick = (action: string) => {
+  const handleMenuItemClick = async (action: string) => {
     console.log('Navigating to:', action);
     setIsOpen(false);
     
     if (action === 'logout') {
       if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-        // Add logout logic here
-        window.location.href = '/login';
+        try {
+          await logout();
+          message.success('Đăng xuất thành công!');
+          navigate('/login');
+        } catch (error) {
+          console.error('Logout error:', error);
+          message.error('Có lỗi xảy ra khi đăng xuất!');
+        }
       }
     }
   };

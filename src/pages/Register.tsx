@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { message } from 'antd';
 import type { RegisterFormData, FormErrors, PasswordStrength } from '../models/RegisterTypes';
 import '../styles/Register.css';
 
 const Register: React.FC = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState<RegisterFormData>({
     email: '',
     username: '',
@@ -236,27 +240,25 @@ const Register: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // Call registration API (you need to implement this in authService)
+      // For now, we'll simulate a successful registration and auto-login
+      message.success('Đăng ký thành công!');
       
-      alert('Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.');
+      // Auto-login after successful registration
+      const loginResult = await login(formData.email, formData.password);
       
-      // Reset form
-      setFormData({
-        email: '',
-        username: '',
-        password: '',
-        confirmPassword: '',
-        terms: false
-      });
-      setPasswordStrength({
-        level: 0,
-        feedback: 'Độ mạnh mật khẩu',
-        className: ''
-      });
+      if (loginResult.success) {
+        message.success('Đăng nhập tự động thành công!');
+        // Navigate to student dashboard by default (or based on registration data)
+        navigate('/student');
+      } else {
+        message.info('Đăng ký thành công! Vui lòng đăng nhập.');
+        navigate('/login');
+      }
       
     } catch (error) {
-      alert('Đăng ký thất bại. Vui lòng thử lại!');
+      console.error('Registration error:', error);
+      message.error('Đăng ký thất bại. Vui lòng thử lại!');
     } finally {
       setIsLoading(false);
     }
