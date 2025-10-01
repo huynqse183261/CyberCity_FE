@@ -13,38 +13,45 @@ const HeroSection: React.FC = () => {
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, alpha: true });
     
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    // Lấy kích thước thực của hero section
+    const heroSection = canvasRef.current.parentElement;
+    const heroRect = heroSection?.getBoundingClientRect();
+    const heroWidth = heroRect?.width || window.innerWidth;
+    const heroHeight = heroRect?.height || window.innerHeight;
+    
+    renderer.setSize(heroWidth, heroHeight);
     renderer.setClearColor(0x000000, 0);
 
     // Create particles
     const particlesGeometry = new THREE.BufferGeometry();
-    const particlesCount = 5000;
+    const particlesCount = 10000; // Tăng số lượng particles
     const posArray = new Float32Array(particlesCount * 3);
 
     for(let i = 0; i < particlesCount * 3; i++) {
-        posArray[i] = (Math.random() - 0.5) * 5;
+        posArray[i] = (Math.random() - 0.5) * 20; // Tăng phạm vi phân bố
     }
 
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
     const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.005,
+        size: 0.02, // Tăng kích thước particles
         color: 0x00d4ff,
         transparent: true,
         opacity: 0.8,
+        sizeAttenuation: true,
     });
 
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particlesMesh);
 
-    camera.position.z = 2;
+    camera.position.z = 5; // Đưa camera ra xa hơn
 
     // Animation
     const animate = () => {
         requestAnimationFrame(animate);
         
-        particlesMesh.rotation.x += 0.0005;
-        particlesMesh.rotation.y += 0.0005;
+        particlesMesh.rotation.x += 0.001; // Tăng tốc độ xoay
+        particlesMesh.rotation.y += 0.001;
         
         renderer.render(scene, camera);
     };
@@ -53,9 +60,13 @@ const HeroSection: React.FC = () => {
 
     // Resize handler
     const handleResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
+        const updatedHeroRect = heroSection?.getBoundingClientRect();
+        const updatedHeroWidth = updatedHeroRect?.width || window.innerWidth;
+        const updatedHeroHeight = updatedHeroRect?.height || window.innerHeight;
+        
+        camera.aspect = updatedHeroWidth / updatedHeroHeight;
         camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setSize(updatedHeroWidth, updatedHeroHeight);
     };
 
     window.addEventListener('resize', handleResize);

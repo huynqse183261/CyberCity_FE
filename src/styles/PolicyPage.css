@@ -1,0 +1,439 @@
+/* Policy Page Styles */
+.policy-page {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #0a0a0a, #1a1a2e, #16213e);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.breadcrumb {
+  max-width: 1200px;
+  margin: 100px auto 0 auto;
+  padding: 0 2rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  z-index: 2;
+}
+
+.policy-content {
+  max-width: 1200px;
+  margin: 2rem auto 4rem auto;
+  padding: 0 2rem;
+  z-index: 2;
+}
+
+.policy-card {
+  background: rgba(15, 15, 35, 0.85);
+  border-radius: 24px;
+  padding: 3rem;
+  box-shadow: 0 8px 32px rgba(0, 212, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.policy-card h1 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #ffffff, #00d4ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  font-weight: 700;
+}
+
+.policy-section {
+  margin-bottom: 3rem;
+}
+
+.policy-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #00d4ff;
+  font-weight: 600;
+}
+
+.policy-section h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #00d4ff;
+  font-weight: 500;
+}
+
+.policy-section h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+  color: #00d4ff;
+  font-weight: 500;
+}
+
+.policy-section p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1rem;
+}
+
+.policy-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.policy-section li {
+  margin-bottom: 0.8rem;
+  padding-left: 1.5rem;
+  position: relative;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.policy-section li::before {
+  content: "•";
+  color: #00d4ff;
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+
+.policy-section li strong {
+  color: #00d4ff;
+  font-weight: 600;
+}
+
+/* Sub-sections */
+.sub-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(0, 212, 255, 0.05);
+  border-radius: 12px;
+  border-left: 4px solid #00d4ff;
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.step {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+/* Course Card */
+.course-card {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  background: rgba(0, 212, 255, 0.08);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.course-info h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #00d4ff;
+}
+
+.course-features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.register-btn {
+  background: linear-gradient(135deg, #00d4ff, #ff0080);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.register-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+}
+
+.course-image img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 212, 255, 0.2);
+}
+
+/* Pricing Grid */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.pricing-card {
+  background: rgba(0, 212, 255, 0.05);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  text-align: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.pricing-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+}
+
+.pricing-card.featured {
+  border-color: #00d4ff;
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.featured-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #00d4ff, #ff0080);
+  color: white;
+  padding: 0.3rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.pricing-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #00d4ff;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1.5rem;
+}
+
+.pricing-card ul {
+  margin-bottom: 2rem;
+}
+
+.pricing-card li {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.pricing-btn {
+  background: rgba(0, 212, 255, 0.2);
+  color: #00d4ff;
+  border: 1px solid #00d4ff;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.pricing-btn:hover,
+.pricing-btn.featured {
+  background: linear-gradient(135deg, #00d4ff, #ff0080);
+  color: white;
+  border-color: transparent;
+}
+
+/* Payment Container */
+.payment-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.payment-form {
+  background: rgba(0, 212, 255, 0.05);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.payment-form h3 {
+  margin-bottom: 1.5rem;
+  color: #00d4ff;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #00d4ff;
+  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+}
+
+.payment-btn {
+  background: linear-gradient(135deg, #00d4ff, #ff0080);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-size: 1.1rem;
+}
+
+.payment-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+}
+
+.order-summary {
+  background: rgba(0, 212, 255, 0.05);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.order-summary h3 {
+  margin-bottom: 1.5rem;
+  color: #00d4ff;
+}
+
+.total-price {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #00d4ff;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.order-items {
+  margin-bottom: 2rem;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.order-item span:first-child {
+  color: #00d4ff;
+  font-weight: bold;
+}
+
+.payment-note {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  font-style: italic;
+}
+
+/* Payment Methods */
+.payment-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(0, 212, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.payment-method:hover {
+  background: rgba(0, 212, 255, 0.1);
+  border-color: #00d4ff;
+}
+
+.payment-method span:first-child {
+  font-size: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .policy-content {
+    padding: 0 1rem;
+  }
+  
+  .policy-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .policy-card h1 {
+    font-size: 2rem;
+  }
+  
+  .course-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .payment-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .course-features {
+    grid-template-columns: 1fr;
+  }
+  
+  .payment-methods {
+    grid-template-columns: 1fr;
+  }
+} 

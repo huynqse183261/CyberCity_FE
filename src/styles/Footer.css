@@ -4,6 +4,8 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 4rem 2rem 2rem;
   color: rgba(255, 255, 255, 0.8);
+  position: relative;
+  z-index: 2; /* Đảm bảo footer hiển thị trên particles */
 }
 
 .footer-container {
@@ -43,11 +45,13 @@
   text-decoration: none;
   font-size: 0.95rem;
   transition: all 0.3s ease;
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .footer-links a:hover {
   color: #00d4ff;
-  padding-left: 5px;
+  transform: translateX(5px);
 }
 
 .social-links {

@@ -32,13 +32,6 @@ export interface RegisterRequest {
   password: string;
 }
 
-// Interface cho API response
-export interface ApiResponse<T = any> {
-  success: boolean;
-  message: string;
-  data?: T;
-}
-
 export interface RegisterResponse {
   userId: string;
   email: string;

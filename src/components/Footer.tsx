@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/Footer.css';
 
 interface FooterLink {
@@ -16,31 +17,26 @@ const Footer: React.FC = () => {
     {
       title: "Chăm sóc khách hàng",
       links: [
-        { text: "Hướng dẫn thanh toán", href: "#" },
-        { text: "Điều kiện giao dịch chung", href: "#" },
-        { text: "Quy trình sử dụng dịch vụ", href: "#" },
-        { text: "Chính sách bảo hành", href: "#" },
-        { text: "Chính sách hoàn trả hàng", href: "#" },
-        { text: "Chính sách bảo mật", href: "#" }
+        { text: "Hướng dẫn thanh toán", href: "/huong-dan-thanh-toan" },
+        { text: "Điều kiện giao dịch chung", href: "/dieu-kien-giao-dich" },
+        { text: "Quy trình sử dụng dịch vụ", href: "/quy-trinh-su-dung" },
+        { text: "Chính sách bảo hành", href: "/chinh-sach-bao-hanh" },
+        { text: "Chính sách hoàn trả hàng", href: "/chinh-sach-bao-hanh" },
+        { text: "Chính sách bảo mật", href: "/chinh-sach-bao-mat" }
       ]
     },
     {
       title: "Tính năng",
       links: [
-        { text: "Học tập", href: "#" },
-        { text: "Luyện tập", href: "#" },
-        { text: "Thi đấu", href: "#" },
-        { text: "Thử thách", href: "#" },
-        { text: "Xếp hạng", href: "#" },
-        { text: "Chia sẻ", href: "#" }
+        { text: "Linux", href: "/" },
+        { text: "Pentesting", href: "/" }
       ]
     },
     {
       title: "Về chúng tôi",
       links: [
-        { text: "Giới thiệu", href: "#" },
-        { text: "Điều khoản sử dụng", href: "#" },
-        { text: "Trợ giúp", href: "#" }
+        { text: "Giới thiệu", href: "/gioi-thieu" },
+        { text: "Liên hệ", href: "/lien-he" }
       ]
     }
   ];
@@ -78,7 +74,7 @@ const Footer: React.FC = () => {
             <ul className="footer-links">
               {section.links.map((link, linkIndex) => (
                 <li key={linkIndex}>
-                  <a href={link.href}>{link.text}</a>
+                  <Link to={link.href}>{link.text}</Link>
                 </li>
               ))}
             </ul>
