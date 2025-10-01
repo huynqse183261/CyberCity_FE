@@ -32,7 +32,7 @@ class DashboardService {
   // Get dashboard statistics
   async getDashboardStats(): Promise<ApiResponse<DashboardStats>> {
     try {
-      const response = await axiosInstance.get('api/dashboard/overview');
+      const response = await axiosInstance.get('api/admin/overview');
       
       // Map backend response to our interface
       const stats: DashboardStats = {
