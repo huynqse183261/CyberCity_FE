@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import authService from '../api/authService';
+import authService from '../services/authService';
 import { message } from 'antd';
 import '../styles/Login.css';
 

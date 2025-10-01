@@ -11,6 +11,8 @@ import {
   Tag,
   Space,
   Typography,
+  Spin,
+  Alert,
 } from 'antd';
 import {
   UserOutlined,
@@ -21,110 +23,17 @@ import {
   DashboardOutlined,
 } from '@ant-design/icons';
 import { Line } from '@ant-design/charts';
+import { useDashboardStats, useSalesData, useRecentOrders } from '../hooks/DashboardHooks';
 
 const { Title, Text } = Typography;
 
-// Sample data for statistics
-const statsData = [
-  {
-    title: 'Tổng số người dùng',
-    value: 40689,
-    precision: 0,
-    valueStyle: { color: '#3f8600' },
-    prefix: <ArrowUpOutlined />,
-    suffix: '8.5% Tăng so với hôm qua',
-    icon: <UserOutlined />,
-    color: '#e6f7ff',
-  },
-  {
-    title: 'Tổng số đơn',
-    value: 10293,
-    precision: 0,
-    valueStyle: { color: '#3f8600' },
-    prefix: <ArrowUpOutlined />,
-    suffix: '1.3% Tăng so với tuần trước',
-    icon: <ShoppingOutlined />,
-    color: '#f6ffed',
-  },
-  {
-    title: 'Tổng doanh số',
-    value: 89000,
-    precision: 0,
-    valueStyle: { color: '#cf1322' },
-    prefix: <ArrowDownOutlined />,
-    suffix: '4.3% Thấp so với tuần trước',
-    icon: <FileTextOutlined />,
-    color: '#fff2e8',
-  },
-  {
-    title: 'Tổng số đang chờ xử lý',
-    value: 2040,
-    precision: 0,
-    valueStyle: { color: '#3f8600' },
-    prefix: <ArrowUpOutlined />,
-    suffix: '1.8% Tăng so với tuần trước',
-    icon: <DashboardOutlined />,
-    color: '#fff0f6',
-  },
-];
-
-// Sample data for sales chart
-const salesData = [
-  { month: 'Jan', value: 20 },
-  { month: 'Feb', value: 25 },
-  { month: 'Mar', value: 30 },
-  { month: 'Apr', value: 35 },
-  { month: 'May', value: 45 },
-  { month: 'Jun', value: 50 },
-  { month: 'Jul', value: 65 },
-  { month: 'Aug', value: 55 },
-  { month: 'Sep', value: 60 },
-  { month: 'Oct', value: 70 },
-  { month: 'Nov', value: 75 },
-  { month: 'Dec', value: 80 },
-];
-
-// Sample data for recent orders table
-const recentOrders = [
-  {
-    key: '1',
-    orderId: '#12345',
-    customer: 'Nguyễn Văn A',
-    product: 'Laptop Gaming',
-    amount: 25000000,
-    status: 'completed',
-    date: '2024-01-15',
-  },
-  {
-    key: '2',
-    orderId: '#12346',
-    customer: 'Trần Thị B',
-    product: 'Điện thoại iPhone',
-    amount: 15000000,
-    status: 'processing',
-    date: '2024-01-14',
-  },
-  {
-    key: '3',
-    orderId: '#12347',
-    customer: 'Lê Văn C',
-    product: 'Máy tính bảng',
-    amount: 8000000,
-    status: 'pending',
-    date: '2024-01-14',
-  },
-  {
-    key: '4',
-    orderId: '#12348',
-    customer: 'Phạm Thị D',
-    product: 'Tai nghe không dây',
-    amount: 2000000,
-    status: 'completed',
-    date: '2024-01-13',
-  },
-];
-
 const AdminDashboard: React.FC = () => {
+  // Fetch data using React Query hooks
+  const { data: stats, isLoading: statsLoading, error: statsError } = useDashboardStats();
+  const { data: salesData, isLoading: salesLoading, error: salesError } = useSalesData();
+  const { data: recentOrders, isLoading: ordersLoading, error: ordersError } = useRecentOrders();
+
+  // Table columns configuration
   const tableColumns = [
     {
       title: 'Mã đơn',
@@ -180,8 +89,9 @@ const AdminDashboard: React.FC = () => {
     },
   ];
 
+  // Chart configuration
   const chartConfig = {
-    data: salesData,
+    data: salesData || [],
     xField: 'month',
     yField: 'value',
     smooth: true,
@@ -203,6 +113,71 @@ const AdminDashboard: React.FC = () => {
     },
   };
 
+  // Stats data with real API data
+  const statsData = React.useMemo(() => {
+    if (!stats) return [];
+    
+    return [
+      {
+        title: 'Tổng số người dùng',
+        value: stats.totalUsers,
+        precision: 0,
+        valueStyle: { color: '#3f8600' },
+        prefix: <ArrowUpOutlined />,
+        suffix: '8.5% Tăng so với hôm qua',
+        icon: <UserOutlined />,
+        color: '#e6f7ff',
+      },
+      {
+        title: 'Tổng số đơn',
+        value: stats.totalOrders,
+        precision: 0,
+        valueStyle: { color: '#3f8600' },
+        prefix: <ArrowUpOutlined />,
+        suffix: '1.3% Tăng so với tuần trước',
+        icon: <ShoppingOutlined />,
+        color: '#f6ffed',
+      },
+      {
+        title: 'Tổng doanh số',
+        value: stats.totalRevenue,
+        precision: 0,
+        valueStyle: { color: '#cf1322' },
+        prefix: <ArrowDownOutlined />,
+        suffix: '4.3% Thấp so với tuần trước',
+        icon: <FileTextOutlined />,
+        color: '#fff2e8',
+      },
+      {
+        title: 'Tổng số đang chờ xử lý',
+        value: stats.pendingOrders,
+        precision: 0,
+        valueStyle: { color: '#3f8600' },
+        prefix: <ArrowUpOutlined />,
+        suffix: '1.8% Tăng so với tuần trước',
+        icon: <DashboardOutlined />,
+        color: '#fff0f6',
+      },
+    ];
+  }, [stats]);
+
+  // Error handling
+  if (statsError || salesError || ordersError) {
+    return (
+      <AdminLayout>
+        <div style={{ padding: '24px' }}>
+          <Alert
+            message="Lỗi tải dữ liệu"
+            description="Không thể tải dữ liệu dashboard. Vui lòng thử lại sau."
+            type="error"
+            showIcon
+            style={{ marginBottom: 24 }}
+          />
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       <div style={{ padding: '24px' }}>
@@ -212,42 +187,52 @@ const AdminDashboard: React.FC = () => {
 
         {/* Statistics Cards */}
         <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-          {statsData.map((stat, index) => (
-            <Col xs={24} sm={12} lg={6} key={index}>
-              <Card className="stats-card">
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <div
-                    className="stats-icon"
-                    style={{
-                      background: stat.color,
-                      marginRight: '16px',
-                    }}
-                  >
-                    {stat.icon}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <Statistic
-                      title={stat.title}
-                      value={stat.value}
-                      precision={stat.precision}
-                      valueStyle={stat.valueStyle}
-                      prefix={stat.prefix}
-                    />
-                    <Text type="secondary" style={{ fontSize: '12px' }}>
-                      {stat.suffix}
-                    </Text>
-                  </div>
-                </div>
-              </Card>
+          {statsLoading ? (
+            <Col span={24}>
+              <Spin size="large" />
             </Col>
-          ))}
+          ) : (
+            statsData.map((stat, index) => (
+              <Col xs={24} sm={12} lg={6} key={index}>
+                <Card className="stats-card">
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div
+                      className="stats-icon"
+                      style={{
+                        background: stat.color,
+                        marginRight: '16px',
+                      }}
+                    >
+                      {stat.icon}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <Statistic
+                        title={stat.title}
+                        value={stat.value}
+                        precision={stat.precision}
+                        valueStyle={stat.valueStyle}
+                        prefix={stat.prefix}
+                      />
+                      <Text type="secondary" style={{ fontSize: '12px' }}>
+                        {stat.suffix}
+                      </Text>
+                    </div>
+                  </div>
+                </Card>
+              </Col>
+            ))
+          )}
         </Row>
 
         {/* Charts and Tables */}
         <Row gutter={[16, 16]}>
           <Col xs={24} xl={16}>
             <Card title="Chi tiết bán hàng" style={{ marginBottom: 16 }}>
-              <Line {...chartConfig} height={300} />
+              {salesLoading ? (
+                <Spin size="large" />
+              ) : (
+                <Line {...chartConfig} height={300} />
+              )}
             </Card>
             
             <Card title="Đơn hàng gần đây">
@@ -256,6 +241,7 @@ const AdminDashboard: React.FC = () => {
                 dataSource={recentOrders}
                 pagination={{ pageSize: 5 }}
                 size="small"
+                loading={ordersLoading}
               />
             </Card>
           </Col>
@@ -291,7 +277,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Text>Người dùng mới</Text>
-                  <Text strong>23</Text>
+                  <Text strong>{statsLoading ? '...' : (stats?.totalUsers || 0)}</Text>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Text>Sản phẩm bán chạy</Text>

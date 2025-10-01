@@ -4,7 +4,7 @@ import type { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query'
 import linuxLabService, { 
   type CreateLabEnvironmentRequest, 
   type CreateLabSessionRequest 
-} from '../api/linuxLabService';
+} from '../services/linuxLabService';
 import type { 
   LinuxLabEnvironment, 
   LinuxLabSession

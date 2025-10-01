@@ -1,5 +1,5 @@
 // Test import authService
-import authService from './authService';
+import authService from '../services/authService';
 
 console.log('AuthService imported successfully:', authService);
 

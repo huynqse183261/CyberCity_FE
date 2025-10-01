@@ -1,4 +1,4 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance from './../api/axiosInstance';
 import type { AxiosResponse } from 'axios';
 import type { ApiResponse } from '../models';
 

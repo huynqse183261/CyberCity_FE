@@ -1,5 +1,5 @@
 import { BaseApiService, API_ENDPOINTS } from './BaseApiService';
-import axiosInstance from './axiosInstance';
+import axiosInstance from '../api/axiosInstance';
 import type { ApiResponse } from '../models';
 
 // AI Chat interfaces
