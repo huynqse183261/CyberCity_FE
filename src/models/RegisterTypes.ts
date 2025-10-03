@@ -4,6 +4,8 @@ export interface RegisterFormData {
   username: string;
   password: string;
   confirmPassword: string;
+  fullName: string;
+  role?: 'admin' | 'teacher' | 'student';
   terms: boolean;
 }
 
@@ -11,6 +13,7 @@ export interface RegisterFormData {
 export interface FormErrors {
   email?: string;
   username?: string;
+  fullName?: string;
   phone?: string;
   password?: string;
   confirmPassword?: string;

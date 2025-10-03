@@ -2,20 +2,28 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ReactQueryProvider from './providers/ReactQueryProvider';
 
-// Import components
+// Import components directly (not lazy loaded as requested)
 import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import AdminDashboard from './pages/AdminDashboard';
-import TeacherDashboard from './pages/TeacherDashboard';
 import HomeLogin from './pages/HomeLogin';
-import ContactPage from './pages/ContactPage';
+import LinuxPage from './pages/LinuxPage';
+import LinuxModule1 from './pages/LinuxModule1';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminCourseManagement from './pages/AdminCourseManagement';
+import AdminModuleManagement from './pages/AdminModuleManagement';
+import AdminLessonManagement from './pages/AdminLessonManagement';
+import AdminTopicManagement from './pages/AdminTopicManagement';
+import AdminSubtopicManagement from './pages/AdminSubtopicManagement';
+
+import TeacherDashboard from './pages/TeacherDashboard';
 import AboutPage from './pages/AboutPage';
-import TermsPage from './pages/TermsPage';
+import ContactPage from './pages/ContactPage';
 import ServiceProcessPage from './pages/ServiceProcessPage';
-import WarrantyPage from './pages/WarrantyPage';
-import PrivacyPage from './pages/PrivacyPage';
 import PaymentGuidePage from './pages/PaymentGuidePage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import WarrantyPage from './pages/WarrantyPage';
 
 // Import protected route components
 import { AdminRoute, TeacherRoute, StudentRoute } from './components/ProtectedRoute';
@@ -31,11 +39,11 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              
-              {/* Student Protected Routes */}
-              <Route 
-                path="/student" 
-                element={
+                
+                {/* Student Protected Routes */}
+                <Route 
+                  path="/student" 
+                  element={
                   <StudentRoute>
                     <HomeLogin />
                   </StudentRoute>
@@ -45,7 +53,7 @@ function App() {
                 path="/linux-lab" 
                 element={
                   <StudentRoute>
-                    <HomeLogin />
+                    <LinuxPage />
                   </StudentRoute>
                 } 
               />
@@ -53,7 +61,7 @@ function App() {
                 path="/linux" 
                 element={
                   <StudentRoute>
-                    <HomeLogin />
+                    <LinuxPage />
                   </StudentRoute>
                 } 
               />
@@ -61,7 +69,7 @@ function App() {
                 path="/linux/module-1" 
                 element={
                   <StudentRoute>
-                    <HomeLogin />
+                    <LinuxModule1 />
                   </StudentRoute>
                 } 
               />
@@ -76,10 +84,42 @@ function App() {
                 } 
               />
               <Route 
-                path="/admin/products" 
+                path="/admin/courses" 
                 element={
                   <AdminRoute>
-                    <AdminDashboard />
+                    <AdminCourseManagement />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/modules" 
+                element={
+                  <AdminRoute>
+                    <AdminModuleManagement />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/lessons" 
+                element={
+                  <AdminRoute>
+                    <AdminLessonManagement />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/topics" 
+                element={
+                  <AdminRoute>
+                    <AdminTopicManagement />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/subtopics" 
+                element={
+                  <AdminRoute>
+                    <AdminSubtopicManagement />
                   </AdminRoute>
                 } 
               />

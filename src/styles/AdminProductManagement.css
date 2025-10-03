@@ -1,0 +1,625 @@
+/* Admin Product Management Styles */
+.admin-product-management {
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* Hierarchical Navigation Styles */
+.admin-product-management .ant-breadcrumb {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+.admin-product-management .ant-breadcrumb-link {
+  color: #1890ff;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.admin-product-management .ant-breadcrumb-link:hover {
+  color: #40a9ff;
+}
+
+.admin-product-management .ant-breadcrumb-separator {
+  color: #8c8c8c;
+}
+
+/* Card Grid Layout */
+.admin-product-management .content-grid {
+  min-height: 400px;
+}
+
+.admin-product-management .content-card {
+  height: 100%;
+  transition: all 0.3s;
+  border: 1px solid #f0f0f0;
+}
+
+.admin-product-management .content-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #1890ff;
+}
+
+.admin-product-management .content-card .ant-card-meta-title {
+  color: #262626;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.admin-product-management .content-card .ant-card-meta-description {
+  color: #595959;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.admin-product-management .content-card .ant-card-actions {
+  background: #fafafa;
+  border-top: 1px solid #f0f0f0;
+}
+
+.admin-product-management .content-card .ant-card-actions > li {
+  margin: 8px 0;
+}
+
+.admin-product-management .content-card .ant-card-actions > li > span {
+  color: #595959;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.admin-product-management .content-card .ant-card-actions > li > span:hover {
+  color: #1890ff;
+}
+
+/* Level Tags */
+.admin-product-management .level-tags {
+  margin-top: 8px;
+}
+
+.admin-product-management .level-tag {
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+}
+
+/* Order Badge */
+.admin-product-management .order-badge {
+  display: inline-block;
+  background: #1890ff;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+/* Duration Tag */
+.admin-product-management .duration-tag {
+  background: #e6f7ff;
+  color: #1890ff;
+  border: 1px solid #91d5ff;
+  border-radius: 12px;
+  font-size: 12px;
+  padding: 2px 8px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+/* Empty State */
+.admin-product-management .empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #8c8c8c;
+}
+
+.admin-product-management .empty-state .ant-empty-image {
+  margin-bottom: 16px;
+}
+
+.admin-product-management .empty-state .empty-title {
+  font-size: 16px;
+  color: #595959;
+  margin-bottom: 8px;
+}
+
+.admin-product-management .empty-description {
+  font-size: 14px;
+  color: #8c8c8c;
+  margin-bottom: 16px;
+}
+
+/* Action Buttons */
+.admin-product-management .action-section {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-product-management .primary-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-product-management .secondary-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Modal Enhancements */
+.admin-product-management .ant-modal-content {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-product-management .ant-modal-header {
+  background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+  border-bottom: none;
+}
+
+.admin-product-management .ant-modal-title {
+  color: white;
+  font-weight: 600;
+}
+
+.admin-product-management .ant-modal-close {
+  color: white;
+}
+
+.admin-product-management .ant-modal-close:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Form Enhancements */
+.admin-product-management .ant-form-item {
+  margin-bottom: 20px;
+}
+
+.admin-product-management .ant-form-item-label {
+  padding-bottom: 4px;
+}
+
+.admin-product-management .ant-form-item-label > label {
+  font-weight: 600;
+  color: #262626;
+  font-size: 14px;
+}
+
+.admin-product-management .ant-form-item-label > label.ant-form-item-required::before {
+  color: #ff4d4f;
+}
+
+/* Input Enhancements */
+.admin-product-management .ant-input,
+.admin-product-management .ant-select-selector,
+.admin-product-management .ant-input-number,
+.admin-product-management .ant-input-affix-wrapper {
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  transition: all 0.3s;
+}
+
+.admin-product-management .ant-input:hover,
+.admin-product-management .ant-select-selector:hover,
+.admin-product-management .ant-input-number:hover,
+.admin-product-management .ant-input-affix-wrapper:hover {
+  border-color: #40a9ff;
+}
+
+.admin-product-management .ant-input:focus,
+.admin-product-management .ant-select-focused .ant-select-selector,
+.admin-product-management .ant-input-number:focus,
+.admin-product-management .ant-input-affix-wrapper:focus {
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* TextArea */
+.admin-product-management .ant-input {
+  resize: vertical;
+  min-height: 32px;
+}
+
+.admin-product-management .ant-input[rows] {
+  min-height: auto;
+}
+
+.admin-product-management .ant-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-product-management .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  color: #262626;
+  font-weight: 600;
+}
+
+.admin-product-management .ant-table-tbody > tr:hover > td {
+  background-color: #f5f5f5;
+}
+
+.admin-product-management .ant-tag {
+  border-radius: 16px;
+  font-size: 12px;
+  padding: 2px 8px;
+  border: none;
+}
+
+.admin-product-management .ant-btn {
+  border-radius: 6px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-product-management .ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+}
+
+.admin-product-management .ant-btn-primary:hover {
+  background-color: #40a9ff;
+  border-color: #40a9ff;
+}
+
+.admin-product-management .ant-btn-primary:focus {
+  background-color: #096dd9;
+  border-color: #096dd9;
+}
+
+.admin-product-management .ant-btn-danger {
+  background-color: #ff4d4f;
+  border-color: #ff4d4f;
+}
+
+.admin-product-management .ant-btn-danger:hover {
+  background-color: #ff7875;
+  border-color: #ff7875;
+}
+
+.admin-product-management .ant-modal-header {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 24px;
+}
+
+.admin-product-management .ant-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.admin-product-management .ant-form-item-label > label {
+  font-weight: 600;
+  color: #262626;
+}
+
+/* This section is now handled in the enhanced input styles above */
+
+.admin-product-management .ant-table-pagination {
+  margin: 16px 0;
+}
+
+.admin-product-management .filter-section {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #f0f0f0;
+}
+
+.admin-product-management .stats-card {
+  text-align: center;
+  padding: 20px;
+}
+
+.admin-product-management .stats-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1890ff;
+  margin-bottom: 8px;
+}
+
+.admin-product-management .stats-label {
+  font-size: 14px;
+  color: #8c8c8c;
+}
+
+.admin-product-management .action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-product-management .search-input {
+  border-radius: 20px;
+}
+
+.admin-product-management .level-tag {
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.admin-product-management .price-cell {
+  font-weight: 600;
+  color: #52c41a;
+}
+
+.admin-product-management .date-cell {
+  color: #8c8c8c;
+  font-size: 12px;
+}
+
+/* View Mode Styles */
+.admin-product-management .view-mode-selector {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.admin-product-management .view-mode-selector .ant-radio-button-wrapper {
+  border-radius: 0;
+}
+
+.admin-product-management .view-mode-selector .ant-radio-button-wrapper:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.admin-product-management .view-mode-selector .ant-radio-button-wrapper:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+/* Tree View Styles */
+.admin-product-management .tree-view {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #f0f0f0;
+}
+
+.admin-product-management .ant-tree .ant-tree-node-content-wrapper {
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.admin-product-management .ant-tree .ant-tree-node-content-wrapper:hover {
+  background-color: #f5f5f5;
+}
+
+.admin-product-management .ant-tree .ant-tree-node-selected .ant-tree-node-content-wrapper {
+  background-color: #e6f7ff;
+  border-color: #91d5ff;
+}
+
+/* Loading States */
+.admin-product-management .loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.admin-product-management .loading-spinner {
+  font-size: 24px;
+}
+
+/* Responsive styles */
+@media (max-width: 1200px) {
+  .admin-product-management .content-card {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-product-management {
+    padding: 16px;
+  }
+  
+  .admin-product-management .ant-modal {
+    margin: 0;
+    max-width: 100vw;
+  }
+  
+  .admin-product-management .ant-table {
+    font-size: 12px;
+  }
+  
+  .admin-product-management .action-buttons .ant-btn {
+    height: 32px;
+    padding: 0 8px;
+  }
+  
+  .admin-product-management .ant-breadcrumb {
+    padding: 8px 12px;
+  }
+  
+  .admin-product-management .content-card .ant-card-meta-title {
+    font-size: 14px;
+  }
+  
+  .admin-product-management .content-card .ant-card-meta-description {
+    font-size: 12px;
+  }
+  
+  .admin-product-management .action-section {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .admin-product-management .primary-actions,
+  .admin-product-management .secondary-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-product-management {
+    padding: 12px;
+  }
+  
+  .admin-product-management .content-card {
+    margin-bottom: 12px;
+  }
+  
+  .admin-product-management .ant-col {
+    margin-bottom: 12px;
+  }
+  
+  .admin-product-management .ant-modal-content {
+    margin: 0;
+  }
+  
+  .admin-product-management .ant-form-item {
+    margin-bottom: 16px;
+  }
+}
+
+/* Loading states */
+.admin-product-management .ant-spin-container {
+  position: relative;
+}
+
+.admin-product-management .loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Empty state */
+.admin-product-management .ant-empty {
+  margin: 40px 0;
+}
+
+.admin-product-management .ant-empty-description {
+  color: #8c8c8c;
+}
+
+/* Status indicators */
+.status-active {
+  color: #52c41a !important;
+  background-color: #f6ffed !important;
+  border-color: #b7eb8f !important;
+}
+
+.status-inactive {
+  color: #ff4d4f !important;
+  background-color: #fff2f0 !important;
+  border-color: #ffccc7 !important;
+}
+
+.level-beginner {
+  color: #52c41a !important;
+  background-color: #f6ffed !important;
+  border-color: #b7eb8f !important;
+}
+
+.level-intermediate {
+  color: #fa8c16 !important;
+  background-color: #fff7e6 !important;
+  border-color: #ffd591 !important;
+}
+
+.level-advanced {
+  color: #ff4d4f !important;
+  background-color: #fff2f0 !important;
+  border-color: #ffccc7 !important;
+}
+
+/* Animation and Transitions */
+.admin-product-management .fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.admin-product-management .slide-in {
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Hover Effects */
+.admin-product-management .hover-lift {
+  transition: transform 0.2s ease-in-out;
+}
+
+.admin-product-management .hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Focus States */
+.admin-product-management .ant-btn:focus {
+  outline: 2px solid rgba(24, 144, 255, 0.3);
+  outline-offset: 2px;
+}
+
+/* Accessibility */
+.admin-product-management .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Print Styles */
+@media print {
+  .admin-product-management {
+    background: white;
+    padding: 0;
+  }
+  
+  .admin-product-management .ant-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+  
+  .admin-product-management .ant-btn,
+  .admin-product-management .ant-modal,
+  .admin-product-management .ant-dropdown {
+    display: none;
+  }
+}

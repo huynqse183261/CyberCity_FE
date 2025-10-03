@@ -112,11 +112,14 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
+      console.log('Starting login process...');
+      
       // Use authentication service to login
       const result = await login(email, password);
+      console.log('Login result:', result);
       
       if (result.success) {
-        message.success('Đăng nhập thành công!');
+        message.success(result.message || 'Đăng nhập thành công!');
         
         // Get current user immediately after successful login
         const currentUser = authService.getCurrentUser();
@@ -138,11 +141,35 @@ const Login: React.FC = () => {
           navigate('/');
         }
       } else {
+        // Hiển thị lỗi mà không reload trang
+        console.error('Login failed:', result.message);
         message.error(result.message || 'Đăng nhập thất bại!');
+        // Không reload trang, giữ nguyên form để user có thể thử lại
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
-      message.error('Đăng nhập thất bại. Vui lòng thử lại!');
+      
+      // Xử lý lỗi chi tiết hơn
+      let errorMessage = 'Đăng nhập thất bại. Vui lòng thử lại!';
+      
+      if (error.response) {
+        // Lỗi từ server
+        const { status, data } = error.response;
+        if (status === 401) {
+          errorMessage = 'Tên đăng nhập hoặc mật khẩu không đúng!';
+        } else if (status === 429) {
+          errorMessage = 'Quá nhiều lần thử. Vui lòng thử lại sau!';
+        } else if (data && data.message) {
+          errorMessage = data.message;
+        }
+      } else if (error.code === 'ECONNABORTED') {
+        errorMessage = 'Kết nối bị timeout. Vui lòng thử lại!';
+      } else if (!error.response) {
+        errorMessage = 'Không thể kết nối đến server. Vui lòng kiểm tra internet!';
+      }
+      
+      message.error(errorMessage);
+      // Không reload trang, giữ nguyên form để user có thể thử lại
     } finally {
       setIsLoading(false);
     }

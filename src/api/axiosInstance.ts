@@ -59,10 +59,14 @@ axiosInstance.interceptors.response.use(
       
       switch (status) {
         case 401:
-          // Unauthorized - xóa token và redirect đến login
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          window.location.href = '/login';
+          // Unauthorized - chỉ xóa token, không redirect để tránh reload trang khi đăng nhập lỗi
+          // Chỉ redirect nếu không phải từ trang login/register
+          if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+          }
           break;
           
         case 403:

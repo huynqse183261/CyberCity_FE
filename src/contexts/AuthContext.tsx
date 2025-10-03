@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import authService, { type UserInfo } from '../services/authService';
+import type { RegisterFormData } from '../models';
 
 interface AuthContextType {
   user: UserInfo | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (usernameOrEmail: string, password: string) => Promise<{ success: boolean; message: string }>;
+  register: (data: RegisterFormData) => Promise<{ success: boolean; message: string; errors?: any }>;
   logout: () => Promise<void>;
   refreshUserData: () => Promise<void>;
 }
@@ -90,15 +92,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       }
       
+      // Không reset auth state khi login thất bại
       return { 
         success: false, 
         message: response.message || 'Đăng nhập thất bại!' 
       };
     } catch (error: any) {
       console.error('Login error:', error);
+      
+      // Xử lý lỗi chi tiết hơn
+      let errorMessage = 'Lỗi kết nối server';
+      
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === 401) {
+          errorMessage = 'Tên đăng nhập hoặc mật khẩu không đúng';
+        } else if (status === 429) {
+          errorMessage = 'Quá nhiều lần thử. Vui lòng thử lại sau';
+        } else if (data && data.message) {
+          errorMessage = data.message;
+        }
+      } else if (error.code === 'ECONNABORTED') {
+        errorMessage = 'Kết nối bị timeout. Vui lòng thử lại';
+      } else if (!error.response) {
+        errorMessage = 'Không thể kết nối đến server';
+      }
+      
       return { 
         success: false, 
-        message: error.message || 'Lỗi kết nối server' 
+        message: errorMessage 
       };
     }
   };
@@ -111,6 +133,52 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setUser(null);
       setIsAuthenticated(false);
+    }
+  };
+
+  const register = async (data: RegisterFormData) => {
+    try {
+      console.log('AuthContext: Starting registration...');
+      const response = await authService.register(data);
+      console.log('AuthContext: Register response:', response);
+      
+      return {
+        success: response.success,
+        message: response.message || (response.success ? 'Đăng ký thành công!' : 'Đăng ký thất bại'),
+        errors: response.errors
+      };
+    } catch (error: any) {
+      console.error('AuthContext: Register error:', error);
+      
+      // Xử lý lỗi chi tiết hơn
+      let errorMessage = 'Lỗi kết nối server';
+      let errors = null;
+      
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === 400) {
+          errorMessage = 'Dữ liệu không hợp lệ';
+          errors = data.errors;
+        } else if (status === 409) {
+          errorMessage = 'Email hoặc tên đăng nhập đã tồn tại';
+        } else if (status === 422) {
+          errorMessage = 'Dữ liệu không hợp lệ';
+          errors = data.errors;
+        } else if (data && data.message) {
+          errorMessage = data.message;
+          errors = data.errors;
+        }
+      } else if (error.code === 'ECONNABORTED') {
+        errorMessage = 'Kết nối bị timeout. Vui lòng thử lại';
+      } else if (!error.response) {
+        errorMessage = 'Không thể kết nối đến server';
+      }
+      
+      return { 
+        success: false, 
+        message: errorMessage,
+        errors
+      };
     }
   };
 
@@ -131,6 +199,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated,
     isLoading,
     login,
+    register,
     logout,
     refreshUserData,
   };

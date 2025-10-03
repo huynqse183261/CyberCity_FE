@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { Layout, Menu, Button, Space, Input, Badge, Avatar, Typography, message } from 'antd';
 import {
   DashboardOutlined,
-  ShoppingOutlined,
   UserOutlined,
   FileTextOutlined,
-  SettingOutlined,
   LogoutOutlined,
   SearchOutlined,
   BellOutlined,
@@ -13,6 +11,10 @@ import {
   MenuUnfoldOutlined,
   MailOutlined,
   DollarOutlined,
+  BookOutlined,
+  ReadOutlined,
+  BranchesOutlined,
+  TagsOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -55,10 +57,41 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       onClick: () => navigate('/admin'),
     },
     {
-      key: '/admin/products',
-      icon: <ShoppingOutlined />,
-      label: 'Sản phẩm',
-      onClick: () => navigate('/admin/products'),
+      key: 'education',
+      icon: <BookOutlined />,
+      label: 'Giáo dục',
+      children: [
+        {
+          key: '/admin/courses',
+          icon: <BookOutlined />,
+          label: 'Khóa học',
+          onClick: () => navigate('/admin/courses'),
+        },
+        {
+          key: '/admin/modules',
+          icon: <ReadOutlined />,
+          label: 'Modules',
+          onClick: () => navigate('/admin/modules'),
+        },
+        {
+          key: '/admin/lessons',
+          icon: <FileTextOutlined />,
+          label: 'Lessons',
+          onClick: () => navigate('/admin/lessons'),
+        },
+        {
+          key: '/admin/topics',
+          icon: <BranchesOutlined />,
+          label: 'Topics',
+          onClick: () => navigate('/admin/topics'),
+        },
+        {
+          key: '/admin/subtopics',
+          icon: <TagsOutlined />,
+          label: 'Subtopics',
+          onClick: () => navigate('/admin/subtopics'),
+        },
+      ],
     },
     {
       key: '/admin/orders',
@@ -89,12 +122,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       icon: <UserOutlined />,
       label: 'Đội ngũ',
       onClick: () => navigate('/admin/team'),
-    },
-    {
-      key: '/admin/teacher',
-      icon: <SettingOutlined />,
-      label: 'Teacher Admin',
-      onClick: () => navigate('/admin/teacher'),
     },
   ];
 

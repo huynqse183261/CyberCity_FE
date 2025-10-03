@@ -146,6 +146,14 @@ class AuthService {
       };
     } catch (error: any) {
       console.error('Login error:', error);
+      console.error('Login error details:', {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        url: error.config?.url,
+        baseURL: error.config?.baseURL
+      });
       
       // Xử lý lỗi từ backend
       if (error?.response?.data) {
@@ -159,7 +167,9 @@ class AuthService {
       
       return {
         success: false,
-        message: 'Lỗi kết nối server',
+        message: error.response?.status === 401 
+          ? 'Thông tin đăng nhập không chính xác' 
+          : 'Lỗi kết nối server',
       };
     }
   }
@@ -167,27 +177,40 @@ class AuthService {
   // Đăng ký
   async register(data: RegisterFormData): Promise<ApiResponse<any>> {
     try {
+      // Format dữ liệu theo API documentation
       const requestData = {
-        username: data.username,
         email: data.email,
+        username: data.username,
         password: data.password,
-        confirmPassword: data.confirmPassword,
+        fullName: data.fullName,
+        role: data.role || 'student' // Default role là student
       };
+
+      console.log('Register request data:', requestData);
 
       const response = await axiosInstance.post<BackendApiResponse<any>>(
         this.endpoints.REGISTER,
         requestData
       );
       
+      console.log('Register response:', response.data);
       const backendData = response.data;
       
       return {
         success: backendData.isSuccess,
         data: backendData.data,
-        message: backendData.message,
+        message: backendData.message || 'Đăng ký thành công',
       };
     } catch (error: any) {
       console.error('Register error:', error);
+      console.error('Register error details:', {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        url: error.config?.url,
+        baseURL: error.config?.baseURL
+      });
       
       if (error?.response?.data) {
         const errorData = error.response.data;
@@ -200,7 +223,9 @@ class AuthService {
       
       return {
         success: false,
-        message: 'Lỗi kết nối server',
+        message: error.response?.status === 409 
+          ? 'Email hoặc tên đăng nhập đã tồn tại' 
+          : 'Lỗi kết nối server',
       };
     }
   }
@@ -208,18 +233,32 @@ class AuthService {
   // Đăng xuất
   async logout(): Promise<ApiResponse<null>> {
     try {
+      console.log('Logout: Starting logout...');
+      
       const response = await axiosInstance.post<BackendApiResponse<null>>(
         this.endpoints.LOGOUT
       );
+      
+      console.log('Logout response:', response.data);
       
       // Xóa tokens khỏi localStorage
       this.clearAuthData();
       
       return {
         success: response.data.isSuccess,
-        message: response.data.message,
+        message: response.data.message || 'Đăng xuất thành công',
       };
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Logout error:', error);
+      console.error('Logout error details:', {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        url: error.config?.url,
+        baseURL: error.config?.baseURL
+      });
+      
       // Vẫn xóa data local dù API lỗi
       this.clearAuthData();
       return {
@@ -308,9 +347,12 @@ class AuthService {
       };
     } catch (error: any) {
       console.error('Refresh token error:', error);
-      // Nếu refresh token thất bại, xóa auth data và redirect
+      // Nếu refresh token thất bại, xóa auth data
       this.clearAuthData();
-      window.location.href = '/login';
+      // Chỉ redirect nếu không ở trang login/register
+      if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
+        window.location.href = '/login';
+      }
       throw error;
     }
   }
