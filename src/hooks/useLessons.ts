@@ -1,13 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import lessonService from '../services/lessonService';
 import type { 
-  Lesson,
   CreateLessonRequest, 
   UpdateLessonRequest,
   LessonListParams,
-  LessonListResponse
 } from '../services/lessonService';
-import type { ApiResponse } from '../models';
 import { message } from 'antd';
 
 // Query keys for lessons

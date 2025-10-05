@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import topicService from '../services/topicService';
 import type {
-  Topic,
   CreateTopicRequest,
   UpdateTopicRequest,
   TopicListParams

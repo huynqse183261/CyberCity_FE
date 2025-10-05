@@ -5,7 +5,6 @@ import type {
   CreateSubtopicRequest,
   UpdateSubtopicRequest,
   SubtopicListParams,
-  SubtopicListResponse
 } from '../services/subtopicService';
 import type { ApiResponse } from '../models';
 
