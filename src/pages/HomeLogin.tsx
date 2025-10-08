@@ -4,15 +4,19 @@ import UserDropdown from '../components/UserDropdown';
 import FeatureCard from '../components/FeatureCard';
 import AIAssistant from '../components/AIAssistant';
 import ParticleBackground from '../components/ParticleBackground';
+import { useAuth } from '../contexts/AuthContext';
 import type { User } from '../models/LinuxLabTypes';
 import '../styles/LinuxLabPage.css';
 
 const HomeLogin: React.FC = () => {
-  const [user] = useState<User>({
-    name: 'H',
-    username: 'huy@linuxlab',
-    avatar: 'H'
-  });
+  const { user: currentUser } = useAuth();
+  
+  // Transform AuthContext user to component user format
+  const user: User = {
+    name: currentUser?.fullName || 'User',
+    username: currentUser?.username || currentUser?.email || 'Unknown User',
+    avatar: currentUser?.fullName?.charAt(0).toUpperCase() || 'U'
+  };
 
   const [isAIExpanded, setIsAIExpanded] = useState(false);
 

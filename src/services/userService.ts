@@ -38,9 +38,9 @@ class UserService extends BaseApiService {
     return resp.data;
   }
 
-  // Update user status (active/inactive)
-  async updateUserStatus(id: string, isActive: boolean) {
-    const resp = await axiosInstance.put(`${this.endpoint}/${id}/status`, { isActive });
+  // Update user status (Active/Inactive)
+  async updateUserStatus(id: string, status: 'Active' | 'Inactive') {
+    const resp = await axiosInstance.put(`${this.endpoint}/${id}/status`, { status });
     return resp.data;
   }
 

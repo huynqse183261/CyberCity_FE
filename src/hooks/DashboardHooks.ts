@@ -1,5 +1,11 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import dashboardService, { type DashboardStats, type SalesData, type RecentOrder, type DashboardData } from './../services/DashboardService';
+import dashboardService, { 
+  type DashboardStats, 
+  type SalesData, 
+  type RecentOrder, 
+  type RecentActivity,
+  type DashboardData 
+} from './../services/DashboardService';
 
 // Hook for dashboard statistics
 export const useDashboardStats = (): UseQueryResult<DashboardStats, Error> => {
@@ -19,11 +25,11 @@ export const useDashboardStats = (): UseQueryResult<DashboardStats, Error> => {
 };
 
 // Hook for sales data
-export const useSalesData = (): UseQueryResult<SalesData[], Error> => {
+export const useSalesData = (year?: number): UseQueryResult<SalesData[], Error> => {
   return useQuery({ 
-    queryKey: ['salesData'],
+    queryKey: ['salesData', year],
     queryFn: async () => {
-      const response = await dashboardService.getSalesData();
+      const response = await dashboardService.getSalesData(year);
       if (!response.success) {
         throw new Error(response.message);
       }
@@ -35,11 +41,11 @@ export const useSalesData = (): UseQueryResult<SalesData[], Error> => {
 };
 
 // Hook for recent orders
-export const useRecentOrders = (): UseQueryResult<RecentOrder[], Error> => {
+export const useRecentOrders = (count?: number): UseQueryResult<RecentOrder[], Error> => {
   return useQuery({
-    queryKey: ['recentOrders'],
+    queryKey: ['recentOrders', count],
     queryFn: async () => {
-      const response = await dashboardService.getRecentOrders();
+      const response = await dashboardService.getRecentOrders(count);
       if (!response.success) {
         throw new Error(response.message);
       }
@@ -48,6 +54,23 @@ export const useRecentOrders = (): UseQueryResult<RecentOrder[], Error> => {
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes (was cacheTime)
     refetchInterval: 60000, // Refetch every minute
+  });
+};
+
+// Hook for recent activities
+export const useRecentActivities = (count?: number): UseQueryResult<RecentActivity[], Error> => {
+  return useQuery({
+    queryKey: ['recentActivities', count],
+    queryFn: async () => {
+      const response = await dashboardService.getRecentActivities(count);
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      return response.data!;
+    },
+    staleTime: 1 * 60 * 1000, // 1 minute
+    gcTime: 3 * 60 * 1000, // 3 minutes
+    refetchInterval: 30000, // Refetch every 30 seconds
   });
 };
 

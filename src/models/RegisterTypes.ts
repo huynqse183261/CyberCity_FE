@@ -5,7 +5,6 @@ export interface RegisterFormData {
   password: string;
   confirmPassword: string;
   fullName: string;
-  role?: 'admin' | 'teacher' | 'student';
   terms: boolean;
 }
 

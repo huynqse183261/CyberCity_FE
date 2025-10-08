@@ -13,24 +13,21 @@ import {
   Input,
   Select,
   Space,
-  Popconfirm,
   message,
   Form
 } from 'antd';
 import {
   UserOutlined,
   EditOutlined,
-  DeleteOutlined,
   PlusOutlined
 } from '@ant-design/icons';
-import { useUsers, useDeleteUser, useUpdateUserRole, useUpdateUserStatus } from '../hooks/useUsers';
+import { useUsers, useUpdateUserRole, useUpdateUserStatus } from '../hooks/useUsers';
 
 const { Search } = Input;
 const { Option } = Select;
 
 const AdminTeamManagement: React.FC = () => {
   const { data, isLoading, error } = useUsers({ pageNumber: 1, pageSize: 100, descending: true });
-  const deleteUserMutation = useDeleteUser();
   const updateRoleMutation = useUpdateUserRole();
   const updateStatusMutation = useUpdateUserStatus();
   
@@ -41,10 +38,29 @@ const AdminTeamManagement: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [form] = Form.useForm();
 
+  // Helper to get a stable user id from various possible fields
+  const getUserId = (user: any): string | undefined => {
+    if (!user) return undefined;
+    return (
+      user.uid ??
+      user.id ??
+      user.userId ??
+      user._id ??
+      user.userID ??
+      user.Id ??
+      user.Uid ??
+      user.user_uid ??
+      user.userUid ??
+      user.UID ??
+      user.uId
+    );
+  };
+
   const users = data?.items || [];
 
   const filteredUsers = users.filter((user: any) => {
-    const matchesSearch = (user.fullName || '').toLowerCase().includes(searchText.toLowerCase()) ||
+    const name = (user.full_name || user.fullName || user.username || '').toLowerCase();
+    const matchesSearch = name.includes(searchText.toLowerCase()) ||
                          (user.email || '').toLowerCase().includes(searchText.toLowerCase()) ||
                          (user.username || '').toLowerCase().includes(searchText.toLowerCase());
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
@@ -61,34 +77,19 @@ const AdminTeamManagement: React.FC = () => {
     setSelectedUser(user);
     form.setFieldsValue({
       role: user.role,
-      isActive: user.isActive !== undefined ? user.isActive : true
+      status: user.status ?? (user.isActive ? 'Active' : 'Inactive')
     });
     setEditModalVisible(true);
   };
 
-  const handleDelete = async (userId: string, event?: any) => {
-    if (event) event.stopPropagation();
-    
-    if (!userId) {
-      message.error('Cannot delete: Invalid ID');
-      return;
-    }
-
-    try {
-      await deleteUserMutation.mutateAsync(userId);
-      message.success('User deleted successfully');
-    } catch (error) {
-      console.error('Delete failed:', error);
-      message.error('Failed to delete user');
-    }
-  };
+  // Deletion is disabled by requirement; only role/status updates are allowed
 
   const handleSaveEdit = async () => {
     if (!selectedUser) return;
 
     try {
       const values = await form.validateFields();
-      const userId = selectedUser.uid || selectedUser.id;
+  const userId = getUserId(selectedUser);
 
       if (!userId) {
         message.error('Cannot update: Invalid ID');
@@ -99,8 +100,9 @@ const AdminTeamManagement: React.FC = () => {
         await updateRoleMutation.mutateAsync({ id: userId, role: values.role });
       }
 
-      if (values.isActive !== selectedUser.isActive) {
-        await updateStatusMutation.mutateAsync({ id: userId, isActive: values.isActive });
+      const prevStatus: 'Active' | 'Inactive' = selectedUser.status ?? (selectedUser.isActive ? 'Active' : 'Inactive');
+      if (values.status && values.status !== prevStatus) {
+        await updateStatusMutation.mutateAsync({ id: userId, status: values.status });
       }
 
       message.success('Updated successfully');
@@ -112,7 +114,7 @@ const AdminTeamManagement: React.FC = () => {
     }
   };
 
-  const handleStatusToggle = async (userId: string, newStatus: boolean, event?: any) => {
+  const handleStatusToggle = async (userId: string | undefined, newStatus: 'Active' | 'Inactive', event?: any) => {
     if (event) event.stopPropagation();
     
     if (!userId) {
@@ -121,7 +123,7 @@ const AdminTeamManagement: React.FC = () => {
     }
 
     try {
-      await updateStatusMutation.mutateAsync({ id: userId, isActive: newStatus });
+      await updateStatusMutation.mutateAsync({ id: userId, status: newStatus });
       message.success('Status updated successfully');
     } catch (error) {
       console.error('Status update failed:', error);
@@ -140,9 +142,9 @@ const AdminTeamManagement: React.FC = () => {
 
   const getRoleText = (role: string) => {
     switch (role) {
-      case 'admin': return 'Admin';
-      case 'teacher': return 'Teacher';
-      case 'student': return 'Student';
+      case 'admin': return 'admin';
+      case 'teacher': return 'teacher';
+      case 'student': return 'student';
       default: return role || 'Unknown';
     }
   };
@@ -214,12 +216,13 @@ const AdminTeamManagement: React.FC = () => {
 
         <Row gutter={[16, 16]}>
           {filteredUsers.map((user: any, index: number) => {
-            const userId = user.uid || user.id || `user-${index}`;
-            const isActive = user.isActive !== undefined ? user.isActive : true;
+            const userId = getUserId(user);
+            const status: 'Active' | 'Inactive' = user.status ?? (user.isActive ? 'Active' : 'Inactive');
+            const isActive = status === 'Active';
             const userRole = user.role || 'student';
             
             return (
-              <Col key={`${userId}-${index}`} xs={24} sm={12} md={8} lg={6}>
+              <Col key={`${userId ?? 'user'}-${index}`} xs={24} sm={12} md={8} lg={6}>
                 <Card
                   hoverable
                   onClick={() => handleCardClick(user)}
@@ -233,26 +236,10 @@ const AdminTeamManagement: React.FC = () => {
                     >
                       Edit
                     </Button>,
-                    <Popconfirm
-                      key={`delete-${index}`}
-                      title="Are you sure you want to delete this member?"
-                      onConfirm={(e) => handleDelete(userId, e)}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <Button 
-                        type="link"
-                        danger 
-                        icon={<DeleteOutlined />}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Delete
-                      </Button>
-                    </Popconfirm>,
                     <Button
                       key={`toggle-${index}`}
                       type="link"
-                      onClick={(e) => handleStatusToggle(userId, !isActive, e)}
+                      onClick={(e) => handleStatusToggle(userId, isActive ? 'Inactive' : 'Active', e)}
                     >
                       {isActive ? 'Deactivate' : 'Activate'}
                     </Button>
@@ -261,12 +248,12 @@ const AdminTeamManagement: React.FC = () => {
                   <div style={{ textAlign: 'center' }}>
                     <Avatar 
                       size={64} 
-                      src={user.avatar} 
+                      src={user.image || user.avatar} 
                       icon={<UserOutlined />}
                       style={{ marginBottom: 12 }}
                     />
                     <div style={{ marginBottom: 8 }}>
-                      <strong>{user.fullName || user.username || 'Unknown User'}</strong>
+                      <strong>{user.full_name || user.fullName || user.username || 'Unknown User'}</strong>
                     </div>
                     <div style={{ marginBottom: 8, color: '#666', fontSize: 12 }}>
                       {user.email || 'No email'}
@@ -310,13 +297,13 @@ const AdminTeamManagement: React.FC = () => {
               <div style={{ textAlign: 'center', marginBottom: 24 }}>
                 <Avatar 
                   size={80} 
-                  src={selectedUser.avatar} 
+                  src={selectedUser.image || selectedUser.avatar} 
                   icon={<UserOutlined />}
                 />
               </div>
               <Descriptions bordered column={1}>
                 <Descriptions.Item label="Full Name">
-                  {selectedUser.fullName || 'Not provided'}
+                  {selectedUser.full_name || selectedUser.fullName || 'Not provided'}
                 </Descriptions.Item>
                 <Descriptions.Item label="Username">
                   {selectedUser.username || 'Not provided'}
@@ -330,15 +317,15 @@ const AdminTeamManagement: React.FC = () => {
                   </Tag>
                 </Descriptions.Item>
                 <Descriptions.Item label="Status">
-                  <Tag color={selectedUser.isActive ? 'green' : 'red'}>
-                    {selectedUser.isActive ? 'Active' : 'Inactive'}
+                  <Tag color={(selectedUser.status ?? (selectedUser.isActive ? 'Active' : 'Inactive')) === 'Active' ? 'green' : 'red'}>
+                    {(selectedUser.status ?? (selectedUser.isActive ? 'Active' : 'Inactive'))}
                   </Tag>
                 </Descriptions.Item>
                 <Descriptions.Item label="Created">
-                  {selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleDateString() : 'Not provided'}
+                  {selectedUser.created_at ? new Date(selectedUser.created_at).toLocaleDateString() : (selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleDateString() : 'Not provided')}
                 </Descriptions.Item>
                 <Descriptions.Item label="Last Updated">
-                  {selectedUser.updatedAt ? new Date(selectedUser.updatedAt).toLocaleDateString() : 'Not provided'}
+                  {selectedUser.updated_at ? new Date(selectedUser.updated_at).toLocaleDateString() : (selectedUser.updatedAt ? new Date(selectedUser.updatedAt).toLocaleDateString() : 'Not provided')}
                 </Descriptions.Item>
               </Descriptions>
             </div>
@@ -359,11 +346,11 @@ const AdminTeamManagement: React.FC = () => {
               <div style={{ textAlign: 'center', marginBottom: 24 }}>
                 <Avatar 
                   size={64} 
-                  src={selectedUser.avatar} 
+                  src={selectedUser.image || selectedUser.avatar} 
                   icon={<UserOutlined />}
                 />
                 <div style={{ marginTop: 8, fontWeight: 'bold' }}>
-                  {selectedUser.fullName || selectedUser.username}
+                  {selectedUser.full_name || selectedUser.fullName || selectedUser.username}
                 </div>
                 <div style={{ color: '#666' }}>
                   {selectedUser.email}
@@ -385,12 +372,12 @@ const AdminTeamManagement: React.FC = () => {
 
                 <Form.Item
                   label="Status"
-                  name="isActive"
+                  name="status"
                   rules={[{ required: true, message: 'Please select status' }]}
                 >
                   <Select>
-                    <Option value={true}>Active</Option>
-                    <Option value={false}>Inactive</Option>
+                    <Option value={'Active'}>Active</Option>
+                    <Option value={'Inactive'}>Inactive</Option>
                   </Select>
                 </Form.Item>
               </Form>

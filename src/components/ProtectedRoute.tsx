@@ -25,6 +25,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Nếu đã đăng nhập nhưng không có quyền truy cập
   if (isAuthenticated && allowedRoles && currentUser) {
+    // Chặn người dùng không Active
+    const status = (currentUser as any).status as string | undefined;
+    if (status && status !== 'Active') {
+      return <Navigate to="/access-denied" replace />;
+    }
+
     const roleMap = {
       admin: 'admin',
       teacher: 'teacher',

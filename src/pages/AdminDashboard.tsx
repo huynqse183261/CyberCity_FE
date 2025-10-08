@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../styles/AdminDashboard.css';
 import AdminLayout from '../components/AdminLayout';
 import {
@@ -13,42 +13,82 @@ import {
   Typography,
   Spin,
   Alert,
+  List,
+  Select,
 } from 'antd';
 import {
   UserOutlined,
-  FileTextOutlined,
-  ArrowUpOutlined,
-  ArrowDownOutlined,
   ShoppingOutlined,
-  DashboardOutlined,
+  BookOutlined,
+  TeamOutlined,
+  CheckCircleOutlined,
 } from '@ant-design/icons';
 import { Line } from '@ant-design/charts';
-import { useDashboardStats, useSalesData, useRecentOrders } from '../hooks/DashboardHooks';
+import { 
+  useDashboardStats, 
+  useSalesData, 
+  useRecentOrders, 
+  useRecentActivities 
+} from '../hooks/DashboardHooks';
 
 const { Title, Text } = Typography;
 
 const AdminDashboard: React.FC = () => {
+  // State for year selection
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  
   // Fetch data using React Query hooks
   const { data: stats, isLoading: statsLoading, error: statsError } = useDashboardStats();
-  const { data: salesData, isLoading: salesLoading, error: salesError } = useSalesData();
-  const { data: recentOrders, isLoading: ordersLoading, error: ordersError } = useRecentOrders();
+  const { data: salesData, isLoading: salesLoading, error: salesError } = useSalesData(selectedYear);
+  const { data: recentOrders, isLoading: ordersLoading, error: ordersError } = useRecentOrders(10);
+  const { data: recentActivities, isLoading: activitiesLoading, error: activitiesError } = useRecentActivities(5);
 
-  // Table columns configuration
+  // Generate year options for the last 5 years and next 2 years
+  const generateYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let year = currentYear - 5; year <= currentYear + 2; year++) {
+      years.push({ label: year.toString(), value: year });
+    }
+    return years;
+  };
+
+  // Transform sales data for line chart (12 months)
+  const transformSalesDataForChart = (data: any[]) => {
+    const monthNames = [
+      'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+      'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+    ];
+    
+    // Create a map for existing data
+    const dataMap = new Map();
+    data?.forEach(item => {
+      dataMap.set(item.month, item.orderCount);
+    });
+    
+    // Generate data for all 12 months
+    return monthNames.map((monthName, index) => ({
+      month: monthName,
+      orderCount: dataMap.get(index + 1) || 0,
+    }));
+  };
+
+  // Table columns configuration for recent orders
   const tableColumns = [
     {
       title: 'Mã đơn',
-      dataIndex: 'orderId',
-      key: 'orderId',
+      dataIndex: 'uid',
+      key: 'uid',
     },
     {
-      title: 'Khách hàng',
-      dataIndex: 'customer',
-      key: 'customer',
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
     },
     {
-      title: 'Sản phẩm',
-      dataIndex: 'product',
-      key: 'product',
+      title: 'Gói dịch vụ',
+      dataIndex: 'planName',
+      key: 'planName',
     },
     {
       title: 'Số tiền',
@@ -57,24 +97,50 @@ const AdminDashboard: React.FC = () => {
       render: (amount: number) => `${amount.toLocaleString('vi-VN')} VNĐ`,
     },
     {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
+      title: 'Thanh toán',
+      dataIndex: 'paymentStatus',
+      key: 'paymentStatus',
       render: (status: string) => {
         let color = 'default';
         let text = '';
         switch (status) {
-          case 'completed':
+          case 'paid':
             color = 'green';
-            text = 'Hoàn thành';
-            break;
-          case 'processing':
-            color = 'blue';
-            text = 'Đang xử lý';
+            text = 'Đã thanh toán';
             break;
           case 'pending':
             color = 'orange';
-            text = 'Chờ xử lý';
+            text = 'Chờ thanh toán';
+            break;
+          case 'failed':
+            color = 'red';
+            text = 'Thất bại';
+            break;
+          default:
+            text = status;
+        }
+        return <Tag color={color}>{text}</Tag>;
+      },
+    },
+    {
+      title: 'Phê duyệt',
+      dataIndex: 'approvalStatus',
+      key: 'approvalStatus',
+      render: (status: string) => {
+        let color = 'default';
+        let text = '';
+        switch (status) {
+          case 'approved':
+            color = 'green';
+            text = 'Đã phê duyệt';
+            break;
+          case 'pending':
+            color = 'orange';
+            text = 'Chờ phê duyệt';
+            break;
+          case 'rejected':
+            color = 'red';
+            text = 'Từ chối';
             break;
           default:
             text = status;
@@ -84,34 +150,11 @@ const AdminDashboard: React.FC = () => {
     },
     {
       title: 'Ngày tạo',
-      dataIndex: 'date',
-      key: 'date',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (date: string) => new Date(date).toLocaleDateString('vi-VN'),
     },
   ];
-
-  // Chart configuration
-  const chartConfig = {
-    data: salesData || [],
-    xField: 'month',
-    yField: 'value',
-    smooth: true,
-    color: '#1890ff',
-    area: {
-      style: {
-        fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff',
-        fillOpacity: 0.3,
-      },
-    },
-    point: {
-      size: 5,
-      shape: 'diamond',
-      style: {
-        fill: 'white',
-        stroke: '#1890ff',
-        lineWidth: 2,
-      },
-    },
-  };
 
   // Stats data with real API data
   const statsData = React.useMemo(() => {
@@ -123,40 +166,50 @@ const AdminDashboard: React.FC = () => {
         value: stats.totalUsers,
         precision: 0,
         valueStyle: { color: '#3f8600' },
-        prefix: <ArrowUpOutlined />,
-        suffix: '8.5% Tăng so với hôm qua',
+        prefix: <UserOutlined />,
+        suffix: 'Người dùng',
         icon: <UserOutlined />,
         color: '#e6f7ff',
       },
       {
-        title: 'Tổng số đơn',
+        title: 'Tổng số đơn hàng',
         value: stats.totalOrders,
         precision: 0,
         valueStyle: { color: '#3f8600' },
-        prefix: <ArrowUpOutlined />,
-        suffix: '1.3% Tăng so với tuần trước',
+        prefix: <ShoppingOutlined />,
+        suffix: 'Đơn hàng',
         icon: <ShoppingOutlined />,
         color: '#f6ffed',
       },
       {
-        title: 'Tổng doanh số',
-        value: stats.totalRevenue,
+        title: 'Tổng khóa học',
+        value: stats.totalCourses,
         precision: 0,
-        valueStyle: { color: '#cf1322' },
-        prefix: <ArrowDownOutlined />,
-        suffix: '4.3% Thấp so với tuần trước',
-        icon: <FileTextOutlined />,
-        color: '#fff2e8',
+        valueStyle: { color: '#1890ff' },
+        prefix: <BookOutlined />,
+        suffix: 'Khóa học',
+        icon: <BookOutlined />,
+        color: '#f0f9ff',
       },
       {
-        title: 'Tổng số đang chờ xử lý',
-        value: stats.pendingOrders,
+        title: 'Tổng đăng ký',
+        value: stats.totalEnrollments,
         precision: 0,
-        valueStyle: { color: '#3f8600' },
-        prefix: <ArrowUpOutlined />,
-        suffix: '1.8% Tăng so với tuần trước',
-        icon: <DashboardOutlined />,
-        color: '#fff0f6',
+        valueStyle: { color: '#722ed1' },
+        prefix: <TeamOutlined />,
+        suffix: 'Đăng ký',
+        icon: <TeamOutlined />,
+        color: '#f9f0ff',
+      },
+      {
+        title: 'Chờ phê duyệt',
+        value: stats.totalApprovedPending,
+        precision: 0,
+        valueStyle: { color: '#fa8c16' },
+        prefix: <CheckCircleOutlined />,
+        suffix: 'Chờ xử lý',
+        icon: <CheckCircleOutlined />,
+        color: '#fff7e6',
       },
     ];
   }, [stats]);
@@ -227,11 +280,84 @@ const AdminDashboard: React.FC = () => {
         {/* Charts and Tables */}
         <Row gutter={[16, 16]}>
           <Col xs={24} xl={16}>
-            <Card title="Chi tiết bán hàng" style={{ marginBottom: 16 }}>
+            <Card 
+              title={
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>Thống kê đơn hàng theo tháng</span>
+                  <Select
+                    value={selectedYear}
+                    style={{ width: 120 }}
+                    onChange={(value) => setSelectedYear(value)}
+                    options={generateYearOptions()}
+                    placeholder="Chọn năm"
+                  />
+                </div>
+              }
+              style={{ marginBottom: 16 }}
+            >
               {salesLoading ? (
                 <Spin size="large" />
               ) : (
-                <Line {...chartConfig} height={300} />
+                <Line 
+                  data={transformSalesDataForChart(salesData || [])}
+                  xField="month"
+                  yField="orderCount"
+                  height={300}
+                  smooth={true}
+                  color="#1890ff"
+                  area={{
+                    style: {
+                      fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff',
+                      fillOpacity: 0.3,
+                    },
+                  }}
+                  point={{
+                    size: 5,
+                    shape: 'diamond',
+                    style: {
+                      fill: 'white',
+                      stroke: '#1890ff',
+                      lineWidth: 2,
+                    },
+                  }}
+                  xAxis={{
+                    label: {
+                      style: {
+                        fontSize: 12,
+                      },
+                    },
+                  }}
+                  yAxis={{
+                    label: {
+                      style: {
+                        fontSize: 12,
+                      },
+                    },
+                    title: {
+                      text: 'Số lượng đơn hàng',
+                      style: {
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                      },
+                    },
+                  }}
+                  tooltip={{
+                    formatter: (datum: any) => {
+                      return {
+                        name: 'Số đơn hàng',
+                        value: `${datum.orderCount} đơn`,
+                      };
+                    },
+                  }}
+                  meta={{
+                    orderCount: {
+                      alias: 'Số lượng đơn hàng',
+                    },
+                    month: {
+                      alias: 'Tháng',
+                    },
+                  }}
+                />
               )}
             </Card>
             
@@ -248,40 +374,56 @@ const AdminDashboard: React.FC = () => {
 
           <Col xs={24} xl={8}>
             <Card title="Hoạt động gần đây" style={{ marginBottom: 16 }}>
-              <Space direction="vertical" style={{ width: '100%' }}>
-                {[1, 2, 3, 4, 5].map((item) => (
-                  <div key={item} style={{ display: 'flex', alignItems: 'center', padding: '8px 0' }}>
-                    <Avatar size="small" style={{ marginRight: 12 }}>
-                      {item}
-                    </Avatar>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '14px' }}>Người dùng {item} đã tạo đơn hàng mới</div>
-                      <Text type="secondary" style={{ fontSize: '12px' }}>
-                        {item} phút trước
-                      </Text>
-                    </div>
-                  </div>
-                ))}
-              </Space>
+              {activitiesLoading ? (
+                <Spin />
+              ) : activitiesError ? (
+                <Alert message="Lỗi tải hoạt động" type="error" />
+              ) : (
+                <List
+                  size="small"
+                  dataSource={recentActivities || []}
+                  renderItem={(activity) => (
+                    <List.Item>
+                      <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                        <Avatar size="small" style={{ marginRight: 12, backgroundColor: '#1890ff' }}>
+                          {activity.type === 'order' ? 'O' : 
+                           activity.type === 'user' ? 'U' : 
+                           activity.type === 'course' ? 'C' : 'A'}
+                        </Avatar>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: '14px' }}>{activity.title}</div>
+                          <Text type="secondary" style={{ fontSize: '12px' }}>
+                            {activity.detail}
+                          </Text>
+                          <br />
+                          <Text type="secondary" style={{ fontSize: '11px' }}>
+                            {new Date(activity.when).toLocaleDateString('vi-VN')}
+                          </Text>
+                        </div>
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              )}
             </Card>
 
             <Card title="Thống kê nhanh">
               <Space direction="vertical" style={{ width: '100%' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Text>Đơn hàng hôm nay</Text>
-                  <Text strong>156</Text>
+                  <Text>Tổng đơn hàng</Text>
+                  <Text strong>{stats?.totalOrders || 0}</Text>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Text>Doanh thu hôm nay</Text>
-                  <Text strong>50,000,000 VNĐ</Text>
+                  <Text>Tổng người dùng</Text>
+                  <Text strong>{stats?.totalUsers || 0}</Text>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Text>Người dùng mới</Text>
-                  <Text strong>{statsLoading ? '...' : (stats?.totalUsers || 0)}</Text>
+                  <Text>Tổng khóa học</Text>
+                  <Text strong>{stats?.totalCourses || 0}</Text>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Text>Sản phẩm bán chạy</Text>
-                  <Text strong>Laptop Gaming</Text>
+                  <Text>Chờ phê duyệt</Text>
+                  <Text strong style={{ color: '#fa8c16' }}>{stats?.totalApprovedPending || 0}</Text>
                 </div>
               </Space>
             </Card>

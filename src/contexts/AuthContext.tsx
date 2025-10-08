@@ -11,6 +11,7 @@ interface AuthContextType {
   register: (data: RegisterFormData) => Promise<{ success: boolean; message: string; errors?: any }>;
   logout: () => Promise<void>;
   refreshUserData: () => Promise<void>;
+  googleLogin: (accessToken: string) => Promise<{ success: boolean; message: string }>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -182,6 +183,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const googleLogin = async (idToken: string) => {
+    try {
+      console.log('AuthContext: Starting Google login...');
+      const response = await authService.googleLogin(idToken);
+      console.log('AuthContext: Google login response:', response);
+      
+      if (response.success) {
+        // AuthService đã lưu token và user info, chỉ cần update state
+        const currentUser = authService.getCurrentUser();
+        console.log('Google login successful, current user:', currentUser);
+        
+        // Update state regardless of currentUser availability
+        setUser(currentUser);
+        setIsAuthenticated(true);
+        
+        // Always return success if authService says so
+        return { 
+          success: true, 
+          message: response.message || 'Đăng nhập Google thành công!' 
+        };
+      }
+      
+      return { 
+        success: false, 
+        message: response.message || 'Đăng nhập Google thất bại!' 
+      };
+    } catch (error: any) {
+      console.error('Google login error:', error);
+      
+      let errorMessage = 'Lỗi đăng nhập Google';
+      
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === 401) {
+          errorMessage = 'Token Google không hợp lệ';
+        } else if (data && data.message) {
+          errorMessage = data.message;
+        }
+      } else if (!error.response) {
+        errorMessage = 'Không thể kết nối đến server';
+      }
+      
+      return { 
+        success: false, 
+        message: errorMessage 
+      };
+    }
+  };
+
   const refreshUserData = async () => {
     try {
       const response = await authService.getProfile();
@@ -202,6 +252,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     logout,
     refreshUserData,
+    googleLogin,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

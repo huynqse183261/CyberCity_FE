@@ -6,6 +6,7 @@ import ReactQueryProvider from './providers/ReactQueryProvider';
 import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 import HomeLogin from './pages/HomeLogin';
 import LinuxPage from './pages/LinuxPage';
 import LinuxModule1 from './pages/LinuxModule1';
@@ -17,6 +18,7 @@ import AdminTopicManagement from './pages/AdminTopicManagement';
 import AdminSubtopicManagement from './pages/AdminSubtopicManagement';
 import AdminPricingManagement from './pages/AdminPricingManagement';
 import AdminTeamManagement from './pages/AdminTeamManagement';
+import AccessDenied from './pages/AccessDenied';
 
 import TeacherDashboard from './pages/TeacherDashboard';
 import AboutPage from './pages/AboutPage';
@@ -42,6 +44,8 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/access-denied" element={<AccessDenied />} />
                 
                 {/* Student Protected Routes */}
                 <Route 

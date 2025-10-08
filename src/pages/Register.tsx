@@ -8,7 +8,7 @@ import '../styles/Register.css';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const { login, register } = useAuth();
+  const { register } = useAuth();
   const [formData, setFormData] = useState<RegisterFormData>({
     email: '',
     username: '',
@@ -260,25 +260,8 @@ const Register: React.FC = () => {
       console.log('Registration result:', registrationResult);
       
       if (registrationResult.success) {
-        message.success(registrationResult.message || 'Đăng ký thành công!');
-        
-        // Auto-login after successful registration
-        try {
-          const loginResult = await login(formData.email, formData.password);
-          
-          if (loginResult.success) {
-            message.success('Đăng nhập tự động thành công!');
-            // Navigate to student dashboard by default (or based on registration data)
-            navigate('/student');
-          } else {
-            message.info('Đăng ký thành công! Vui lòng đăng nhập.');
-            navigate('/login');
-          }
-        } catch (loginError) {
-          console.error('Auto-login error after registration:', loginError);
-          message.info('Đăng ký thành công! Vui lòng đăng nhập.');
-          navigate('/login');
-        }
+        message.success(registrationResult.message || 'Đăng ký thành công! Vui lòng đăng nhập.');
+        navigate('/login');
       } else {
         // Hiển thị lỗi chi tiết từ server
         console.error('Registration failed:', registrationResult.message);

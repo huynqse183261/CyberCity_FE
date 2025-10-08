@@ -53,8 +53,8 @@ export const useUpdateUserRole = () => {
 export const useUpdateUserStatus = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) => 
-      userService.updateUserStatus(id, isActive),
+    mutationFn: ({ id, status }: { id: string; status: 'Active' | 'Inactive' }) => 
+      userService.updateUserStatus(id, status),
     onSuccess: () => {
       message.success('Cập nhật trạng thái thành công');
       qc.invalidateQueries({ predicate: (q) => q.queryKey[0] === 'users' });

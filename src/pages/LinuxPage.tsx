@@ -1,13 +1,21 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import LinuxLabNavigation from '../components/LinuxLabNavigation';
 import UserDropdown from '../components/UserDropdown';
+import { useAuth } from '../contexts/AuthContext';
 import type { User } from '../models/LinuxLabTypes';
 import '../styles/LinuxLabPage.css';
 
 const LinuxPage: React.FC = () => {
   const [introProgress, setIntroProgress] = useState<number[]>([95, 88, 75, 65, 45, 30]);
   const headerProgress = 10;
-  const [user] = useState<User>({ name: 'H', username: 'huy@linuxlab', avatar: 'H' });
+  const { user: currentUser } = useAuth();
+  
+  // Transform AuthContext user to component user format
+  const user: User = {
+    name: currentUser?.fullName || 'User',
+    username: currentUser?.username || currentUser?.email || 'Unknown User',
+    avatar: currentUser?.fullName?.charAt(0).toUpperCase() || 'U'
+  };
 
   const modules = useMemo(() => [
     {
