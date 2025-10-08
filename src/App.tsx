@@ -15,6 +15,8 @@ import AdminModuleManagement from './pages/AdminModuleManagement';
 import AdminLessonManagement from './pages/AdminLessonManagement';
 import AdminTopicManagement from './pages/AdminTopicManagement';
 import AdminSubtopicManagement from './pages/AdminSubtopicManagement';
+import AdminPricingManagement from './pages/AdminPricingManagement';
+import AdminTeamManagement from './pages/AdminTeamManagement';
 
 import TeacherDashboard from './pages/TeacherDashboard';
 import AboutPage from './pages/AboutPage';
@@ -24,6 +26,7 @@ import PaymentGuidePage from './pages/PaymentGuidePage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
 import WarrantyPage from './pages/WarrantyPage';
+import PricingPage from './pages/PricingPage';
 
 // Import protected route components
 import { AdminRoute, TeacherRoute, StudentRoute } from './components/ProtectedRoute';
@@ -135,7 +138,7 @@ function App() {
                 path="/admin/team" 
                 element={
                   <AdminRoute>
-                    <AdminDashboard />
+                    <AdminTeamManagement />
                   </AdminRoute>
                 } 
               />
@@ -151,7 +154,7 @@ function App() {
                 path="/admin/pricing" 
                 element={
                   <AdminRoute>
-                    <AdminDashboard />
+                    <AdminPricingManagement />
                   </AdminRoute>
                 } 
               />
@@ -225,6 +228,7 @@ function App() {
               {/* Other Pages */}
               <Route path="/lien-he" element={<ContactPage />} />
               <Route path="/gioi-thieu" element={<AboutPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
               <Route path="/dieu-kien-giao-dich" element={<TermsPage />} />
               <Route path="/quy-trinh-su-dung" element={<ServiceProcessPage />} />
               <Route path="/chinh-sach-bao-hanh" element={<WarrantyPage />} />
