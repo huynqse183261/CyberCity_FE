@@ -89,6 +89,39 @@
   gap: 10px;
 }
 
+.user-info-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.user-info-display:hover {
+  background-color: rgba(0, 212, 255, 0.1);
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.user-fullname {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.user-username {
+  color: #b8c5d1;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
 .user-icon {
   cursor: pointer;
   position: relative;
@@ -108,36 +141,84 @@
   font-size: 0.9rem;
 }
 
+.avatar-large {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(45deg, #00d4ff, #0099cc);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #0a0e1a;
+  font-size: 1.1rem;
+  margin-right: 12px;
+}
+
 .user-dropdown {
   position: absolute;
   right: 0;
-  top: 44px;
-  background: #23263a;
+  top: 48px;
+  background: #1e2139;
   border: 1px solid #00d4ff33;
-  border-radius: 10px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-  min-width: 210px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  min-width: 280px;
   z-index: 100;
   overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.dropdown-header {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #23263a 0%, #2a2f4a 100%);
+  border-bottom: 1px solid #00d4ff22;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-name {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.dropdown-username {
+  color: #b8c5d1;
+  font-size: 0.85rem;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #2a2f4a;
+  margin: 0;
 }
 
 .user-dropdown div {
-  padding: 13px 20px;
+  padding: 12px 20px;
   cursor: pointer;
-  border-bottom: 1px solid #2a2f4a;
   color: #e0e6ed;
   background: none;
-  font-size: 1rem;
-  transition: background 0.2s;
-}
-
-.user-dropdown div:last-child {
-  border-bottom: none;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .user-dropdown div:hover {
   background: #00d4ff22;
   color: #00d4ff;
+}
+
+.logout-item {
+  color: #ff6b6b !important;
+}
+
+.logout-item:hover {
+  background: #ff6b6b22 !important;
+  color: #ff8e8e !important;
 }
 
 /* Hero Section */

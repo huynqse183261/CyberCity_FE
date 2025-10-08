@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import AdminLayout from '../components/AdminLayout';
 import type { TeamMember } from '../models/TeamTypes';
+import { useUsers, useDeleteUser } from '../hooks/useUsers';
 import {
   Card,
-  Table,
   Button,
   Space,
   Tag,
@@ -18,20 +18,14 @@ import {
   Statistic,
   Avatar,
   Upload,
+  Spin,
 } from 'antd';
 import {
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
   SearchOutlined,
   UserOutlined,
   TeamOutlined,
   UploadOutlined,
-  EyeOutlined,
-  MailOutlined,
-  PhoneOutlined,
 } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -44,94 +38,28 @@ const TeamManagement: React.FC = () => {
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [form] = Form.useForm();
 
-  // Sample team data
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    {
-      key: '1',
-      id: 'EMP001',
-      name: 'Nguyễn Văn An',
-      email: 'nguyenvanan@company.com',
-      phone: '0123456789',
-      position: 'Full Stack Developer',
-      department: 'Công nghệ',
-      role: 'employee',
-      status: 'active',
-      joinDate: '2023-01-15',
-      avatar: 'https://api.dicebear.com/7.x/miniavs/svg?seed=1',
-      address: '123 Đường ABC, Quận 1, TP.HCM',
-      salary: 25000000,
-      skills: ['React', 'Node.js', 'TypeScript', 'MongoDB'],
-      bio: 'Developer với 3 năm kinh nghiệm phát triển web',
-    },
-    {
-      key: '2',
-      id: 'EMP002',
-      name: 'Trần Thị Bình',
-      email: 'tranthibinh@company.com',
-      phone: '0987654321',
-      position: 'UI/UX Designer',
-      department: 'Thiết kế',
-      role: 'employee',
-      status: 'active',
-      joinDate: '2023-03-20',
-      avatar: 'https://api.dicebear.com/7.x/miniavs/svg?seed=2',
-      address: '456 Đường XYZ, Quận 2, TP.HCM',
-      salary: 20000000,
-      skills: ['Figma', 'Adobe XD', 'Photoshop', 'Illustrator'],
-      bio: 'Designer chuyên về UI/UX với 4 năm kinh nghiệm',
-    },
-    {
-      key: '3',
-      id: 'EMP003',
-      name: 'Lê Văn Cường',
-      email: 'levancuong@company.com',
-      phone: '0369852147',
-      position: 'Project Manager',
-      department: 'Quản lý',
-      role: 'manager',
-      status: 'active',
-      joinDate: '2022-06-10',
-      avatar: 'https://api.dicebear.com/7.x/miniavs/svg?seed=3',
-      address: '789 Đường DEF, Quận 3, TP.HCM',
-      salary: 35000000,
-      skills: ['Agile', 'Scrum', 'Jira', 'Leadership'],
-      bio: 'Project Manager với 6 năm kinh nghiệm quản lý dự án',
-    },
-    {
-      key: '4',
-      id: 'EMP004',
-      name: 'Phạm Thị Dung',
-      email: 'phamthidung@company.com',
-      phone: '0741852963',
-      position: 'Marketing Manager',
-      department: 'Marketing',
-      role: 'manager',
-      status: 'active',
-      joinDate: '2023-05-01',
-      avatar: 'https://api.dicebear.com/7.x/miniavs/svg?seed=4',
-      address: '321 Đường GHI, Quận 4, TP.HCM',
-      salary: 30000000,
-      skills: ['Digital Marketing', 'SEO', 'Google Ads', 'Social Media'],
-      bio: 'Marketing Manager với kinh nghiệm 5 năm trong digital marketing',
-    },
-    {
-      key: '5',
-      id: 'EMP005',
-      name: 'Hoàng Văn Em',
-      email: 'hoangvanem@company.com',
-      phone: '0147258369',
-      position: 'System Administrator',
-      department: 'Công nghệ',
-      role: 'admin',
-      status: 'active',
-      joinDate: '2022-01-10',
-      avatar: 'https://api.dicebear.com/7.x/miniavs/svg?seed=5',
-      address: '654 Đường JKL, Quận 5, TP.HCM',
-      salary: 28000000,
-      skills: ['Linux', 'Docker', 'AWS', 'DevOps'],
-      bio: 'System Admin chuyên về cloud và infrastructure',
-    },
-  ]);
+  // Fetch users from API
+  const { data: usersData, isLoading, error } = useUsers({ pageNumber: 1, pageSize: 1000, descending: true });
+  const deleteUserMutation = useDeleteUser();
+
+  // Map backend response to TeamMember[]
+  const teamMembers: TeamMember[] = (Array.isArray(usersData) ? usersData : (usersData && usersData.items) || []).map((u: any, idx: number) => ({
+    key: u.uid || u.id || String(idx),
+    id: u.uid || u.id || `U${idx}`,
+    name: u.fullName || u.username || u.email || 'Không tên',
+    email: u.email || '',
+    phone: u.phone || u.mobile || '',
+    position: u.position || u.role || 'Nhân viên',
+    department: u.department || 'Chưa xác định',
+    role: (u.role as 'admin' | 'manager' | 'employee') || 'employee',
+    status: (u.status || 'active') as 'active' | 'inactive',
+    joinDate: u.createdAt || u.joinDate || '',
+    avatar: u.avatar || u.image || undefined,
+    address: u.address || '',
+    salary: u.salary || 0,
+    skills: u.skills || [],
+    bio: u.bio || '',
+  }));
 
   const departments = ['Công nghệ', 'Thiết kế', 'Marketing', 'Quản lý', 'Nhân sự', 'Kế toán'];
 
@@ -153,138 +81,12 @@ const TeamManagement: React.FC = () => {
     }
   };
 
-  const columns: ColumnsType<TeamMember> = [
-    {
-      title: 'Nhân viên',
-      key: 'member',
-      render: (_, record: TeamMember) => (
-        <Space>
-          <Avatar src={record.avatar} icon={<UserOutlined />} />
-          <div>
-            <div style={{ fontWeight: 500 }}>{record.name}</div>
-            <div style={{ fontSize: '12px', color: '#666' }}>{record.id}</div>
-          </div>
-        </Space>
-      ),
-    },
-    {
-      title: 'Vị trí',
-      dataIndex: 'position',
-      key: 'position',
-    },
-    {
-      title: 'Phòng ban',
-      dataIndex: 'department',
-      key: 'department',
-      filters: departments.map(dept => ({ text: dept, value: dept })),
-      onFilter: (value: any, record: TeamMember) => record.department === value,
-      render: (department: string) => <Tag color="cyan">{department}</Tag>,
-    },
-    {
-      title: 'Vai trò',
-      dataIndex: 'role',
-      key: 'role',
-      filters: [
-        { text: 'Quản trị viên', value: 'admin' },
-        { text: 'Quản lý', value: 'manager' },
-        { text: 'Nhân viên', value: 'employee' },
-      ],
-      onFilter: (value: any, record: TeamMember) => record.role === value,
-      render: (role: string) => (
-        <Tag color={getRoleColor(role)}>
-          {getRoleText(role)}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Liên hệ',
-      key: 'contact',
-      render: (_, record: TeamMember) => (
-        <div>
-          <div style={{ fontSize: '12px' }}>
-            <MailOutlined /> {record.email}
-          </div>
-          <div style={{ fontSize: '12px' }}>
-            <PhoneOutlined /> {record.phone}
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: 'Lương',
-      dataIndex: 'salary',
-      key: 'salary',
-      render: (salary: number) => `${salary.toLocaleString('vi-VN')} VNĐ`,
-      sorter: (a, b) => a.salary - b.salary,
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
-      filters: [
-        { text: 'Đang làm việc', value: 'active' },
-        { text: 'Đã nghỉ việc', value: 'inactive' },
-      ],
-      onFilter: (value: any, record: TeamMember) => record.status === value,
-      render: (status: string) => (
-        <Tag color={status === 'active' ? 'green' : 'red'}>
-          {status === 'active' ? 'Đang làm việc' : 'Đã nghỉ việc'}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Ngày vào',
-      dataIndex: 'joinDate',
-      key: 'joinDate',
-      sorter: (a, b) => new Date(a.joinDate).getTime() - new Date(b.joinDate).getTime(),
-    },
-    {
-      title: 'Thao tác',
-      key: 'action',
-      width: 200,
-      render: (_, record: TeamMember) => (
-        <Space>
-          <Button 
-            type="primary" 
-            size="small" 
-            icon={<EyeOutlined />}
-            onClick={() => handleView(record)}
-          >
-            Xem
-          </Button>
-          <Button 
-            type="default" 
-            size="small" 
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
-            Sửa
-          </Button>
-          <Popconfirm
-            title="Bạn có chắc muốn xóa nhân viên này?"
-            onConfirm={() => handleDelete(record.key)}
-            okText="Có"
-            cancelText="Không"
-          >
-            <Button 
-              type="primary" 
-              danger 
-              size="small" 
-              icon={<DeleteOutlined />}
-            >
-              Xóa
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
+  // Using card-grid UI instead of table; remove table columns
 
-  const handleAdd = () => {
-    setEditingMember(null);
-    form.resetFields();
-    setIsModalVisible(true);
-  };
+
+  // handleAdd is not used in card view; keep modal control via button above
+
+  // isLoading comes from useUsers hook above
 
   const handleEdit = (member: TeamMember) => {
     setEditingMember(member);
@@ -319,34 +121,38 @@ const TeamManagement: React.FC = () => {
     });
   };
 
-  const handleDelete = (key: string) => {
-    setTeamMembers(teamMembers.filter(member => member.key !== key));
-    message.success('Xóa nhân viên thành công!');
+  const handleDelete = async (key: string) => {
+    try {
+      // call delete API
+      await deleteUserMutation.mutateAsync(key);
+    } catch (err) {
+      console.error('Delete user error', err);
+    }
   };
+
+  // Local changes for optimistic create/update (backend mutations not implemented here)
+  const [localChanges, setLocalChanges] = useState<TeamMember[]>([]);
 
   const handleModalOk = () => {
     form.validateFields().then(values => {
       const skillsArray = values.skills ? values.skills.split(',').map((skill: string) => skill.trim()) : [];
-      
+
       if (editingMember) {
-        // Update existing member
-        setTeamMembers(teamMembers.map(member => 
-          member.key === editingMember.key 
-            ? { ...editingMember, ...values, skills: skillsArray }
-            : member
-        ));
-        message.success('Cập nhật nhân viên thành công!');
+        // Apply update to localChanges (replace if existed)
+        const updated: TeamMember = { ...editingMember, ...values, skills: skillsArray };
+        setLocalChanges(prev => prev.map(c => c.key === updated.key ? updated : c));
+        message.success('Cập nhật nhân viên (cục bộ) thành công!');
       } else {
-        // Add new member
+        // Add new member locally
         const newMember: TeamMember = {
           key: Date.now().toString(),
-          id: `EMP${String(teamMembers.length + 1).padStart(3, '0')}`,
+          id: `EMP${String(Math.floor(Math.random() * 10000)).padStart(3, '0')}`,
           ...values,
           skills: skillsArray,
           joinDate: new Date().toISOString().split('T')[0],
         };
-        setTeamMembers([...teamMembers, newMember]);
-        message.success('Thêm nhân viên thành công!');
+        setLocalChanges(prev => [newMember, ...prev]);
+        message.success('Thêm nhân viên (cục bộ) thành công!');
       }
       setIsModalVisible(false);
       form.resetFields();
@@ -358,7 +164,13 @@ const TeamManagement: React.FC = () => {
     form.resetFields();
   };
 
-  const filteredMembers = teamMembers.filter(member => {
+  // Merge backend members with local changes (dedupe by key)
+  const mergedMembersMap = new Map<string, TeamMember>();
+  teamMembers.forEach(m => mergedMembersMap.set(m.key, m));
+  localChanges.forEach(m => mergedMembersMap.set(m.key, m));
+  const mergedMembers = Array.from(mergedMembersMap.values());
+
+  const filteredMembers = mergedMembers.filter(member => {
     const matchesSearch = member.name.toLowerCase().includes(searchText.toLowerCase()) ||
                          member.email.toLowerCase().includes(searchText.toLowerCase()) ||
                          member.id.toLowerCase().includes(searchText.toLowerCase());
@@ -458,34 +270,56 @@ const TeamManagement: React.FC = () => {
                 </Select>
               </Space>
             </Col>
-            <Col>
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={handleAdd}
-              >
-                Thêm nhân viên
-              </Button>
-            </Col>
+            <div>
+              {isLoading ? (
+                <div style={{ textAlign: 'center', padding: 40 }}><Spin /></div>
+              ) : (
+                <Row gutter={[16, 16]}>
+                  {filteredMembers.map(member => (
+                    <Col key={member.key} xs={24} sm={12} md={8} lg={6}>
+                      <div onClick={() => handleView(member)} style={{ cursor: 'pointer' }}>
+                        <Card hoverable className="team-card">
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <Avatar size={64} src={member.avatar} icon={<UserOutlined />} />
+                            <div style={{ marginLeft: 12, flex: 1 }}>
+                              <div style={{ fontWeight: 600 }}>{member.name}</div>
+                              <div style={{ color: '#666', fontSize: 12 }}>{member.position}</div>
+                              <div style={{ marginTop: 6 }}>
+                                <Tag color="cyan">{member.department}</Tag>
+                                <Tag color={getRoleColor(member.role)}>{getRoleText(member.role)}</Tag>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{ marginTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ fontSize: 12, color: '#444' }}>
+                              <div>{member.email}</div>
+                              <div>{member.phone}</div>
+                            </div>
+
+                            <div>
+                              <Space>
+                                <Button size="small" onClick={(e) => { e.stopPropagation(); handleView(member); }}>
+                                  Xem
+                                </Button>
+                                <Button size="small" onClick={(e) => { e.stopPropagation(); handleEdit(member); }}>Sửa</Button>
+                                <Popconfirm title="Bạn có chắc muốn xóa nhân viên này?" onConfirm={(e) => { e?.stopPropagation(); handleDelete(member.key); }} okText="Có" cancelText="Không">
+                                  <Button danger size="small" onClick={(e) => e.stopPropagation()}>Xóa</Button>
+                                </Popconfirm>
+                              </Space>
+                            </div>
+                          </div>
+                        </Card>
+                      </div>
+                    </Col>
+                  ))}
+                </Row>
+              )}
+            </div>
           </Row>
         </Card>
 
-        {/* Team Members Table */}
-        <Card>
-          <Table
-            columns={columns}
-            dataSource={filteredMembers}
-            pagination={{
-              total: filteredMembers.length,
-              pageSize: 10,
-              showSizeChanger: true,
-              showQuickJumper: true,
-              showTotal: (total, range) => 
-                `${range[0]}-${range[1]} của ${total} nhân viên`,
-            }}
-            scroll={{ x: 1200 }}
-          />
-        </Card>
+        {/* Team Members Grid (cards) rendered above */}
 
         {/* Add/Edit Modal */}
         <Modal

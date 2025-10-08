@@ -2,20 +2,33 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ReactQueryProvider from './providers/ReactQueryProvider';
 
-// Import components
+// Import components directly (not lazy loaded as requested)
 import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import AdminDashboard from './pages/AdminDashboard';
-import TeacherDashboard from './pages/TeacherDashboard';
+import ForgotPassword from './pages/ForgotPassword';
 import HomeLogin from './pages/HomeLogin';
-import ContactPage from './pages/ContactPage';
+import LinuxPage from './pages/LinuxPage';
+import LinuxModule1 from './pages/LinuxModule1';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminCourseManagement from './pages/AdminCourseManagement';
+import AdminModuleManagement from './pages/AdminModuleManagement';
+import AdminLessonManagement from './pages/AdminLessonManagement';
+import AdminTopicManagement from './pages/AdminTopicManagement';
+import AdminSubtopicManagement from './pages/AdminSubtopicManagement';
+import AdminPricingManagement from './pages/AdminPricingManagement';
+import AdminTeamManagement from './pages/AdminTeamManagement';
+import AccessDenied from './pages/AccessDenied';
+
+import TeacherDashboard from './pages/TeacherDashboard';
 import AboutPage from './pages/AboutPage';
-import TermsPage from './pages/TermsPage';
+import ContactPage from './pages/ContactPage';
 import ServiceProcessPage from './pages/ServiceProcessPage';
-import WarrantyPage from './pages/WarrantyPage';
-import PrivacyPage from './pages/PrivacyPage';
 import PaymentGuidePage from './pages/PaymentGuidePage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import WarrantyPage from './pages/WarrantyPage';
+import PricingPage from './pages/PricingPage';
 
 // Import protected route components
 import { AdminRoute, TeacherRoute, StudentRoute } from './components/ProtectedRoute';
@@ -31,11 +44,13 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              
-              {/* Student Protected Routes */}
-              <Route 
-                path="/student" 
-                element={
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/access-denied" element={<AccessDenied />} />
+                
+                {/* Student Protected Routes */}
+                <Route 
+                  path="/student" 
+                  element={
                   <StudentRoute>
                     <HomeLogin />
                   </StudentRoute>
@@ -45,7 +60,7 @@ function App() {
                 path="/linux-lab" 
                 element={
                   <StudentRoute>
-                    <HomeLogin />
+                    <LinuxPage />
                   </StudentRoute>
                 } 
               />
@@ -53,7 +68,7 @@ function App() {
                 path="/linux" 
                 element={
                   <StudentRoute>
-                    <HomeLogin />
+                    <LinuxPage />
                   </StudentRoute>
                 } 
               />
@@ -61,7 +76,7 @@ function App() {
                 path="/linux/module-1" 
                 element={
                   <StudentRoute>
-                    <HomeLogin />
+                    <LinuxModule1 />
                   </StudentRoute>
                 } 
               />
@@ -76,10 +91,42 @@ function App() {
                 } 
               />
               <Route 
-                path="/admin/products" 
+                path="/admin/courses" 
                 element={
                   <AdminRoute>
-                    <AdminDashboard />
+                    <AdminCourseManagement />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/modules" 
+                element={
+                  <AdminRoute>
+                    <AdminModuleManagement />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/lessons" 
+                element={
+                  <AdminRoute>
+                    <AdminLessonManagement />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/topics" 
+                element={
+                  <AdminRoute>
+                    <AdminTopicManagement />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/subtopics" 
+                element={
+                  <AdminRoute>
+                    <AdminSubtopicManagement />
                   </AdminRoute>
                 } 
               />
@@ -95,7 +142,7 @@ function App() {
                 path="/admin/team" 
                 element={
                   <AdminRoute>
-                    <AdminDashboard />
+                    <AdminTeamManagement />
                   </AdminRoute>
                 } 
               />
@@ -111,7 +158,7 @@ function App() {
                 path="/admin/pricing" 
                 element={
                   <AdminRoute>
-                    <AdminDashboard />
+                    <AdminPricingManagement />
                   </AdminRoute>
                 } 
               />
@@ -185,6 +232,7 @@ function App() {
               {/* Other Pages */}
               <Route path="/lien-he" element={<ContactPage />} />
               <Route path="/gioi-thieu" element={<AboutPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
               <Route path="/dieu-kien-giao-dich" element={<TermsPage />} />
               <Route path="/quy-trinh-su-dung" element={<ServiceProcessPage />} />
               <Route path="/chinh-sach-bao-hanh" element={<WarrantyPage />} />

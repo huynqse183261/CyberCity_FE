@@ -43,35 +43,49 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
 
   return (
     <div className="user-menu-container" ref={dropdownRef}>
-      <div 
-        className="avatar user-icon" 
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {user.avatar}
+      <div className="user-info-display">
+        <div 
+          className="avatar user-icon" 
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {user.avatar}
+        </div>
+        <div className="user-details">
+          <span className="user-fullname">{user.name}</span>
+          <span className="user-username">@{user.username}</span>
+        </div>
       </div>
-      <span style={{ color: '#b8c5d1' }}>{user.username}</span>
       {isOpen && (
         <div className="user-dropdown">
+          <div className="dropdown-header">
+            <div className="avatar-large">{user.avatar}</div>
+            <div>
+              <div className="dropdown-name">{user.name}</div>
+              <div className="dropdown-username">@{user.username}</div>
+            </div>
+          </div>
+          <div className="dropdown-divider"></div>
           <div onClick={() => handleMenuItemClick('profile')}>
-            Thông tin tài khoản
+            👤 Thông tin tài khoản
           </div>
           <div onClick={() => handleMenuItemClick('profile')}>
-            Hồ sơ của tôi
+            📋 Hồ sơ của tôi
           </div>
           <div onClick={() => handleMenuItemClick('friends')}>
-            Bạn bè
+            👥 Bạn bè
           </div>
           <div onClick={() => handleMenuItemClick('classes')}>
-            Lớp của tôi
+            🎓 Lớp của tôi
           </div>
           <div onClick={() => handleMenuItemClick('payment-history')}>
-            Lịch sử thanh toán
+            💳 Lịch sử thanh toán
           </div>
           <div onClick={() => handleMenuItemClick('payment-settings')}>
-            Quản lý thanh toán
+            ⚙️ Quản lý thanh toán
           </div>
-          <div onClick={() => handleMenuItemClick('logout')}>
-            Thoát
+          <div className="dropdown-divider"></div>
+          <div onClick={() => handleMenuItemClick('logout')} className="logout-item">
+            🚪 Thoát
           </div>
         </div>
       )}

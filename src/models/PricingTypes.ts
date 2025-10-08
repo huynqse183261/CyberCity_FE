@@ -1,3 +1,22 @@
+// Pricing-specific types (use unique names to avoid collisions with other models)
+export interface PricingPlanDTO {
+  uid: string;
+  planName: string;
+  price: number;
+  durationDays: number;
+  features: string; // backend may return JSON string or plain text
+  orderCount?: number;
+}
+
+export interface PricingListDTO {
+  items: PricingPlanDTO[];
+  pageNumber?: number;
+  pageSize?: number;
+  totalItems?: number;
+  totalPages?: number;
+}
+
+// Keep ApiResponse local to pricing service if needed; project has other ApiResponse definitions elsewhere.
 // Interface cho gói định giá
 export interface PricingPlan {
   key: string;

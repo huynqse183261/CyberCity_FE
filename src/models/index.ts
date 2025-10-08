@@ -7,6 +7,7 @@ export * from './MessageTypes';
 export * from './PricingTypes';
 export * from './InvoiceTypes';
 export * from './DashboardTypes';
+export * from './CourseTypes';
 
 // Interface chung cho API response
 export interface ApiResponse<T> {

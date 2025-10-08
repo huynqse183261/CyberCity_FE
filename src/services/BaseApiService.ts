@@ -118,55 +118,55 @@ export const API_ENDPOINTS = {
   },
   
   // User Management
-  USERS: '/users',
-  ROLES: '/roles',
-  PERMISSIONS: '/permissions',
+  USERS: '/api/users',
+  ROLES: '/api/roles',
+  PERMISSIONS: '/api/permissions',
   
   // Course & Learning
-  COURSES: '/courses',
-  MODULES: '/modules',
-  LESSONS: '/lessons',
-  ASSIGNMENTS: '/assignments',
-  SUBMISSIONS: '/submissions',
-  GRADES: '/grades',
+  COURSES: '/api/courses',
+  MODULES: '/api/modules',
+  LESSONS: '/api/lessons',
+  ASSIGNMENTS: '/api/assignments',
+  SUBMISSIONS: '/api/submissions',
+  GRADES: '/api/grades',
   
   // Linux Lab
-  LAB_ENVIRONMENTS: '/lab-environments',
-  VIRTUAL_MACHINES: '/virtual-machines',
-  LAB_SESSIONS: '/lab-sessions',
-  TERMINALS: '/terminals',
+  LAB_ENVIRONMENTS: '/api/lab-environments',
+  VIRTUAL_MACHINES: '/api/virtual-machines',
+  LAB_SESSIONS: '/api/lab-sessions',
+  TERMINALS: '/api/terminals',
   
   // Content Management
-  PRODUCTS: '/products',
-  CATEGORIES: '/categories',
-  ORDERS: '/orders',
-  PAYMENTS: '/payments',
-  INVOICES: '/invoices',
+  PRODUCTS: '/api/products',
+  CATEGORIES: '/api/categories',
+  ORDERS: '/api/orders',
+  PAYMENTS: '/api/payments',
+  INVOICES: '/api/invoices',
   
   // Communication
-  MESSAGES: '/messages',
-  NOTIFICATIONS: '/notifications',
-  ANNOUNCEMENTS: '/announcements',
+  MESSAGES: '/api/messages',
+  NOTIFICATIONS: '/api/notifications',
+  ANNOUNCEMENTS: '/api/announcements',
   
   // Analytics & Reports
-  ANALYTICS: '/analytics',
-  REPORTS: '/reports',
-  STATISTICS: '/statistics',
+  ANALYTICS: '/api/analytics',
+  REPORTS: '/api/reports',
+  STATISTICS: '/api/statistics',
   
   // AI Assistant
-  AI_CHAT: '/ai/chat',
-  AI_HELP: '/ai/help',
-  AI_SUGGESTIONS: '/ai/suggestions',
+  AI_CHAT: '/api/ai/chat',
+  AI_HELP: '/api/ai/help',
+  AI_SUGGESTIONS: '/api/ai/suggestions',
   
   // File Management
-  UPLOADS: '/uploads',
-  FILES: '/files',
-  MEDIA: '/media',
+  UPLOADS: '/api/uploads',
+  FILES: '/api/files',
+  MEDIA: '/api/media',
   
   // System
-  HEALTH: '/health',
-  SETTINGS: '/settings',
-  LOGS: '/logs',
+  HEALTH: '/api/health',
+  SETTINGS: '/api/settings',
+  LOGS: '/api/logs',
 } as const;
 
 export default BaseApiService;

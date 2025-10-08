@@ -6,40 +6,61 @@ export interface DashboardStats {
   totalOrders: number;
   totalRevenue: number;
   pendingOrders: number;
+  totalCourses: number;
+  totalEnrollments: number;
+  totalApprovedPending: number;
 }
 
 export interface SalesData {
   month: string;
-  value: number;
+  year: number;
+  orderCount: number;
 }
 
 export interface RecentOrder {
+  uid: string;
   orderId: string;
-  customer: string;
-  product: string;
+  email: string;
+  planName: string;
   amount: number;
-  status: string;
-  date: string;
+  paymentStatus: string;
+  approvalStatus: string;
+  createdAt: string;
+}
+
+export interface RecentActivity {
+  type: string;
+  title: string;
+  detail: string;
+  userId: string;
+  relatedId: string;
+  when: string;
 }
 
 export interface DashboardData {
   stats: DashboardStats;
   salesData: SalesData[];
   recentOrders: RecentOrder[];
+  recentActivities: RecentActivity[];
 }
 
 class DashboardService {
-  // Get dashboard statistics
+  // Get quick stats (4 main metrics)
   async getDashboardStats(): Promise<ApiResponse<DashboardStats>> {
     try {
-      const response = await axiosInstance.get('api/admin/overview');
+      const response = await axiosInstance.get('/api/admin/quick-stats');
+      
+      console.log('Quick stats response:', response.data);
       
       // Map backend response to our interface
       const stats: DashboardStats = {
         totalUsers: response.data.totalUsers || 0,
         totalOrders: response.data.totalOrders || 0,
         totalRevenue: response.data.totalRevenue || 0,
-        pendingOrders: response.data.pendingOrders || 0,
+        pendingOrders: response.data.totalApprovalPending || 0,
+        totalCourses: response.data.totalCourses || 0,
+        totalEnrollments: response.data.totalEnrollments || 0,
+        totalApprovedPending: response.data.totalApprovedPending || 0,
       };
 
       return {
@@ -56,24 +77,19 @@ class DashboardService {
     }
   }
 
-  // Get sales data for chart
-  async getSalesData(): Promise<ApiResponse<SalesData[]>> {
+  // Get sales data by month/year
+  async getSalesData(year: number = 2025): Promise<ApiResponse<SalesData[]>> {
     try {
-      // For now, return mock data until backend provides real endpoint
-      const salesData: SalesData[] = [
-        { month: 'Jan', value: 20 },
-        { month: 'Feb', value: 25 },
-        { month: 'Mar', value: 30 },
-        { month: 'Apr', value: 35 },
-        { month: 'May', value: 45 },
-        { month: 'Jun', value: 50 },
-        { month: 'Jul', value: 65 },
-        { month: 'Aug', value: 55 },
-        { month: 'Sep', value: 60 },
-        { month: 'Oct', value: 70 },
-        { month: 'Nov', value: 75 },
-        { month: 'Dec', value: 80 },
-      ];
+      const response = await axiosInstance.get(`/api/admin/orders-by-month?year=${year}`);
+      
+      console.log('Sales data response:', response.data);
+      
+      // Map backend response to our interface
+      const salesData: SalesData[] = response.data.map((item: any) => ({
+        month: item.month,
+        year: item.year,
+        orderCount: item.orderCount
+      }));
 
       return {
         success: true,
@@ -83,54 +99,34 @@ class DashboardService {
     } catch (error: any) {
       return {
         success: false,
-        message: error.response?.data?.message || 'Failed to fetch dashboard sales data',
+        message: error.response?.data?.message || 'Failed to fetch sales data',
         errors: error.response?.data
       };
     }
   }
 
   // Get recent orders
-  async getRecentOrders(): Promise<ApiResponse<RecentOrder[]>> {
+  async getRecentOrders(count: number = 10): Promise<ApiResponse<RecentOrder[]>> {
     try {
-      // Mock data until backend provides real endpoint
-      const recentOrders: RecentOrder[] = [
-        {
-          orderId: '#12345',
-          customer: 'Nguyễn Văn A',
-          product: 'Laptop Gaming',
-          amount: 25000000,
-          status: 'completed',
-          date: '2024-01-15',
-        },
-        {
-          orderId: '#12346',
-          customer: 'Trần Thị B',
-          product: 'Điện thoại iPhone',
-          amount: 15000000,
-          status: 'processing',
-          date: '2024-01-14',
-        },
-        {
-          orderId: '#12347',
-          customer: 'Lê Văn C',
-          product: 'Máy tính bảng',
-          amount: 8000000,
-          status: 'pending',
-          date: '2024-01-14',
-        },
-        {
-          orderId: '#12348',
-          customer: 'Phạm Thị D',
-          product: 'Tai nghe không dây',
-          amount: 2000000,
-          status: 'completed',
-          date: '2024-01-13',
-        },
-      ];
+      const response = await axiosInstance.get(`/api/admin/recent-orders?count=${count}`);
+      
+      console.log('Recent orders response:', response.data);
+      
+      // Map backend response to our interface
+      const orders: RecentOrder[] = response.data.map((item: any) => ({
+        uid: item.uid,
+        orderId: item.orderId,
+        email: item.email,
+        planName: item.planName,
+        amount: item.amount,
+        paymentStatus: item.paymentStatus,
+        approvalStatus: item.approvalStatus,
+        createdAt: item.createdAt
+      }));
 
       return {
         success: true,
-        data: recentOrders,
+        data: orders,
         message: 'Recent orders retrieved successfully'
       };
     } catch (error: any) {
@@ -142,13 +138,45 @@ class DashboardService {
     }
   }
 
+  // Get recent activities
+  async getRecentActivities(count: number = 20): Promise<ApiResponse<RecentActivity[]>> {
+    try {
+      const response = await axiosInstance.get(`/api/admin/recent-activities?count=${count}`);
+      
+      console.log('Recent activities response:', response.data);
+      
+      // Map backend response to our interface
+      const activities: RecentActivity[] = response.data.map((item: any) => ({
+        type: item.type,
+        title: item.title,
+        detail: item.detail,
+        userId: item.userId,
+        relatedId: item.relatedId,
+        when: item.when
+      }));
+
+      return {
+        success: true,
+        data: activities,
+        message: 'Recent activities retrieved successfully'
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to fetch recent activities',
+        errors: error.response?.data
+      };
+    }
+  }
+
   // Get all dashboard data at once
   async getDashboardData(): Promise<ApiResponse<DashboardData>> {
     try {
-      const [statsResponse, salesResponse, ordersResponse] = await Promise.all([
+      const [statsResponse, salesResponse, ordersResponse, activitiesResponse] = await Promise.all([
         this.getDashboardStats(),
         this.getSalesData(),
-        this.getRecentOrders()
+        this.getRecentOrders(),
+        this.getRecentActivities()
       ]);
 
       if (!statsResponse.success) {
@@ -162,7 +190,8 @@ class DashboardService {
       const dashboardData: DashboardData = {
         stats: statsResponse.data!,
         salesData: salesResponse.data || [],
-        recentOrders: ordersResponse.data || []
+        recentOrders: ordersResponse.data || [],
+        recentActivities: activitiesResponse.data || []
       };
 
       return {

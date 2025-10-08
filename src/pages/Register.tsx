@@ -8,12 +8,13 @@ import '../styles/Register.css';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { register } = useAuth();
   const [formData, setFormData] = useState<RegisterFormData>({
     email: '',
     username: '',
     password: '',
     confirmPassword: '',
+    fullName: '',
     terms: false
   });
 
@@ -182,6 +183,11 @@ const Register: React.FC = () => {
           error = 'Tên đăng nhập chỉ chứa chữ, số và dấu gạch dưới (3-20 ký tự)';
         }
         break;
+      case 'fullName':
+        if (value && (value as string).trim().length < 2) {
+          error = 'Họ và tên phải có ít nhất 2 ký tự';
+        }
+        break;
     }
 
     setErrors(prev => ({
@@ -218,6 +224,12 @@ const Register: React.FC = () => {
       newErrors.username = 'Tên đăng nhập chỉ chứa chữ, số và dấu gạch dưới (3-20 ký tự)';
     }
 
+    if (!formData.fullName) {
+      newErrors.fullName = 'Họ và tên là bắt buộc';
+    } else if (formData.fullName.trim().length < 2) {
+      newErrors.fullName = 'Họ và tên phải có ít nhất 2 ký tự';
+    }
+
     if (!formData.password) {
       newErrors.password = 'Mật khẩu là bắt buộc';
     } else if (passwordStrength.level < 3) {
@@ -240,25 +252,71 @@ const Register: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Call registration API (you need to implement this in authService)
-      // For now, we'll simulate a successful registration and auto-login
-      message.success('Đăng ký thành công!');
+      console.log('Starting registration process...');
       
-      // Auto-login after successful registration
-      const loginResult = await login(formData.email, formData.password);
+      // Sử dụng register function từ AuthContext
+      const registrationResult = await register(formData);
       
-      if (loginResult.success) {
-        message.success('Đăng nhập tự động thành công!');
-        // Navigate to student dashboard by default (or based on registration data)
-        navigate('/student');
-      } else {
-        message.info('Đăng ký thành công! Vui lòng đăng nhập.');
+      console.log('Registration result:', registrationResult);
+      
+      if (registrationResult.success) {
+        message.success(registrationResult.message || 'Đăng ký thành công! Vui lòng đăng nhập.');
         navigate('/login');
+      } else {
+        // Hiển thị lỗi chi tiết từ server
+        console.error('Registration failed:', registrationResult.message);
+        message.error(registrationResult.message || 'Đăng ký thất bại!');
+        
+        // Nếu có lỗi validation chi tiết, hiển thị chúng
+        if (registrationResult.errors) {
+          const serverErrors: FormErrors = {};
+          Object.entries(registrationResult.errors).forEach(([key, value]) => {
+            if (key in formData) { // Chỉ áp dụng lỗi cho các field có trong form
+              (serverErrors as any)[key] = Array.isArray(value) ? value[0] : value;
+            }
+          });
+          setErrors(serverErrors);
+        }
+        
+        // Không reload trang, giữ nguyên form để user có thể sửa lỗi
       }
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
-      message.error('Đăng ký thất bại. Vui lòng thử lại!');
+      
+      // Xử lý lỗi chi tiết hơn
+      let errorMessage = 'Đăng ký thất bại. Vui lòng thử lại!';
+      
+      if (error.response) {
+        // Lỗi từ server
+        const { status, data } = error.response;
+        if (status === 409) {
+          errorMessage = 'Email hoặc tên đăng nhập đã tồn tại!';
+        } else if (status === 422) {
+          errorMessage = 'Thông tin đăng ký không hợp lệ!';
+          // Hiển thị lỗi validation nếu có
+          if (data && data.errors) {
+            const serverErrors: FormErrors = {};
+            Object.entries(data.errors).forEach(([key, value]) => {
+              if (key in formData) { // Chỉ áp dụng lỗi cho các field có trong form
+                (serverErrors as any)[key] = Array.isArray(value) ? value[0] : value;
+              }
+            });
+            setErrors(serverErrors);
+          }
+        } else if (status === 429) {
+          errorMessage = 'Quá nhiều lần thử. Vui lòng thử lại sau!';
+        } else if (data && data.message) {
+          errorMessage = data.message;
+        }
+      } else if (error.code === 'ECONNABORTED') {
+        errorMessage = 'Kết nối bị timeout. Vui lòng thử lại!';
+      } else if (!error.response) {
+        errorMessage = 'Không thể kết nối đến server. Vui lòng kiểm tra internet!';
+      }
+      
+      message.error(errorMessage);
+      // Không reload trang, giữ nguyên form để user có thể thử lại
     } finally {
       setIsLoading(false);
     }
@@ -322,6 +380,22 @@ const Register: React.FC = () => {
               required
             />
             {errors.username && <div className="error-message">{errors.username}</div>}
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="fullName">Họ và tên</label>
+            <input 
+              type="text" 
+              id="fullName" 
+              name="fullName" 
+              className={`form-input ${errors.fullName ? 'input-error' : ''}`}
+              placeholder="Nhập họ và tên đầy đủ"
+              value={formData.fullName}
+              onChange={handleInputChange}
+              onBlur={() => handleFieldBlur('fullName')}
+              required
+            />
+            {errors.fullName && <div className="error-message">{errors.fullName}</div>}
           </div>
           <div className="form-group">
             <label className="form-label" htmlFor="password">Mật khẩu</label>
