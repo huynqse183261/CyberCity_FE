@@ -85,6 +85,12 @@ export const StudentRoute: React.FC<{ children: React.ReactNode }> = ({ children
   </ProtectedRoute>
 );
 
+export const AllUserRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <ProtectedRoute allowedRoles={['admin', 'teacher', 'student']}>
+    {children}
+  </ProtectedRoute>
+);
+
 export const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <ProtectedRoute requireAuth={false}>
     {children}

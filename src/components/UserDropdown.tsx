@@ -38,6 +38,8 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
           message.error('Có lỗi xảy ra khi đăng xuất!');
         }
       }
+    } else if (action === 'inbox') {
+      navigate('/inbox');
     }
   };
 
@@ -67,6 +69,9 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
           <div className="dropdown-divider"></div>
           <div onClick={() => handleMenuItemClick('profile')}>
             👤 Thông tin tài khoản
+          </div>
+          <div onClick={() => handleMenuItemClick('inbox')}>
+            💬 Hộp thư
           </div>
           <div onClick={() => handleMenuItemClick('profile')}>
             📋 Hồ sơ của tôi

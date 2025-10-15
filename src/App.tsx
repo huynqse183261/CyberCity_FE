@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
+import InboxPage from './pages/InboxPage';
 import HomeLogin from './pages/HomeLogin';
 import LinuxPage from './pages/LinuxPage';
 import LinuxModule1 from './pages/LinuxModule1';
@@ -31,7 +32,8 @@ import WarrantyPage from './pages/WarrantyPage';
 import PricingPage from './pages/PricingPage';
 
 // Import protected route components
-import { AdminRoute, TeacherRoute, StudentRoute } from './components/ProtectedRoute';
+import { AdminRoute, TeacherRoute, StudentRoute, AllUserRoute } from './components/ProtectedRoute';
+import AdminMessages from './pages/AdminMessages';
 
 function App() {
   return (
@@ -46,6 +48,16 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/access-denied" element={<AccessDenied />} />
+
+              {/* Shared Protected Routes - Available for all authenticated users */}
+              <Route 
+                path="/inbox" 
+                element={
+                  <AllUserRoute>
+                    <InboxPage />
+                  </AllUserRoute>
+                } 
+              />
                 
                 {/* Student Protected Routes */}
                 <Route 
@@ -150,7 +162,7 @@ function App() {
                 path="/admin/messages" 
                 element={
                   <AdminRoute>
-                    <AdminDashboard />
+                    <AdminMessages />
                   </AdminRoute>
                 } 
               />

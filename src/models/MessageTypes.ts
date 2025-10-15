@@ -1,48 +1,121 @@
-// Interface cho tin nhắn
+// ===========================
+// MESSAGING SYSTEM TYPES
+// Based on PostgreSQL Schema
+// ===========================
+
+// User info for messaging
+export interface MessageUser {
+  uid: string;
+  email: string;
+  username: string;
+  full_name: string;
+  image?: string;
+  role: 'student' | 'teacher' | 'admin';
+}
+
+// Conversation types
+export interface Conversation {
+  uid: string;
+  org_uid?: string;
+  title?: string;
+  is_group: boolean;
+  created_at: string;
+  last_message?: Message;
+  unread_count?: number;
+  members?: ConversationMember[];
+}
+
+// Conversation member
+export interface ConversationMember {
+  uid: string;
+  conversation_uid: string;
+  user_uid: string;
+  joined_at: string;
+  user?: MessageUser;
+}
+
+// Message in conversation
 export interface Message {
-  key: string;
-  id: string;
-  senderName: string;
-  senderEmail: string;
-  subject: string;
-  content: string;
-  status: 'unread' | 'read' | 'replied' | 'archived';
-  priority: 'low' | 'normal' | 'high' | 'urgent';
-  createdAt: string;
-  readAt?: string;
-  repliedAt?: string;
-  attachments?: MessageAttachment[];
-  tags?: string[];
+  uid: string;
+  conversation_uid: string;
+  sender_uid: string;
+  message: string;
+  sent_at: string;
+  sender?: MessageUser;
+  is_read?: boolean;
 }
 
-// Interface cho file đính kèm
-export interface MessageAttachment {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  url: string;
-}
+// ===========================
+// API REQUEST/RESPONSE TYPES
+// ===========================
 
-// Interface cho thống kê tin nhắn
-export interface MessageStats {
+// Get conversations list
+export interface GetConversationsResponse {
+  conversations: Conversation[];
   total: number;
-  unread: number;
-  read: number;
-  replied: number;
-  urgent: number;
+  page: number;
+  limit: number;
 }
 
-// Interface cho filter tin nhắn
+// Get messages in conversation
+export interface GetMessagesResponse {
+  messages: Message[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+// Create new conversation request
+export interface CreateConversationRequest {
+  title?: string;
+  is_group: boolean;
+  member_uids: string[];
+  org_uid?: string;
+}
+
+// Send message request
+export interface SendMessageRequest {
+  conversation_uid: string;
+  message: string;
+}
+
+// Search conversations/messages
+export interface SearchMessagesRequest {
+  query: string;
+  conversation_uid?: string;
+  sender_uid?: string;
+  date_from?: string;
+  date_to?: string;
+  page?: number;
+  limit?: number;
+}
+
+// ===========================
+// UI STATE TYPES
+// ===========================
+
+// Inbox page state
+export interface InboxState {
+  selectedConversation?: Conversation;
+  conversations: Conversation[];
+  messages: Message[];
+  loading: boolean;
+  searchQuery: string;
+  newMessageText: string;
+  showNewConversationModal: boolean;
+}
+
+// Message filter for UI
 export interface MessageFilter {
   searchText: string;
-  status: string;
-  priority: string;
-  dateRange?: [string, string];
+  conversation_type: 'all' | 'private' | 'group';
+  date_range?: [string, string];
+  sender?: string;
 }
 
-// Interface cho form trả lời tin nhắn
-export interface MessageReplyData {
-  content: string;
-  attachments?: File[];
+// Notification for new messages
+export interface MessageNotification {
+  conversation_uid: string;
+  message: Message;
+  unread_count: number;
 }
