@@ -43,7 +43,6 @@ const AdminMessagesPage: React.FC = () => {
     currentPage,
     pageSize,
     totalConversations,
-    searchQuery,
     selectConversation,
     sendMessage,
     deleteMessage,
