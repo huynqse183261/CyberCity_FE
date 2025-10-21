@@ -1,8 +1,9 @@
 import React from 'react';
 import TeacherLayout from '../components/TeacherLayout';
 import { Row, Col, Card, Statistic, Button, Alert, List, Avatar, Modal, Form, Input, message } from 'antd';
-import { TeamOutlined, LineChartOutlined, ClockCircleOutlined, TrophyOutlined, PlusOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
+import { TeamOutlined, LineChartOutlined, ClockCircleOutlined, PlusOutlined, SendOutlined, UserOutlined, MessageOutlined } from '@ant-design/icons';
 import { Line } from '@ant-design/charts';
+import { useTeacherDashboard } from '../hooks/useTeacher';
 
 const chartData = [
   { week: 'T2', progress: 65 },
@@ -25,6 +26,9 @@ const lineConfig = {
 };
 
 const TeacherDashboard: React.FC = () => {
+  // Fetch real stats from API
+  const { loading: statsLoading, stats } = useTeacherDashboard();
+
   // Modal state
   const [classModal, setClassModal] = React.useState(false);
   const [notifyModal, setNotifyModal] = React.useState(false);
@@ -74,22 +78,44 @@ const TeacherDashboard: React.FC = () => {
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={6}>
           <Card>
-            <Statistic title="Tổng học sinh" value={156} prefix={<TeamOutlined />} />
+            <Statistic 
+              title="Tổng học sinh" 
+              value={stats?.totalStudents || 0} 
+              prefix={<TeamOutlined />}
+              loading={statsLoading}
+            />
           </Card>
         </Col>
         <Col span={6}>
           <Card>
-            <Statistic title="Tiến độ TB" value={72} suffix="%" prefix={<LineChartOutlined />} />
+            <Statistic 
+              title="Tiến độ TB" 
+              value={stats?.avgProgress || 0} 
+              suffix="%" 
+              prefix={<LineChartOutlined />}
+              precision={1}
+              loading={statsLoading}
+            />
           </Card>
         </Col>
         <Col span={6}>
           <Card>
-            <Statistic title="Bài chờ chấm" value={8} prefix={<ClockCircleOutlined />} />
+            <Statistic 
+              title="Khóa học hoạt động" 
+              value={stats?.activeCourses || 0} 
+              prefix={<ClockCircleOutlined />}
+              loading={statsLoading}
+            />
           </Card>
         </Col>
         <Col span={6}>
           <Card>
-            <Statistic title="Điểm trung bình" value={8.4} prefix={<TrophyOutlined />} />
+            <Statistic 
+              title="Tin nhắn chưa đọc" 
+              value={stats?.unreadMessages || 0} 
+              prefix={<MessageOutlined />}
+              loading={statsLoading}
+            />
           </Card>
         </Col>
       </Row>

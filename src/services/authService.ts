@@ -17,6 +17,7 @@ export interface LoginResponse {
   fullName: string;
   role: 'admin' | 'teacher' | 'student';  // Backend trả về lowercase
   avatar?: string;
+  image?: string; // link ảnh avatar từ API
   isVerified: boolean;
   token: string;  // JWT token từ backend
   refreshToken?: string;
@@ -36,7 +37,8 @@ export interface UserInfo {
   username: string;
   fullName: string;
   role: 'admin' | 'teacher' | 'student';  // Backend trả về lowercase
-  avatar?: string;
+  avatar?: string;  // Backward compatibility - maps to image field
+  image?: string;   // Primary avatar URL from API - used by layouts/settings
   isVerified: boolean;
   status?: 'Active' | 'Inactive' | string;
 }
@@ -100,16 +102,17 @@ class AuthService {
           localStorage.setItem('refresh_token', userData.refreshToken);
         }
         
-        // Lưu thông tin user
+        // Lưu thông tin user - đồng bộ cả image và avatar
         const userInfo: UserInfo = {
           id: userData.userId,
           email: userData.email,
           username: userData.username,
           fullName: userData.fullName,
           role: userData.role,
-          avatar: userData.avatar,
+          avatar: userData.image || userData.avatar, // fallback for backward compatibility
+          image: userData.image || userData.avatar,  // primary field for avatar URL
           isVerified: userData.isVerified,
-          status: (userData as any).status || 'Active',
+          status: 'Active',
         };
         localStorage.setItem('user', JSON.stringify(userInfo));
         
@@ -127,14 +130,15 @@ class AuthService {
           localStorage.setItem('access_token', userData.token);
         }
         
-        // Lưu thông tin user
+        // Lưu thông tin user - đồng bộ cả image và avatar
         const userInfo: UserInfo = {
           id: userData.uid || userData.userId,
           email: userData.email,
           username: userData.username,
           fullName: userData.fullName,
           role: userData.role,
-          avatar: userData.avatar,
+          avatar: userData.image || userData.avatar,
+          image: userData.image || userData.avatar,
           isVerified: userData.isVerified || false,
           status: userData.status || 'Active',
         };
@@ -341,14 +345,15 @@ class AuthService {
           localStorage.setItem('refresh_token', userData.refreshToken);
         }
         
-        // Lưu thông tin user
+        // Lưu thông tin user - đồng bộ cả image và avatar từ Google Login
         const userInfo: UserInfo = {
           id: userId,
           email: userData.email,
           username: userData.username,
           fullName: userData.fullName,
           role: userData.role,
-          avatar: userData.avatar,
+          avatar: userData.image || userData.avatar,
+          image: userData.image || userData.avatar,
           isVerified: userData.isVerified,
           status: (userData as any).status || 'Active',
         };
@@ -442,13 +447,15 @@ class AuthService {
       
       if (backendData.isSuccess && backendData.data) {
         const userData = backendData.data;
+        // Đồng bộ cả image và avatar từ API
         const userInfo: UserInfo = {
           id: userData.userId,
           email: userData.email,
           username: userData.username,
           fullName: userData.fullName,
           role: userData.role,
-          avatar: userData.avatar,
+          avatar: userData.image || userData.avatar, // fallback for backward compatibility
+          image: userData.image || userData.avatar,  // primary field for avatar URL
           isVerified: userData.isVerified,
           status: (userData as any).status || 'Active',
         };

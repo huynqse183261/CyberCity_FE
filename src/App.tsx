@@ -22,6 +22,13 @@ import AdminTeamManagement from './pages/AdminTeamManagement';
 import AccessDenied from './pages/AccessDenied';
 
 import TeacherDashboard from './pages/TeacherDashboard';
+import TeacherMessages from './pages/TeacherMessages';
+import TeacherStudents from './pages/TeacherStudents';
+import TeacherStudentDetail from './pages/TeacherStudentDetail';
+import TeacherStudentProgress from './pages/TeacherStudentProgress';
+import TeacherSettings from './pages/TeacherSettings';
+import StudentSettings from './pages/StudentSettings';
+import AdminSettings from './pages/AdminSettings';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ServiceProcessPage from './pages/ServiceProcessPage';
@@ -225,19 +232,63 @@ function App() {
                 } 
               />
               <Route 
-                path="/teacher/settings" 
+                path="/teacher/students" 
                 element={
                   <TeacherRoute>
-                    <TeacherDashboard />
+                    <TeacherStudents />
                   </TeacherRoute>
                 } 
               />
               <Route 
-                path="/teacher/students" 
+                path="/teacher/students/:studentUid" 
                 element={
                   <TeacherRoute>
-                    <TeacherDashboard />
+                    <TeacherStudentDetail />
                   </TeacherRoute>
+                } 
+              />
+              <Route 
+                path="/teacher/students/:studentUid/progress" 
+                element={
+                  <TeacherRoute>
+                    <TeacherStudentProgress />
+                  </TeacherRoute>
+                } 
+              />
+              <Route 
+                path="/teacher/messages" 
+                element={
+                  <TeacherRoute>
+                    <TeacherMessages />
+                  </TeacherRoute>
+                } 
+              />
+              <Route 
+                path="/teacher/settings" 
+                element={
+                  <TeacherRoute>
+                    <TeacherSettings />
+                  </TeacherRoute>
+                } 
+              />
+
+              {/* Admin Settings */}
+              <Route 
+                path="/admin/settings" 
+                element={
+                  <AdminRoute>
+                    <AdminSettings />
+                  </AdminRoute>
+                } 
+              />
+
+              {/* Student Settings */}
+              <Route 
+                path="/student/settings" 
+                element={
+                  <StudentRoute>
+                    <StudentSettings />
+                  </StudentRoute>
                 } 
               />
 

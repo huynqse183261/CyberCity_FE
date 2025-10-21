@@ -15,6 +15,7 @@ import {
   ReadOutlined,
   BranchesOutlined,
   TagsOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -123,6 +124,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       label: 'Đội ngũ',
       onClick: () => navigate('/admin/team'),
     },
+    {
+      key: '/admin/settings',
+      icon: <SettingOutlined />,
+      label: 'Cài đặt',
+      onClick: () => navigate('/admin/settings'),
+    },
   ];
 
   const handleLogout = async () => {
@@ -226,7 +233,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               <Button type="text" icon={<BellOutlined />} />
             </Badge>
             <Space>
-              <Avatar src={user?.avatar || "https://api.dicebear.com/7.x/miniavs/svg?seed=admin"} />
+              <Avatar style={{ background: '#e74c3c' }} src={user?.image || user?.avatar}>
+                  {user?.fullName?.charAt(0) || 'A'}
+                </Avatar>
               <div>
                 <div style={{ fontWeight: 500 }}>{user?.fullName || 'Admin'}</div>
                 <Text type="secondary" style={{ fontSize: '12px' }}>{user?.role || 'Admin'}</Text>

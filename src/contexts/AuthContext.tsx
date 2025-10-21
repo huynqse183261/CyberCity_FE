@@ -232,6 +232,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  /**
+   * Refresh user data from API
+   * Called after profile updates (e.g., avatar upload) to sync sidebar/layouts
+   * Fetches latest user info from /auth/profile and updates AuthContext
+   */
   const refreshUserData = async () => {
     try {
       const response = await authService.getProfile();
