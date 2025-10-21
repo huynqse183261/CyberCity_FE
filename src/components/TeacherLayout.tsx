@@ -24,8 +24,7 @@ const TeacherLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const pathname = window.location.pathname;
-  // Dùng user?.image để hiển thị avatar (sync với TeacherSettings)
-  const avatarSrc = user?.image || user?.avatar;
+  const avatarSrc = user?.image;
 
   const handleLogout = async () => {
     try {
@@ -53,13 +52,15 @@ const TeacherLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         <div style={{ padding: '2rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
           <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>💻 EduTech System</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <Avatar 
-              size={50}
-              src={avatarSrc}
-              style={{ background: 'linear-gradient(45deg, #3498db, #2980b9)' }}
-            >
-              {user?.fullName?.charAt(0) || 'T'}
-            </Avatar>
+            {avatarSrc ? (
+              <Avatar 
+                src={avatarSrc}
+              />
+            ) : (
+              <Avatar>
+                {user?.fullName?.charAt(0) || 'T'}
+              </Avatar>
+            )}
             <div>
               <div style={{ fontWeight: 600 }}>{user?.fullName || 'Teacher'}</div>
               <div style={{ fontSize: '0.85rem', opacity: 0.8 }}>{user?.email}</div>
