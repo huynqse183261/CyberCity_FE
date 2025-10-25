@@ -208,8 +208,8 @@ const AdminSettings: React.FC = () => {
                   </Text>
                 </Descriptions.Item>
                 <Descriptions.Item label="Trạng thái">
-                  <Text type={profile?.status === 'active' ? 'success' : 'warning'}>
-                    {profile?.status === 'active' ? 'Đang hoạt động' : 'Không hoạt động'}
+                  <Text type={profile?.status === 'Active' ? 'success' : 'warning'}>
+                    {profile?.status === 'Active' ? 'Đang hoạt động' : 'Không hoạt động'}
                   </Text>
                 </Descriptions.Item>
                 {profile?.createdAt && (

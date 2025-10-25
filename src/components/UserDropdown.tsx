@@ -38,8 +38,14 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
           message.error('Có lỗi xảy ra khi đăng xuất!');
         }
       }
+    } else if (action === 'profile') {
+      navigate('/student/profile');
     } else if (action === 'inbox') {
       navigate('/inbox');
+    } else if (action === 'payment-history') {
+      navigate('/student/payment-history');
+    } else if (action === 'settings') {
+      navigate('/student/settings');
     }
   };
 
@@ -54,18 +60,10 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
         </div>
         <div className="user-details">
           <span className="user-fullname">{user.name}</span>
-          <span className="user-username">@{user.username}</span>
         </div>
       </div>
       {isOpen && (
         <div className="user-dropdown">
-          <div className="dropdown-header">
-            <div className="avatar-large">{user.avatar}</div>
-            <div>
-              <div className="dropdown-name">{user.name}</div>
-              <div className="dropdown-username">@{user.username}</div>
-            </div>
-          </div>
           <div className="dropdown-divider"></div>
           <div onClick={() => handleMenuItemClick('profile')}>
             👤 Thông tin tài khoản
@@ -73,24 +71,14 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
           <div onClick={() => handleMenuItemClick('inbox')}>
             💬 Hộp thư
           </div>
-          <div onClick={() => handleMenuItemClick('profile')}>
-            📋 Hồ sơ của tôi
-          </div>
-          <div onClick={() => handleMenuItemClick('friends')}>
-            👥 Bạn bè
-          </div>
-          <div onClick={() => handleMenuItemClick('classes')}>
-            🎓 Lớp của tôi
-          </div>
           <div onClick={() => handleMenuItemClick('payment-history')}>
             💳 Lịch sử thanh toán
           </div>
           <div onClick={() => handleMenuItemClick('payment-settings')}>
             ⚙️ Quản lý thanh toán
           </div>
-          <div className="dropdown-divider"></div>
           <div onClick={() => handleMenuItemClick('logout')} className="logout-item">
-            🚪 Thoát
+            🚪 Đăng xuất
           </div>
         </div>
       )}

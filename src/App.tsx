@@ -28,6 +28,8 @@ import TeacherStudentDetail from './pages/TeacherStudentDetail';
 import TeacherStudentProgress from './pages/TeacherStudentProgress';
 import TeacherSettings from './pages/TeacherSettings';
 import StudentSettings from './pages/StudentSettings';
+import StudentProfile from './pages/StudentProfile';
+import StudentPaymentHistory from './pages/StudentPaymentHistory';
 import AdminSettings from './pages/AdminSettings';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
@@ -41,6 +43,13 @@ import PricingPage from './pages/PricingPage';
 // Import protected route components
 import { AdminRoute, TeacherRoute, StudentRoute, AllUserRoute } from './components/ProtectedRoute';
 import AdminMessages from './pages/AdminMessages';
+
+// Import PenTest Learning Pages
+import PenTestPage from './pages/PenTestPage';
+import PenTestModule1 from './pages/PenTestModule1';
+
+// Import AI Assistant Page
+import AIAssistantPage from './pages/AIAssistantPage';
 
 function App() {
   return (
@@ -288,6 +297,62 @@ function App() {
                 element={
                   <StudentRoute>
                     <StudentSettings />
+                  </StudentRoute>
+                } 
+              />
+
+              {/* Student Profile */}
+              <Route 
+                path="/student/profile" 
+                element={
+                  <StudentRoute>
+                    <StudentProfile />
+                  </StudentRoute>
+                } 
+              />
+
+              {/* Student Payment History */}
+              <Route 
+                path="/student/payment-history" 
+                element={
+                  <StudentRoute>
+                    <StudentPaymentHistory />
+                  </StudentRoute>
+                } 
+              />
+
+              {/* PenTest Learning Routes */}
+              <Route 
+                path="/pentest" 
+                element={
+                  <StudentRoute>
+                    <PenTestPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/pentest-lab" 
+                element={
+                  <StudentRoute>
+                    <PenTestPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/pentest/module-1" 
+                element={
+                  <StudentRoute>
+                    <PenTestModule1 />
+                  </StudentRoute>
+                } 
+              />
+
+              {/* AI Assistant Route */}
+              <Route 
+                path="/ai-assistant" 
+                element={
+                  <StudentRoute>
+                    <AIAssistantPage />
                   </StudentRoute>
                 } 
               />

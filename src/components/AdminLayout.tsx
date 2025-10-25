@@ -233,7 +233,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               <Button type="text" icon={<BellOutlined />} />
             </Badge>
             <Space>
-              <Avatar style={{ background: '#e74c3c' }} src={user?.image || user?.avatar}>
+              <Avatar style={{ background: '#e74c3c' }} src={user?.image}>
                   {user?.fullName?.charAt(0) || 'A'}
                 </Avatar>
               <div>
