@@ -2,11 +2,12 @@ import React from 'react';
 import { Layout, Menu, Avatar, Input, Badge, Dropdown, message } from 'antd';
 import {
   DashboardOutlined,
-  UserOutlined,
+  BookOutlined,
   SettingOutlined,
   BellOutlined,
   LogoutOutlined,
   MessageOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,13 +15,17 @@ import { useAuth } from '../contexts/AuthContext';
 const { Sider, Content, Header } = Layout;
 
 const sidebarMenu = [
-  { key: '/teacher', icon: <DashboardOutlined />, label: 'Dashboard' },
-  { key: '/teacher/students', icon: <UserOutlined />, label: 'Quản lý học sinh' },
-  { key: '/teacher/messages', icon: <MessageOutlined />, label: 'Hộp thư tin nhắn' },
-  { key: '/teacher/settings', icon: <SettingOutlined />, label: 'Cài đặt' },
+  { key: '/student', icon: <DashboardOutlined />, label: 'Dashboard' },
+  { key: '/student/courses', icon: <BookOutlined />, label: 'Khóa học của tôi' },
+  { key: '/student/messages', icon: <MessageOutlined />, label: 'Hộp thư tin nhắn' },
+  { key: '/student/settings', icon: <SettingOutlined />, label: 'Cài đặt' },
 ];
 
-const TeacherLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface StudentLayoutProps {
+  children: React.ReactNode;
+}
+
+const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const pathname = window.location.pathname;
@@ -48,21 +53,24 @@ const TeacherLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider width={280} style={{ background: 'linear-gradient(180deg, #2c3e50 0%, #34495e 100%)', color: 'white' }}>
+      <Sider width={280} style={{ background: 'linear-gradient(180deg, #27ae60 0%, #229954 100%)', color: 'white' }}>
         <div style={{ padding: '2rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>💻 EduTech System</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>🎓 EduTech System</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             {avatarSrc ? (
               <Avatar 
+                style={{ background: 'linear-gradient(45deg, #2ecc71, #27ae60)', width: 50, height: 50 }}
                 src={avatarSrc}
               />
             ) : (
-              <Avatar>
-                {user?.fullName?.charAt(0) || 'T'}
+              <Avatar 
+                style={{ background: 'linear-gradient(45deg, #2ecc71, #27ae60)', width: 50, height: 50 }}
+              >
+                {user?.fullName?.charAt(0) || 'S'}
               </Avatar>
             )}
             <div>
-              <div style={{ fontWeight: 600 }}>{user?.fullName || 'Teacher'}</div>
+              <div style={{ fontWeight: 600 }}>{user?.fullName || 'Student'}</div>
               <div style={{ fontSize: '0.85rem', opacity: 0.8 }}>{user?.email}</div>
             </div>
           </div>
@@ -89,15 +97,15 @@ const TeacherLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           justifyContent: 'space-between',
           borderBottom: '1px solid #f0f0f0',
         }}>
-          <div style={{ fontWeight: 600, fontSize: 20 }}>Trang Giáo viên</div>
+          <div style={{ fontWeight: 600, fontSize: 20 }}>Trang Học sinh</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
             <Input.Search placeholder="Tìm kiếm..." style={{ width: 240 }} />
-            <Badge count={5}>
+            <Badge count={3}>
               <BellOutlined style={{ fontSize: 22 }} />
             </Badge>
             <Dropdown overlay={userMenu} placement="bottomRight">
-              <Avatar style={{ background: '#f56a00' }} src={avatarSrc}>
-                {user?.fullName?.charAt(0) || 'T'}
+              <Avatar style={{ background: '#27ae60' }} src={avatarSrc}>
+                {user?.fullName?.charAt(0) || 'S'}
               </Avatar>
             </Dropdown>
           </div>
@@ -110,4 +118,4 @@ const TeacherLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   );
 };
 
-export default TeacherLayout;
+export default StudentLayout;

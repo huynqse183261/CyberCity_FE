@@ -1,0 +1,659 @@
+/* ===========================
+   ADMIN MESSAGES - STYLING
+   Admin Dashboard Theme - Consistent Design
+   =========================== */
+
+/* Main Container */
+.admin-messages {
+  padding: 24px;
+  background: #f0f2f5;
+  min-height: calc(100vh - 64px);
+}
+
+/* Page Header */
+.admin-messages-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 0;
+}
+
+.admin-messages-header h2 {
+  margin: 0;
+  color: #262626;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* ===========================
+   STATS CARDS - Consistent with AdminDashboard
+   =========================== */
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stats-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.stats-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.stats-card .ant-card-body {
+  padding: 20px;
+}
+
+.stats-card .stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.stats-card .stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 4px;
+}
+
+.stats-card .stat-label {
+  color: #8c8c8c;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.stats-card .stat-change {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.stats-card .stat-change.positive {
+  color: #52c41a;
+}
+
+.stats-card .stat-change.negative {
+  color: #ff4d4f;
+}
+
+/* Icon Colors - Consistent with AdminDashboard */
+.stats-card .stat-icon.total-conversations {
+  background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
+  color: #1890ff;
+}
+
+.stats-card .stat-icon.active-users {
+  background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%);
+  color: #52c41a;
+}
+
+.stats-card .stat-icon.pending-reports {
+  background: linear-gradient(135deg, #fff2e8 0%, #ffd591 100%);
+  color: #fa8c16;
+}
+
+.stats-card .stat-icon.resolved-reports {
+  background: linear-gradient(135deg, #f9f0ff 0%, #efdbff 100%);
+  color: #722ed1;
+}
+
+/* ===========================
+   TABS STYLING - Consistent with AdminDashboard
+   =========================== */
+
+.admin-messages .ant-tabs {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+}
+
+.admin-messages .ant-tabs-tab {
+  padding: 12px 20px;
+  font-weight: 500;
+}
+
+.admin-messages .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #1890ff;
+  font-weight: 600;
+}
+
+.admin-messages .ant-tabs-content-holder {
+  padding: 24px;
+}
+
+/* ===========================
+   TABLE STYLING - Consistent with AdminDashboard
+   =========================== */
+
+.admin-messages .ant-table {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+}
+
+.admin-messages .ant-table-thead > tr > th {
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  font-weight: 600;
+  color: #262626;
+  padding: 16px;
+}
+
+.admin-messages .ant-table-tbody > tr > td {
+  padding: 16px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.admin-messages .ant-table-tbody > tr:hover > td {
+  background: #f5f5f5;
+}
+
+.admin-messages .ant-table-row-selected > td {
+  background: #e6f7ff !important;
+}
+
+/* Table Toolbar */
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 16px 20px;
+  background: #fff;
+  border-radius: 8px 8px 0 0;
+  border: 1px solid #f0f0f0;
+  border-bottom: none;
+}
+
+.table-toolbar-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.table-toolbar-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Search Input */
+.admin-messages .ant-input-search {
+  width: 280px;
+}
+
+/* ===========================
+   BUTTONS - Consistent with AdminDashboard
+   =========================== */
+
+.admin-messages .ant-btn-primary {
+  background: #1890ff;
+  border-color: #1890ff;
+  border-radius: 6px;
+  font-weight: 500;
+  height: 36px;
+  padding: 0 16px;
+}
+
+.admin-messages .ant-btn-primary:hover {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+.admin-messages .ant-btn-default {
+  border-radius: 6px;
+  font-weight: 500;
+  height: 36px;
+  padding: 0 16px;
+  border-color: #d9d9d9;
+}
+
+.admin-messages .ant-btn-default:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.admin-messages .ant-btn-danger {
+  background: #ff4d4f;
+  border-color: #ff4d4f;
+  border-radius: 6px;
+  font-weight: 500;
+  height: 36px;
+  padding: 0 16px;
+}
+
+.admin-messages .ant-btn-danger:hover {
+  background: #ff7875;
+  border-color: #ff7875;
+}
+
+/* ===========================
+   CARDS - Consistent with AdminDashboard
+   =========================== */
+
+.admin-messages .ant-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+}
+
+.admin-messages .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.admin-messages .ant-card-head-title {
+  font-weight: 600;
+  color: #262626;
+}
+
+.admin-messages .ant-card-body {
+  padding: 20px;
+}
+
+/* ===========================
+   MODALS - Consistent with AdminDashboard
+   =========================== */
+
+.admin-messages .ant-modal {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-messages .ant-modal-header {
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 24px;
+}
+
+.admin-messages .ant-modal-title {
+  font-weight: 600;
+  color: #262626;
+  font-size: 16px;
+}
+
+.admin-messages .ant-modal-body {
+  padding: 24px;
+}
+
+.admin-messages .ant-modal-footer {
+  border-top: 1px solid #f0f0f0;
+  padding: 12px 24px;
+  background: #fafafa;
+}
+
+/* ===========================
+   FORMS - Consistent with AdminDashboard
+   =========================== */
+
+.admin-messages .ant-form-item-label > label {
+  font-weight: 500;
+  color: #262626;
+}
+
+.admin-messages .ant-input,
+.admin-messages .ant-select-selector,
+.admin-messages .ant-picker {
+  border-radius: 6px;
+  border-color: #d9d9d9;
+  height: 36px;
+}
+
+.admin-messages .ant-input:focus,
+.admin-messages .ant-select-focused .ant-select-selector,
+.admin-messages .ant-picker:hover,
+.admin-messages .ant-picker-focused {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.admin-messages .ant-input.ant-input-lg,
+.admin-messages .ant-select-lg .ant-select-selector {
+  height: 40px;
+}
+
+/* ===========================
+   TAGS - Consistent with AdminDashboard
+   =========================== */
+
+.admin-messages .ant-tag {
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border: none;
+}
+
+.admin-messages .status-tag.active {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.admin-messages .status-tag.inactive {
+  background: #fff2e8;
+  color: #fa8c16;
+}
+
+.admin-messages .status-tag.banned {
+  background: #fff1f0;
+  color: #ff4d4f;
+}
+
+.admin-messages .priority-tag.high {
+  background: #fff1f0;
+  color: #ff4d4f;
+}
+
+.admin-messages .priority-tag.medium {
+  background: #fff2e8;
+  color: #fa8c16;
+}
+
+.admin-messages .priority-tag.low {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+/* ===========================
+   FILTERS SECTION
+   =========================== */
+
+.filters-section {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+}
+
+.filters-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 150px;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8c8c8c;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===========================
+   CONVERSATION VIEW
+   =========================== */
+
+.conversation-view {
+  display: flex;
+  height: 600px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+}
+
+.conversation-list {
+  width: 350px;
+  border-right: 1px solid #f0f0f0;
+  overflow-y: auto;
+}
+
+.conversation-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.conversation-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.messages-container {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #f8f9fa;
+}
+
+.message-item {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.message-author {
+  font-weight: 600;
+  color: #262626;
+}
+
+.message-time {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.message-content {
+  color: #595959;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.message-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* ===========================
+   RESPONSIVE DESIGN
+   =========================== */
+
+@media (max-width: 1200px) {
+  .stats-cards {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  
+  .table-toolbar {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .table-toolbar-left,
+  .table-toolbar-right {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-messages {
+    padding: 16px;
+  }
+  
+  .admin-messages-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  .stats-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-item {
+    min-width: auto;
+  }
+  
+  .conversation-view {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .conversation-list {
+    width: 100%;
+    height: 300px;
+    border-right: none;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .admin-messages .ant-input-search {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-messages {
+    padding: 12px;
+  }
+  
+  .admin-messages-header h2 {
+    font-size: 20px;
+  }
+  
+  .stats-card .stat-value {
+    font-size: 20px;
+  }
+  
+  .admin-messages .ant-tabs-content-holder {
+    padding: 16px;
+  }
+  
+  .admin-messages .ant-modal-body {
+    padding: 16px;
+  }
+}
+
+/* ===========================
+   UTILITY CLASSES
+   =========================== */
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mb-16 {
+  margin-bottom: 16px;
+}
+
+.mb-24 {
+  margin-bottom: 24px;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-12 {  gap: 12px;
+}
+
+.gap-16 {
+  gap: 16px;
+}
+
+/* ===========================
+   LOADING STATES
+   =========================== */
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #8c8c8c;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+.empty-state .empty-icon {
+  font-size: 48px;
+  color: #d9d9d9;
+  margin-bottom: 16px;
+}
+
+.empty-state .empty-text {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.empty-state .empty-description {
+  font-size: 14px;
+  color: #bfbfbf;
+}

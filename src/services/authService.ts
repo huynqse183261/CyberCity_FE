@@ -11,16 +11,19 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  userId: string;
+  id?: string; // API trả về id thay vì userId
+  userId?: string; // Fallback cho format cũ
   username: string;
   email: string;
   fullName: string;
   role: 'admin' | 'teacher' | 'student';  // Backend trả về lowercase
   avatar?: string;
-  isVerified: boolean;
+  image?: string; // link ảnh avatar từ API
+  isVerified?: boolean;
+  status?: string; // Active, Inactive
   token: string;  // JWT token từ backend
   refreshToken?: string;
-  expiresIn: number;
+  expiresIn?: number;
 }
 
 export interface BackendApiResponse<T> {
@@ -37,6 +40,7 @@ export interface UserInfo {
   fullName: string;
   role: 'admin' | 'teacher' | 'student';  // Backend trả về lowercase
   avatar?: string;
+  image?: string; // link ảnh avatar từ API
   isVerified: boolean;
   status?: 'Active' | 'Inactive' | string;
 }
@@ -88,9 +92,8 @@ class AuthService {
       // Xử lý response từ backend
       const backendData = response.data;
       console.log('Backend data:', backendData);
-      console.log('Is backendData.isSuccess?', backendData.isSuccess);
-      console.log('Does backendData.data exist?', !!backendData.data);
       
+      // API trả về trực tiếp object user, không có isSuccess wrapper
       if (backendData.isSuccess && backendData.data) {
         const userData = backendData.data;
         
@@ -102,21 +105,51 @@ class AuthService {
         
         // Lưu thông tin user
         const userInfo: UserInfo = {
-          id: userData.userId,
+          id: userData.id || userData.userId || '',
           email: userData.email,
           username: userData.username,
           fullName: userData.fullName,
           role: userData.role,
-          avatar: userData.avatar,
-          isVerified: userData.isVerified,
-          status: (userData as any).status || 'Active',
+          avatar: userData.image || userData.avatar,
+          image: userData.image, // Lưu luôn field image để sidebar dùng
+          isVerified: userData.isVerified !== false, // Default true nếu không có
+          status: userData.status || 'Active',
         };
         localStorage.setItem('user', JSON.stringify(userInfo));
         
         return {
           success: true,
           data: userData,
-          message: backendData.message,
+          message: backendData.message || 'Đăng nhập thành công',
+        };
+      } else if ((backendData as any).id && (backendData as any).token) {
+        // API trả trực tiếp user object (không có wrapper)
+        const userData = backendData as any;
+        
+        // Lưu token vào localStorage
+        localStorage.setItem('access_token', userData.token);
+        if (userData.refreshToken) {
+          localStorage.setItem('refresh_token', userData.refreshToken);
+        }
+        
+        // Lưu thông tin user
+        const userInfo: UserInfo = {
+          id: userData.id,
+          email: userData.email,
+          username: userData.username,
+          fullName: userData.fullName,
+          role: userData.role,
+          avatar: userData.image || userData.avatar,
+          image: userData.image, // Lưu luôn field image để sidebar dùng
+          isVerified: userData.isVerified !== false,
+          status: userData.status || 'Active',
+        };
+        localStorage.setItem('user', JSON.stringify(userInfo));
+        
+        return {
+          success: true,
+          data: userData,
+          message: 'Đăng nhập thành công',
         };
       } else if ((backendData as any).uid) {
         // Fallback: Backend có thể trả về format khác
@@ -348,9 +381,10 @@ class AuthService {
           username: userData.username,
           fullName: userData.fullName,
           role: userData.role,
-          avatar: userData.avatar,
-          isVerified: userData.isVerified,
-          status: (userData as any).status || 'Active',
+          avatar: userData.image || userData.avatar,
+          image: userData.image,
+          isVerified: userData.isVerified !== false,
+          status: userData.status || 'Active',
         };
         localStorage.setItem('user', JSON.stringify(userInfo));
         console.log('10. Saved user info:', userInfo);
@@ -443,14 +477,15 @@ class AuthService {
       if (backendData.isSuccess && backendData.data) {
         const userData = backendData.data;
         const userInfo: UserInfo = {
-          id: userData.userId,
+          id: userData.id || userData.userId || '',
           email: userData.email,
           username: userData.username,
           fullName: userData.fullName,
           role: userData.role,
-          avatar: userData.avatar,
-          isVerified: userData.isVerified,
-          status: (userData as any).status || 'Active',
+          avatar: userData.image || userData.avatar,
+          image: userData.image,
+          isVerified: userData.isVerified !== false,
+          status: userData.status || 'Active',
         };
         
         // Cập nhật localStorage

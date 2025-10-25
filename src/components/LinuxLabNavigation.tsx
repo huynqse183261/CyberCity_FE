@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const LinuxLabNavigation: React.FC = () => {
   return (
@@ -8,11 +9,11 @@ const LinuxLabNavigation: React.FC = () => {
         <span>LinuxLab</span>
       </div>
       <ul className="nav-links">
-        <li><a href="#home">Trang chủ</a></li>
-        <li><a href="#labs">Phòng lab</a></li>
-        <li><a href="#terminal">Terminal</a></li>
-        <li><a href="#pentesting">Pentesting</a></li>
-        <li><a href="#courses">Khóa học</a></li>
+        <li><Link to="/student">Trang chủ</Link></li>
+        <li><Link to="/linux-lab">Linux Lab</Link></li>
+        <li><Link to="/pentest-lab">PenTest Lab</Link></li>
+        <li><Link to="/ai-assistant">AI Assistant</Link></li>
+        <li><Link to="/student/profile">Hồ sơ</Link></li>
       </ul>
     </div>
   );

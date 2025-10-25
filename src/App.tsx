@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
+import InboxPage from './pages/InboxPage';
 import HomeLogin from './pages/HomeLogin';
 import LinuxPage from './pages/LinuxPage';
 import LinuxModule1 from './pages/LinuxModule1';
@@ -21,6 +22,15 @@ import AdminTeamManagement from './pages/AdminTeamManagement';
 import AccessDenied from './pages/AccessDenied';
 
 import TeacherDashboard from './pages/TeacherDashboard';
+import TeacherMessages from './pages/TeacherMessages';
+import TeacherStudents from './pages/TeacherStudents';
+import TeacherStudentDetail from './pages/TeacherStudentDetail';
+import TeacherStudentProgress from './pages/TeacherStudentProgress';
+import TeacherSettings from './pages/TeacherSettings';
+import StudentSettings from './pages/StudentSettings';
+import StudentProfile from './pages/StudentProfile';
+import StudentPaymentHistory from './pages/StudentPaymentHistory';
+import AdminSettings from './pages/AdminSettings';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ServiceProcessPage from './pages/ServiceProcessPage';
@@ -31,7 +41,15 @@ import WarrantyPage from './pages/WarrantyPage';
 import PricingPage from './pages/PricingPage';
 
 // Import protected route components
-import { AdminRoute, TeacherRoute, StudentRoute } from './components/ProtectedRoute';
+import { AdminRoute, TeacherRoute, StudentRoute, AllUserRoute } from './components/ProtectedRoute';
+import AdminMessages from './pages/AdminMessages';
+
+// Import PenTest Learning Pages
+import PenTestPage from './pages/PenTestPage';
+import PenTestModule1 from './pages/PenTestModule1';
+
+// Import AI Assistant Page
+import AIAssistantPage from './pages/AIAssistantPage';
 
 function App() {
   return (
@@ -46,6 +64,16 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/access-denied" element={<AccessDenied />} />
+
+              {/* Shared Protected Routes - Available for all authenticated users */}
+              <Route 
+                path="/inbox" 
+                element={
+                  <AllUserRoute>
+                    <InboxPage />
+                  </AllUserRoute>
+                } 
+              />
                 
                 {/* Student Protected Routes */}
                 <Route 
@@ -150,7 +178,7 @@ function App() {
                 path="/admin/messages" 
                 element={
                   <AdminRoute>
-                    <AdminDashboard />
+                    <AdminMessages />
                   </AdminRoute>
                 } 
               />
@@ -213,19 +241,119 @@ function App() {
                 } 
               />
               <Route 
-                path="/teacher/settings" 
+                path="/teacher/students" 
                 element={
                   <TeacherRoute>
-                    <TeacherDashboard />
+                    <TeacherStudents />
                   </TeacherRoute>
                 } 
               />
               <Route 
-                path="/teacher/students" 
+                path="/teacher/students/:studentUid" 
                 element={
                   <TeacherRoute>
-                    <TeacherDashboard />
+                    <TeacherStudentDetail />
                   </TeacherRoute>
+                } 
+              />
+              <Route 
+                path="/teacher/students/:studentUid/progress" 
+                element={
+                  <TeacherRoute>
+                    <TeacherStudentProgress />
+                  </TeacherRoute>
+                } 
+              />
+              <Route 
+                path="/teacher/messages" 
+                element={
+                  <TeacherRoute>
+                    <TeacherMessages />
+                  </TeacherRoute>
+                } 
+              />
+              <Route 
+                path="/teacher/settings" 
+                element={
+                  <TeacherRoute>
+                    <TeacherSettings />
+                  </TeacherRoute>
+                } 
+              />
+
+              {/* Admin Settings */}
+              <Route 
+                path="/admin/settings" 
+                element={
+                  <AdminRoute>
+                    <AdminSettings />
+                  </AdminRoute>
+                } 
+              />
+
+              {/* Student Settings */}
+              <Route 
+                path="/student/settings" 
+                element={
+                  <StudentRoute>
+                    <StudentSettings />
+                  </StudentRoute>
+                } 
+              />
+
+              {/* Student Profile */}
+              <Route 
+                path="/student/profile" 
+                element={
+                  <StudentRoute>
+                    <StudentProfile />
+                  </StudentRoute>
+                } 
+              />
+
+              {/* Student Payment History */}
+              <Route 
+                path="/student/payment-history" 
+                element={
+                  <StudentRoute>
+                    <StudentPaymentHistory />
+                  </StudentRoute>
+                } 
+              />
+
+              {/* PenTest Learning Routes */}
+              <Route 
+                path="/pentest" 
+                element={
+                  <StudentRoute>
+                    <PenTestPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/pentest-lab" 
+                element={
+                  <StudentRoute>
+                    <PenTestPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/pentest/module-1" 
+                element={
+                  <StudentRoute>
+                    <PenTestModule1 />
+                  </StudentRoute>
+                } 
+              />
+
+              {/* AI Assistant Route */}
+              <Route 
+                path="/ai-assistant" 
+                element={
+                  <StudentRoute>
+                    <AIAssistantPage />
+                  </StudentRoute>
                 } 
               />
 

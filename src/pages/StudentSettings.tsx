@@ -22,12 +22,12 @@ import {
   MailOutlined,
 } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
-import TeacherLayout from '../components/TeacherLayout';
+import StudentLayout from '../components/StudentLayout';
 import userService from '../services/userService';
 
 const { Title, Text } = Typography;
 
-interface TeacherProfile {
+interface StudentProfile {
   uid: string;
   email: string;
   username: string;
@@ -38,9 +38,9 @@ interface TeacherProfile {
   status?: string;
 }
 
-const TeacherSettings: React.FC = () => {
+const StudentSettings: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [profile, setProfile] = useState<TeacherProfile | null>(null);
+  const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [profileForm] = Form.useForm();
@@ -56,7 +56,7 @@ const TeacherSettings: React.FC = () => {
     setLoading(true);
     try {
       const response = await userService.getMyProfile();
-      console.log('✅ Teacher profile loaded:', response);
+      console.log('✅ Student profile loaded:', response);
       if (response.success && response.data) {
         setProfile(response.data);
         profileForm.setFieldsValue({
@@ -64,7 +64,6 @@ const TeacherSettings: React.FC = () => {
           email: response.data.email,
         });
       } else if (response.data) {
-        // Handle direct data response
         setProfile(response.data);
         profileForm.setFieldsValue({
           fullName: response.data.fullName,
@@ -72,7 +71,7 @@ const TeacherSettings: React.FC = () => {
         });
       }
     } catch (error: any) {
-      console.error('❌ Error loading teacher profile:', error);
+      console.error('❌ Error loading student profile:', error);
       message.error('Không thể tải thông tin cá nhân');
     } finally {
       setLoading(false);
@@ -150,19 +149,19 @@ const TeacherSettings: React.FC = () => {
 
   if (loading && !profile) {
     return (
-      <TeacherLayout>
+      <StudentLayout>
         <div style={{ textAlign: 'center', padding: '100px 0' }}>
           <Spin size="large" tip="Đang tải thông tin..." />
         </div>
-      </TeacherLayout>
+      </StudentLayout>
     );
   }
 
   return (
-    <TeacherLayout>
+    <StudentLayout>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <Title level={2}>
-          <UserOutlined /> Cài đặt tài khoản giáo viên
+          <UserOutlined /> Cài đặt tài khoản học sinh
         </Title>
 
         {/* Profile Overview Card */}
@@ -173,7 +172,7 @@ const TeacherSettings: React.FC = () => {
                 size={120}
                 src={profile?.image}
                 icon={<UserOutlined />}
-                style={{ backgroundColor: '#3498db', marginBottom: 16 }}
+                style={{ backgroundColor: '#27ae60', marginBottom: 16 }}
               />
               <br />
               <Upload
@@ -340,8 +339,8 @@ const TeacherSettings: React.FC = () => {
           </Tabs>
         </Card>
       </Space>
-    </TeacherLayout>
+    </StudentLayout>
   );
 };
 
-export default TeacherSettings;
+export default StudentSettings;

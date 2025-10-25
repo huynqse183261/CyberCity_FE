@@ -22,12 +22,12 @@ import {
   MailOutlined,
 } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
-import TeacherLayout from '../components/TeacherLayout';
+import AdminLayout from '../components/AdminLayout';
 import userService from '../services/userService';
 
 const { Title, Text } = Typography;
 
-interface TeacherProfile {
+interface AdminProfile {
   uid: string;
   email: string;
   username: string;
@@ -38,9 +38,9 @@ interface TeacherProfile {
   status?: string;
 }
 
-const TeacherSettings: React.FC = () => {
+const AdminSettings: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [profile, setProfile] = useState<TeacherProfile | null>(null);
+  const [profile, setProfile] = useState<AdminProfile | null>(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [profileForm] = Form.useForm();
@@ -56,7 +56,7 @@ const TeacherSettings: React.FC = () => {
     setLoading(true);
     try {
       const response = await userService.getMyProfile();
-      console.log('✅ Teacher profile loaded:', response);
+      console.log('✅ Admin profile loaded:', response);
       if (response.success && response.data) {
         setProfile(response.data);
         profileForm.setFieldsValue({
@@ -64,7 +64,6 @@ const TeacherSettings: React.FC = () => {
           email: response.data.email,
         });
       } else if (response.data) {
-        // Handle direct data response
         setProfile(response.data);
         profileForm.setFieldsValue({
           fullName: response.data.fullName,
@@ -72,7 +71,7 @@ const TeacherSettings: React.FC = () => {
         });
       }
     } catch (error: any) {
-      console.error('❌ Error loading teacher profile:', error);
+      console.error('❌ Error loading admin profile:', error);
       message.error('Không thể tải thông tin cá nhân');
     } finally {
       setLoading(false);
@@ -150,19 +149,19 @@ const TeacherSettings: React.FC = () => {
 
   if (loading && !profile) {
     return (
-      <TeacherLayout>
+      <AdminLayout>
         <div style={{ textAlign: 'center', padding: '100px 0' }}>
           <Spin size="large" tip="Đang tải thông tin..." />
         </div>
-      </TeacherLayout>
+      </AdminLayout>
     );
   }
 
   return (
-    <TeacherLayout>
+    <AdminLayout>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <Title level={2}>
-          <UserOutlined /> Cài đặt tài khoản giáo viên
+          <UserOutlined /> Cài đặt tài khoản quản trị viên
         </Title>
 
         {/* Profile Overview Card */}
@@ -173,7 +172,7 @@ const TeacherSettings: React.FC = () => {
                 size={120}
                 src={profile?.image}
                 icon={<UserOutlined />}
-                style={{ backgroundColor: '#3498db', marginBottom: 16 }}
+                style={{ backgroundColor: '#e74c3c', marginBottom: 16 }}
               />
               <br />
               <Upload
@@ -204,13 +203,13 @@ const TeacherSettings: React.FC = () => {
                   {profile?.username}
                 </Descriptions.Item>
                 <Descriptions.Item label="Role">
-                  <Text type="success" strong style={{ textTransform: 'uppercase' }}>
+                  <Text type="danger" strong style={{ textTransform: 'uppercase' }}>
                     {profile?.role}
                   </Text>
                 </Descriptions.Item>
                 <Descriptions.Item label="Trạng thái">
-                  <Text type={profile?.status === 'active' ? 'success' : 'warning'}>
-                    {profile?.status === 'active' ? 'Đang hoạt động' : 'Không hoạt động'}
+                  <Text type={profile?.status === 'Active' ? 'success' : 'warning'}>
+                    {profile?.status === 'Active' ? 'Đang hoạt động' : 'Không hoạt động'}
                   </Text>
                 </Descriptions.Item>
                 {profile?.createdAt && (
@@ -340,8 +339,8 @@ const TeacherSettings: React.FC = () => {
           </Tabs>
         </Card>
       </Space>
-    </TeacherLayout>
+    </AdminLayout>
   );
 };
 
-export default TeacherSettings;
+export default AdminSettings;

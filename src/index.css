@@ -38,3 +38,6 @@ a {
 #root {
   min-height: 100vh;
 }
+
+/* Import PenTest Learning Styles */
+@import './styles/PenTestLearning.css';

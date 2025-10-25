@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 
 // https://vite.dev/config/
@@ -29,7 +29,7 @@ export default defineConfig({
             './src/pages/OrderManagement.tsx',
             './src/pages/InvoiceManagement.tsx',
             './src/pages/TeamManagement.tsx',
-            './src/pages/MessagesManagement.tsx',
+            './src/pages/AdminMessages.tsx',
             './src/pages/PricingManagement.tsx'
           ],
           
