@@ -1,0 +1,171 @@
+.download-vm-page {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #2d3748 100%);
+  min-height: 100vh;
+  color: #e2e8f0;
+}
+
+.download-vm-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px 20px 50px;
+}
+
+.download-hero {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.download-hero .ant-typography {
+  color: #e2e8f0;
+}
+
+.hero-subtitle {
+  font-size: 1.2em;
+  color: #cbd5e0;
+  margin-top: 20px;
+}
+
+.vm-card {
+  background: rgba(26, 35, 50, 0.8);
+  border-radius: 15px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.vm-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+  border-color: #00d4ff;
+}
+
+.vm-card-header {
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 153, 204, 0.1));
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-radius: 15px 15px 0 0;
+}
+
+.vm-icon {
+  font-size: 3em;
+  background: rgba(0, 212, 255, 0.2);
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.vm-card-content {
+  padding: 20px;
+  flex: 1;
+}
+
+.vm-card-content .ant-typography {
+  color: #cbd5e0;
+}
+
+.vm-requirements {
+  margin-top: 16px;
+}
+
+.requirements-list {
+  margin: 10px 0 0 0;
+  padding-left: 20px;
+  color: #cbd5e0;
+}
+
+.requirements-list li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.vm-card .ant-card-actions {
+  background: rgba(0, 212, 255, 0.05);
+  border-top: 1px solid rgba(0, 212, 255, 0.2);
+  padding: 16px;
+}
+
+.vm-card .ant-card-actions li {
+  margin: 0;
+  width: 100%;
+}
+
+.vm-card .ant-btn-primary {
+  background: linear-gradient(135deg, #00d4ff, #0099cc);
+  border: none;
+  height: 40px;
+}
+
+.vm-card .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #0099cc, #00d4ff);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+}
+
+.download-vm-page .ant-card {
+  background: rgba(26, 35, 50, 0.8);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.download-vm-page .ant-card-head-title {
+  color: #00d4ff;
+}
+
+.download-vm-page .ant-steps-item-title {
+  color: #cbd5e0;
+}
+
+.download-vm-page .ant-steps-item-description {
+  color: #9ca3af;
+}
+
+.download-vm-page .ant-steps-item-icon {
+  background: rgba(0, 212, 255, 0.1);
+  border-color: #00d4ff;
+}
+
+.download-vm-page .ant-steps-item-icon .ant-steps-icon {
+  color: #00d4ff;
+}
+
+.download-vm-page .ant-alert {
+  background: rgba(26, 35, 50, 0.8);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 12px;
+}
+
+.download-vm-page .ant-alert-message {
+  color: #e2e8f0;
+}
+
+.download-vm-page .ant-alert-description {
+  color: #cbd5e0;
+}
+
+@media (max-width: 768px) {
+  .download-vm-container {
+    padding: 100px 15px 30px;
+  }
+
+  .vm-card-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .vm-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2em;
+  }
+}
+

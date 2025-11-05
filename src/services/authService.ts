@@ -348,35 +348,41 @@ class AuthService {
       console.log('6a. Backend success:', (backendData as any).success);
       console.log('7. Backend data exists:', !!backendData.data);
       console.log('8. Backend message:', backendData.message);
-      
-      // Handle cả 2 format: isSuccess và success
-      const isSuccessful = backendData.isSuccess || (backendData as any).success;
-      
-      if (isSuccessful && backendData.data) {
-        const userData = backendData.data;
-        console.log('9. User data from backend:', userData);
-        
-        // Handle cả 2 format: userId và uid
-        const userId = userData.userId || (userData as any).uid;
-        const token = userData.token || (userData as any).access_token;
-        
-        if (!userId || !token) {
-          console.error('Missing required fields:', { userId, token });
+
+      // Chuẩn hóa userData từ nhiều format: {data}, {items[0]}, hoặc object trực tiếp
+      const userData: any = backendData?.data
+        ?? (Array.isArray((backendData as any)?.items) ? (backendData as any).items[0] : undefined)
+        ?? backendData;
+
+      // Thành công nếu có cờ isSuccess/success hoặc có userData hợp lệ
+      const isSuccessful = backendData.isSuccess || (backendData as any).success || !!userData;
+
+      if (isSuccessful && userData) {
+        console.log('9. User data normalized from backend:', userData);
+
+        // Lấy id và token từ nhiều key phổ biến
+        const uid = userData.userId ?? userData.uid ?? userData.id ?? null;
+        const token = userData.token ?? userData.access_token ?? null;
+
+        if (!uid) {
+          console.error('Missing required user id:', { uid });
           return {
             success: false,
-            message: 'Dữ liệu từ server không đầy đủ',
+            message: 'Thiếu userId/uid/id trong dữ liệu từ server',
           };
         }
-        
-        // Lưu token vào localStorage
-        localStorage.setItem('access_token', token);
+
+        // Lưu token nếu có (trường hợp dùng cookie session có thể không có token)
+        if (token) {
+          localStorage.setItem('access_token', token);
+        }
         if (userData.refreshToken) {
           localStorage.setItem('refresh_token', userData.refreshToken);
         }
-        
+
         // Lưu thông tin user
         const userInfo: UserInfo = {
-          id: userId,
+          id: uid,
           email: userData.email,
           username: userData.username,
           fullName: userData.fullName,
@@ -384,12 +390,12 @@ class AuthService {
           avatar: userData.image || userData.avatar,
           image: userData.image,
           isVerified: userData.isVerified !== false,
-          status: userData.status || 'Active',
+          status: (userData.status as string)?.toLowerCase() || 'active',
         };
         localStorage.setItem('user', JSON.stringify(userInfo));
         console.log('10. Saved user info:', userInfo);
         console.log('11. Token saved:', !!localStorage.getItem('access_token'));
-        
+
         return {
           success: true,
           data: userData,

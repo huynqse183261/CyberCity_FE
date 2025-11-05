@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import authService from '../services/authService';
 import { message } from 'antd';
@@ -15,22 +15,16 @@ const Login: React.FC = () => {
   const [remember, setRemember] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      console.log('User authenticated, redirecting...', user);
-      const roleRoutes = {
-        'admin': '/admin',
-        'teacher': '/teacher', 
-        'student': '/student'
-      };
-      const redirectPath = roleRoutes[user.role as keyof typeof roleRoutes];
-      console.log('Redirecting to:', redirectPath, 'for role:', user.role);
-      if (redirectPath) {
-        navigate(redirectPath);
-      }
-    }
-  }, [isAuthenticated, user, navigate]);
+  // Nếu đã đăng nhập, điều hướng bằng Navigate để tránh effect gây vòng lặp
+  if (isAuthenticated && user) {
+    const roleRoutes = {
+      'admin': '/admin',
+      'teacher': '/teacher', 
+      'student': '/student'
+    } as const;
+    const redirectPath = roleRoutes[user.role as keyof typeof roleRoutes] || '/';
+    return <Navigate to={redirectPath} replace />;
+  }
 
   useEffect(() => {
     // Create floating particles
@@ -119,7 +113,7 @@ const Login: React.FC = () => {
         if (currentUser) {
           // Nếu tài khoản không Active, đưa sang trang Access Denied (tự quay lại sau 30s)
           const status = (currentUser as any).status as string | undefined;
-          if (status && status !== 'Active') {
+          if (status && status.toLowerCase() !== 'active') {
             message.warning('Tài khoản của bạn hiện không hoạt động. Vui lòng liên hệ quản trị viên.');
             navigate('/access-denied');
             return;
@@ -134,7 +128,7 @@ const Login: React.FC = () => {
           
           const redirectPath = roleRoutes[currentUser.role as keyof typeof roleRoutes];
           console.log('Redirecting to:', redirectPath, 'for role:', currentUser.role);
-          navigate(redirectPath);
+          navigate(redirectPath, { replace: true });
         } else {
           console.warn('User data not available after login');
           navigate('/');

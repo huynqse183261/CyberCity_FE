@@ -7,10 +7,10 @@ import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
-import InboxPage from './pages/InboxPage';
+// import InboxPage from './pages/InboxPage';
 import HomeLogin from './pages/HomeLogin';
 import LinuxPage from './pages/LinuxPage';
-import LinuxModule1 from './pages/LinuxModule1';
+// import LinuxModule1 from './pages/LinuxModule1';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminCourseManagement from './pages/AdminCourseManagement';
 import AdminModuleManagement from './pages/AdminModuleManagement';
@@ -27,9 +27,7 @@ import TeacherStudents from './pages/TeacherStudents';
 import TeacherStudentDetail from './pages/TeacherStudentDetail';
 import TeacherStudentProgress from './pages/TeacherStudentProgress';
 import TeacherSettings from './pages/TeacherSettings';
-import StudentSettings from './pages/StudentSettings';
 import StudentProfile from './pages/StudentProfile';
-import StudentPaymentHistory from './pages/StudentPaymentHistory';
 import AdminSettings from './pages/AdminSettings';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
@@ -38,15 +36,27 @@ import PaymentGuidePage from './pages/PaymentGuidePage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
 import WarrantyPage from './pages/WarrantyPage';
-import PricingPage from './pages/PricingPage';
+// import PricingPage from './pages/PricingPage';
+import StudentPricingPage from './pages/StudentPricingPage';
+import StudentCheckoutPage from './pages/StudentCheckoutPage';
+import StudentPaymentHistoryPage from './pages/StudentPaymentHistoryPage';
+import StudentConfirmOrderPage from './pages/StudentConfirmOrderPage';
+import CheckoutPage from './pages/CheckoutPage';
+import DownloadVMPage from './pages/DownloadVMPage';
 
 // Import protected route components
-import { AdminRoute, TeacherRoute, StudentRoute, AllUserRoute } from './components/ProtectedRoute';
+import { AdminRoute, TeacherRoute, StudentRoute, PublicRoute } from './components/ProtectedRoute';
 import AdminMessages from './pages/AdminMessages';
+import AdminOrderManagement from './pages/AdminOrderManagement';
+import InvoiceManagement from './pages/InvoiceManagement';
 
 // Import PenTest Learning Pages
 import PenTestPage from './pages/PenTestPage';
-import PenTestModule1 from './pages/PenTestModule1';
+// import PenTestModule1 from './pages/PenTestModule1';
+
+// Import Module Detail Page
+import ModuleDetailPage from './pages/ModuleDetailPage';
+import CourseDetailPage from './pages/CourseDetailPage';
 
 // Import AI Assistant Page
 import AIAssistantPage from './pages/AIAssistantPage';
@@ -65,15 +75,7 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/access-denied" element={<AccessDenied />} />
 
-              {/* Shared Protected Routes - Available for all authenticated users */}
-              <Route 
-                path="/inbox" 
-                element={
-                  <AllUserRoute>
-                    <InboxPage />
-                  </AllUserRoute>
-                } 
-              />
+              {/* Removed inbox route for students */}
                 
                 {/* Student Protected Routes */}
                 <Route 
@@ -93,18 +95,66 @@ function App() {
                 } 
               />
               <Route 
-                path="/linux" 
+                path="/student/pricing" 
                 element={
                   <StudentRoute>
-                    <LinuxPage />
+                    <StudentPricingPage />
                   </StudentRoute>
                 } 
               />
               <Route 
-                path="/linux/module-1" 
+                path="/student/confirm" 
                 element={
                   <StudentRoute>
-                    <LinuxModule1 />
+                    <StudentConfirmOrderPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/student/checkout" 
+                element={
+                  <StudentRoute>
+                    <StudentCheckoutPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/student/payment-history" 
+                element={
+                  <StudentRoute>
+                    <StudentPaymentHistoryPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/linux/course/:courseUid" 
+                element={
+                  <StudentRoute>
+                    <CourseDetailPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/linux/course/:courseUid/module/:moduleIndex" 
+                element={
+                  <StudentRoute>
+                    <ModuleDetailPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/linux/module/:moduleIndex" 
+                element={
+                  <StudentRoute>
+                    <ModuleDetailPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/linux" 
+                element={
+                  <StudentRoute>
+                    <LinuxPage />
                   </StudentRoute>
                 } 
               />
@@ -162,7 +212,7 @@ function App() {
                 path="/admin/orders" 
                 element={
                   <AdminRoute>
-                    <AdminDashboard />
+                    <AdminOrderManagement />
                   </AdminRoute>
                 } 
               />
@@ -194,7 +244,7 @@ function App() {
                 path="/admin/invoices" 
                 element={
                   <AdminRoute>
-                    <AdminDashboard />
+                    <InvoiceManagement />
                   </AdminRoute>
                 } 
               />
@@ -290,17 +340,6 @@ function App() {
                   </AdminRoute>
                 } 
               />
-
-              {/* Student Settings */}
-              <Route 
-                path="/student/settings" 
-                element={
-                  <StudentRoute>
-                    <StudentSettings />
-                  </StudentRoute>
-                } 
-              />
-
               {/* Student Profile */}
               <Route 
                 path="/student/profile" 
@@ -311,22 +350,28 @@ function App() {
                 } 
               />
 
-              {/* Student Payment History */}
+              {/* PenTest Learning Routes */}
               <Route 
-                path="/student/payment-history" 
+                path="/pentest/course/:courseUid" 
                 element={
                   <StudentRoute>
-                    <StudentPaymentHistory />
+                    <CourseDetailPage />
                   </StudentRoute>
                 } 
               />
-
-              {/* PenTest Learning Routes */}
               <Route 
-                path="/pentest" 
+                path="/pentest/course/:courseUid/module/:moduleIndex" 
                 element={
                   <StudentRoute>
-                    <PenTestPage />
+                    <ModuleDetailPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/pentest/module/:moduleIndex" 
+                element={
+                  <StudentRoute>
+                    <ModuleDetailPage />
                   </StudentRoute>
                 } 
               />
@@ -339,28 +384,36 @@ function App() {
                 } 
               />
               <Route 
-                path="/pentest/module-1" 
+                path="/pentest" 
                 element={
                   <StudentRoute>
-                    <PenTestModule1 />
+                    <PenTestPage />
                   </StudentRoute>
                 } 
               />
 
-              {/* AI Assistant Route */}
+              {/* AI Assistant Route - Public */}
               <Route 
                 path="/ai-assistant" 
                 element={
-                  <StudentRoute>
+                  <PublicRoute>
                     <AIAssistantPage />
-                  </StudentRoute>
+                  </PublicRoute>
                 } 
               />
+
 
               {/* Other Pages */}
               <Route path="/lien-he" element={<ContactPage />} />
               <Route path="/gioi-thieu" element={<AboutPage />} />
-              <Route path="/pricing" element={<PricingPage />} />
+              {/* Removed public pricing sample page */}
+              <Route 
+                path="/checkout" 
+                element={
+                  <CheckoutPage />
+                } 
+              />
+              <Route path="/download-vm" element={<DownloadVMPage />} />
               <Route path="/dieu-kien-giao-dich" element={<TermsPage />} />
               <Route path="/quy-trinh-su-dung" element={<ServiceProcessPage />} />
               <Route path="/chinh-sach-bao-hanh" element={<WarrantyPage />} />

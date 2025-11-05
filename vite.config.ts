@@ -1,12 +1,27 @@
- import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+import dotenv from 'dotenv'
+
+// Load env file dựa trên mode (development/production)
+// Vite tự động load .env files, nhưng có thể sử dụng dotenv để load rõ ràng hơn
+dotenv.config()
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  build: {
-    chunkSizeWarningLimit: 1600, // Giữ warning limit hợp lý
-    rollupOptions: {
+export default defineConfig(({ mode }) => {
+  // Load env variables từ file .env và system environment
+  // Vite tự động merge: system env > .env.production > .env.development > .env
+  const env = loadEnv(mode, process.cwd(), '')
+  
+  return {
+    plugins: [react()],
+    // Đảm bảo env variables được expose đúng cách
+    define: {
+      // Có thể define thêm các giá trị mặc định nếu cần
+      __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '1.0.0'),
+    },
+    build: {
+      chunkSizeWarningLimit: 1600, // Giữ warning limit hợp lý
+      rollupOptions: {
       output: {
         manualChunks: {
           // Vendor chunks - tách các thư viện lớn
@@ -104,5 +119,6 @@ export default defineConfig({
       '@ant-design/icons',
       'axios'
     ]
+  },
   }
 })

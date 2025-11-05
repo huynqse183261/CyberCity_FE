@@ -1083,11 +1083,18 @@
 .topics { background: rgba(0, 212, 255, 0.05); padding: 15px; border-radius: 10px; backdrop-filter: blur(5px); }
 .topics h4 { margin-bottom: 10px; color: #00d4ff; transition: color 0.3s ease; }
 .module:hover .topics h4 { color: #fff; }
+.topics-description { color: #b8c5d1; line-height: 1.6; margin-bottom: 15px; }
+.module:hover .topics .topics-description { color: #fff; }
 .topics ul { list-style: none; padding-left: 0; }
-.topics li { padding: 5px 0; position: relative; padding-left: 20px; transition: color 0.3s ease; }
-.topics li:before { content: '▶'; position: absolute; left: 0; color: #00d4ff; transition: color 0.3s ease; }
+.topics li { padding: 5px 0; position: relative; padding-left: 20px; transition: color 0.2s ease; color:#e0e6ed; }
+.topics li:before { content: '▶'; position: absolute; left: 0; color: #00d4ff; transition: color 0.2s ease; }
 .module:hover .topics li:before { color: #fff; }
 .module:hover .topics li { color: rgba(255, 255, 255, 0.9); }
+
+/* Hover trực tiếp vào từng topic: chữ và icon chuyển sang trắng để dễ đọc */
+.topics li:hover { color: #ffffff !important; }
+.topics li:hover a { color: #ffffff !important; text-decoration: none; }
+.topics li:hover:before { color: #ffffff !important; }
 .rating-comment { background: rgba(0, 212, 255, 0.05); padding: 15px; border-radius: 10px; backdrop-filter: blur(5px); }
 .rating { margin-bottom: 10px; }
 .stars { display: flex; gap: 5px; margin-bottom: 10px; }

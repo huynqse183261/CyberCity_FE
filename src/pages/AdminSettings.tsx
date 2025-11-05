@@ -208,8 +208,8 @@ const AdminSettings: React.FC = () => {
                   </Text>
                 </Descriptions.Item>
                 <Descriptions.Item label="Trạng thái">
-                  <Text type={profile?.status === 'Active' ? 'success' : 'warning'}>
-                    {profile?.status === 'Active' ? 'Đang hoạt động' : 'Không hoạt động'}
+                  <Text type={profile?.status?.toLowerCase() === 'active' ? 'success' : 'warning'}>
+                    {profile?.status?.toLowerCase() === 'active' ? 'Đang hoạt động' : 'Không hoạt động'}
                   </Text>
                 </Descriptions.Item>
                 {profile?.createdAt && (
@@ -225,51 +225,6 @@ const AdminSettings: React.FC = () => {
         {/* Settings Tabs */}
         <Card>
           <Tabs defaultActiveKey="profile">
-            {/* Profile Tab */}
-            <Tabs.TabPane
-              tab={
-                <span>
-                  <UserOutlined />
-                  Thông tin cá nhân
-                </span>
-              }
-              key="profile"
-            >
-              <Form
-                form={profileForm}
-                layout="vertical"
-                onFinish={handleUpdateProfile}
-                style={{ maxWidth: 600 }}
-              >
-                <Form.Item
-                  label="Họ và tên"
-                  name="fullName"
-                  rules={[
-                    { required: true, message: 'Vui lòng nhập họ tên!' },
-                    { max: 128, message: 'Họ tên không được quá 128 ký tự!' }
-                  ]}
-                >
-                  <Input prefix={<UserOutlined />} placeholder="Nhập họ và tên" />
-                </Form.Item>
-
-                <Form.Item
-                  label="Email"
-                  name="email"
-                  rules={[
-                    { required: true, message: 'Vui lòng nhập email!' },
-                    { type: 'email', message: 'Email không hợp lệ!' }
-                  ]}
-                >
-                  <Input prefix={<MailOutlined />} placeholder="Nhập email" />
-                </Form.Item>
-
-                <Form.Item>
-                  <Button type="primary" htmlType="submit" icon={<SaveOutlined />}>
-                    Cập nhật thông tin
-                  </Button>
-                </Form.Item>
-              </Form>
-            </Tabs.TabPane>
 
             {/* Password Tab */}
             <Tabs.TabPane
