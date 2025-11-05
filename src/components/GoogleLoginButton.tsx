@@ -45,9 +45,9 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
         console.log('- user in localStorage:', !!localStorage.getItem('user'));
         
         if (isAuth && currentUser) {
-          // Check account status
-          const status = currentUser.status;
-          if (status && status !== 'Active') {
+          // Check account status (case-insensitive)
+          const status = currentUser.status as string | undefined;
+          if (status && status.toLowerCase() !== 'active') {
             message.warning('Tài khoản của bạn hiện không hoạt động. Vui lòng liên hệ quản trị viên.');
             navigate('/access-denied');
             return;

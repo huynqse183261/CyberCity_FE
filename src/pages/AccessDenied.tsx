@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Result, Button, Typography } from 'antd';
+import React from 'react';
+import { Result, Button, Typography, Space } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const { Paragraph, Text } = Typography;
@@ -7,24 +7,24 @@ const { Paragraph, Text } = Typography;
 const AccessDenied: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [counter, setCounter] = useState<number>(30);
+  const handleGoBack = () => {
+    // Quay lại trang trước nếu có, nếu không thì về trang chủ
+    if (location.state?.from) {
+      navigate(-1);
+    } else {
+      navigate('/', { replace: true });
+    }
+  };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCounter((c) => {
-        if (c <= 1) {
-          clearInterval(timer);
-          navigate('/login', { replace: true });
-          return 0;
-        }
-        return c - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [navigate]);
-
-  const handleBackToLogin = () => {
-    navigate('/login', { replace: true, state: { from: location.state?.from } });
+  const handleGoHomeAndClearToken = () => {
+    try {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
+    } catch (e) {
+      // noop
+    }
+    navigate('/', { replace: true });
   };
 
   return (
@@ -35,11 +35,14 @@ const AccessDenied: React.FC = () => {
         subTitle={
           <Paragraph>
             <Text> Tài khoản của bạn hiện không được phép truy cập vào trang này. </Text>
-            <br />
-            <Text type="secondary">Bạn sẽ được chuyển về trang đăng nhập sau {counter}s...</Text>
           </Paragraph>
         }
-        extra={<Button type="primary" onClick={handleBackToLogin}>Về trang đăng nhập</Button>}
+        extra={
+          <Space>
+            <Button onClick={handleGoBack}>Quay lại</Button>
+            <Button type="primary" onClick={handleGoHomeAndClearToken}>Về trang chủ</Button>
+          </Space>
+        }
       />
     </div>
   );

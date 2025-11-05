@@ -30,7 +30,7 @@ const TeacherLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     try {
       await logout();
       message.success('Đăng xuất thành công!');
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
       message.error('Có lỗi xảy ra khi đăng xuất!');

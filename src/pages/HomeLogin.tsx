@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import LinuxLabNavigation from '../components/LinuxLabNavigation';
 import UserDropdown from '../components/UserDropdown';
@@ -38,16 +38,16 @@ const HomeLogin: React.FC = () => {
           <p className="hero-subtitle">
             Nền tảng học tập An toàn thông tin dành cho sinh viên
             <br />
-            Thực hành Linux & Pentesting với môi trường ảo hóa và AI hỗ trợ 24/7
+            Học lý thuyết Linux & Pentesting kèm quiz kiểm tra kiến thức và AI hỗ trợ 24/7
           </p>
           <div className="hero-stats">
             <div className="stat-item">
-              <div className="stat-value">50+</div>
-              <div className="stat-label">Bài Lab</div>
+              <div className="stat-value">100+</div>
+              <div className="stat-label">Bài Lý Thuyết</div>
             </div>
             <div className="stat-item">
-              <div className="stat-value">100+</div>
-              <div className="stat-label">Tools</div>
+              <div className="stat-value">50+</div>
+              <div className="stat-label">Quiz Kiểm Tra</div>
             </div>
             <div className="stat-item">
               <div className="stat-value">24/7</div>
@@ -68,34 +68,34 @@ const HomeLogin: React.FC = () => {
               <div className="feature-icon-large">🐧</div>
               <h3 className="feature-title">Học Linux</h3>
               <p className="feature-description">
-                Thành thạo Linux từ cơ bản đến nâng cao với 6 module học tập đầy đủ
+                Học lý thuyết Linux từ cơ bản đến nâng cao và làm quiz kiểm tra kiến thức qua các module học tập đầy đủ
               </p>
               <ul className="feature-highlights">
-                <li>✓ Terminal & Command Line mastery</li>
-                <li>✓ System Administration</li>
-                <li>✓ Shell Scripting & Automation</li>
-                <li>✓ Linux Security & Hardening</li>
-                <li>✓ DevOps & Cloud Deployment</li>
+                <li>✓ Học lý thuyết từng bài chi tiết</li>
+                <li>✓ Làm quiz kiểm tra sau mỗi bài</li>
+                <li>✓ Terminal & Dòng lệnh chủ đạo</li>
+                <li>✓ Quản trị hệ thống & Bảo mật</li>
+                <li>✓ Shell Scripting & Quản lý DevOps</li>
               </ul>
               <div className="feature-stats-row">
                 <div className="mini-stat">
                   <span className="mini-stat-value">6</span>
-                  <span className="mini-stat-label">Modules</span>
+                  <span className="mini-stat-label">Module</span>
                 </div>
                 <div className="mini-stat">
-                  <span className="mini-stat-value">30+</span>
-                  <span className="mini-stat-label">Labs</span>
+                  <span className="mini-stat-value">50+</span>
+                  <span className="mini-stat-label">Bài lý thuyết</span>
                 </div>
                 <div className="mini-stat">
-                  <span className="mini-stat-value">40h</span>
-                  <span className="mini-stat-label">Duration</span>
+                  <span className="mini-stat-value">20+</span>
+                  <span className="mini-stat-label">Bài kiểm tra</span>
                 </div>
               </div>
               <button 
                 className="feature-btn linux-btn"
                 onClick={() => navigate('/linux')}
               >
-                Bắt đầu học Linux →
+                Vào khóa Linux →
               </button>
             </div>
 
@@ -104,34 +104,34 @@ const HomeLogin: React.FC = () => {
               <div className="feature-icon-large">🔐</div>
               <h3 className="feature-title">Penetration Testing</h3>
               <p className="feature-description">
-                Học kỹ thuật pentest thực chiến với môi trường lab an toàn
+                Học lý thuyết Pentesting từ cơ bản đến nâng cao và làm quiz kiểm tra kiến thức qua các module thực chiến
               </p>
               <ul className="feature-highlights">
-                <li>✓ Reconnaissance & Information Gathering</li>
-                <li>✓ Vulnerability Assessment & Scanning</li>
-                <li>✓ Web Application Penetration Testing</li>
-                <li>✓ Network & System Exploitation</li>
-                <li>✓ Post-Exploitation & Reporting</li>
+                <li>✓ Học lý thuyết từng bài chi tiết</li>
+                <li>✓ Làm quiz kiểm tra sau mỗi bài</li>
+                <li>✓ Trinh sát & Thu thập thông tin</li>
+                <li>✓ Đánh giá lỗ hổng & Khai thác</li>
+                <li>✓ Kiểm thử ứng dụng web & mạng</li>
               </ul>
               <div className="feature-stats-row">
                 <div className="mini-stat">
-                  <span className="mini-stat-value">5</span>
-                  <span className="mini-stat-label">Phases</span>
-                </div>
-                <div className="mini-stat">
-                  <span className="mini-stat-value">20+</span>
-                  <span className="mini-stat-label">Targets</span>
+                  <span className="mini-stat-value">6</span>
+                  <span className="mini-stat-label">Module</span>
                 </div>
                 <div className="mini-stat">
                   <span className="mini-stat-value">50+</span>
-                  <span className="mini-stat-label">Tools</span>
+                  <span className="mini-stat-label">Bài lý thuyết</span>
+                </div>
+                <div className="mini-stat">
+                  <span className="mini-stat-value">20+</span>
+                  <span className="mini-stat-label">Bài kiểm tra</span>
                 </div>
               </div>
               <button 
                 className="feature-btn pentest-btn"
                 onClick={() => navigate('/pentest-lab')}
               >
-                Bắt đầu Pentest →
+                Vào khóa Pentest →
               </button>
             </div>
 
@@ -152,15 +152,15 @@ const HomeLogin: React.FC = () => {
               <div className="feature-stats-row">
                 <div className="mini-stat">
                   <span className="mini-stat-value">AI</span>
-                  <span className="mini-stat-label">Powered</span>
+                  <span className="mini-stat-label">Công nghệ</span>
                 </div>
                 <div className="mini-stat">
                   <span className="mini-stat-value">24/7</span>
-                  <span className="mini-stat-label">Available</span>
+                  <span className="mini-stat-label">Sẵn sàng</span>
                 </div>
                 <div className="mini-stat">
                   <span className="mini-stat-value">∞</span>
-                  <span className="mini-stat-label">Questions</span>
+                  <span className="mini-stat-label">Câu hỏi</span>
                 </div>
               </div>
               <button 
@@ -174,39 +174,39 @@ const HomeLogin: React.FC = () => {
         </div>
       </section>
 
-      {/* Learning Path Section */}
+      {/* Learning Path Section - Linux */}
       <section className="learning-path-section">
         <div className="features-container">
-          <h2 className="section-title">Lộ trình học tập</h2>
+          <h2 className="section-title">Lộ trình học Linux</h2>
           <div className="learning-path">
             <div className="path-step">
               <div className="step-number">1</div>
               <div className="step-content">
-                <h4>Làm quen với Linux</h4>
-                <p>Học các lệnh cơ bản và làm quen với Terminal</p>
+                <h4>Học Lý Thuyết</h4>
+                <p>Đọc và nắm vững kiến thức từng bài học</p>
               </div>
             </div>
             <div className="path-arrow">→</div>
             <div className="path-step">
               <div className="step-number">2</div>
               <div className="step-content">
-                <h4>Thực hành Lab</h4>
-                <p>Áp dụng kiến thức vào các bài lab thực tế</p>
+                <h4>Làm Quiz</h4>
+                <p>Kiểm tra kiến thức qua các câu hỏi quiz</p>
               </div>
             </div>
             <div className="path-arrow">→</div>
             <div className="path-step">
               <div className="step-number">3</div>
               <div className="step-content">
-                <h4>Học Pentesting</h4>
-                <p>Khám phá kỹ thuật tấn công và phòng thủ</p>
+                <h4>Hoàn Thành Module</h4>
+                <p>Tiếp tục với các module tiếp theo</p>
               </div>
             </div>
             <div className="path-arrow">→</div>
             <div className="path-step">
               <div className="step-number">4</div>
               <div className="step-content">
-                <h4>Nhận chứng chỉ</h4>
+                <h4>Nhận Chứng Chỉ</h4>
                 <p>Hoàn thành khóa học và nhận chứng nhận</p>
               </div>
             </div>
@@ -214,30 +214,41 @@ const HomeLogin: React.FC = () => {
         </div>
       </section>
 
-      {/* Quick Access Section */}
-      <section className="quick-access-section">
+      {/* Learning Path Section - Pentest */}
+      <section className="learning-path-section">
         <div className="features-container">
-          <h2 className="section-title">Truy cập nhanh</h2>
-          <div className="quick-access-grid">
-            <div className="quick-access-card" onClick={() => navigate('/inbox')}>
-              <div className="quick-icon">💬</div>
-              <h4>Hộp thư</h4>
-              <p>Tin nhắn và thông báo</p>
+          <h2 className="section-title">Lộ trình học Pentest</h2>
+          <div className="learning-path">
+            <div className="path-step">
+              <div className="step-number">1</div>
+              <div className="step-content">
+                <h4>Học Lý Thuyết</h4>
+                <p>Đọc và nắm vững kiến thức Pentesting từng bài</p>
+              </div>
             </div>
-            <div className="quick-access-card" onClick={() => navigate('/student/settings')}>
-              <div className="quick-icon">⚙️</div>
-              <h4>Cài đặt</h4>
-              <p>Quản lý tài khoản</p>
+            <div className="path-arrow">→</div>
+            <div className="path-step">
+              <div className="step-number">2</div>
+              <div className="step-content">
+                <h4>Làm Quiz</h4>
+                <p>Kiểm tra kiến thức qua các câu hỏi quiz</p>
+              </div>
             </div>
-            <div className="quick-access-card" onClick={() => alert('Đang phát triển')}>
-              <div className="quick-icon">📊</div>
-              <h4>Tiến độ</h4>
-              <p>Xem kết quả học tập</p>
+            <div className="path-arrow">→</div>
+            <div className="path-step">
+              <div className="step-number">3</div>
+              <div className="step-content">
+                <h4>Hoàn Thành Module</h4>
+                <p>Tiếp tục với các module tiếp theo</p>
+              </div>
             </div>
-            <div className="quick-access-card" onClick={() => alert('Đang phát triển')}>
-              <div className="quick-icon">🏆</div>
-              <h4>Thành tích</h4>
-              <p>Huy chương và chứng chỉ</p>
+            <div className="path-arrow">→</div>
+            <div className="path-step">
+              <div className="step-number">4</div>
+              <div className="step-content">
+                <h4>Nhận Chứng Chỉ</h4>
+                <p>Hoàn thành khóa học và nhận chứng nhận</p>
+              </div>
             </div>
           </div>
         </div>

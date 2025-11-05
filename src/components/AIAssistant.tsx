@@ -1,11 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Settings, Trash2 } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import LinuxLabNavigation from './LinuxLabNavigation';
-import UserDropdown from './UserDropdown';
-import { useAuth } from '../contexts/AuthContext';
-import type { User as UserType } from '../models/LinuxLabTypes';
-import '../styles/LinuxLabPage.css';
 
 interface Message {
   id: string;
@@ -15,7 +10,6 @@ interface Message {
 }
 
 const AIAssistant: React.FC = () => {
-  const { user: currentUser } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -23,16 +17,8 @@ const AIAssistant: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Transform AuthContext user to component user format
-  const user: UserType = {
-    name: currentUser?.fullName || 'User',
-    username: currentUser?.username || currentUser?.email || 'Unknown User',
-    avatar: currentUser?.fullName?.charAt(0).toUpperCase() || 'U'
-  };
-
-  // Khởi tạo Google Generative AI
-  const apiKey = "AIzaSyAyV4aVzWNhKzlSfWWb8XSw0GZB5gDxqdU";
-  const genAI = new GoogleGenerativeAI(apiKey);
+  // Lấy API key từ environment variables
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -66,11 +52,15 @@ const AIAssistant: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Sử dụng Google Generative AI SDK
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      // Khởi tạo Google Generative AI
+      const genAI = new GoogleGenerativeAI(apiKey);
       
+      // Sử dụng model gemini-2.5-flash như yêu cầu
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+
+      // Gửi prompt và nhận phản hồi
       const result = await model.generateContent(currentInput);
-      const response = await result.response;
+      const response = result.response;
       const aiResponse = response.text() || 'Không nhận được phản hồi từ AI';
 
       const assistantMessage: Message = {
@@ -109,363 +99,179 @@ const AIAssistant: React.FC = () => {
   };
 
   return (
-    <div className="linux-lab-page ai-chat-page">
-      {/* Navigation */}
-      <nav className="navigation">
-        <div className="nav-container">
-          <LinuxLabNavigation />
-          <UserDropdown user={user} />
-        </div>
-      </nav>
-
-      {/* AI Chat Header */}
-      <div className="ai-chat-header">
-        <div className="ai-chat-header-content">
-          <div className="ai-chat-title">
-            <div className="ai-chat-icon">🤖</div>
-            <div>
-              <h1>AI Assistant</h1>
-              <p>Trợ lý AI thông minh hỗ trợ học tập 24/7</p>
-            </div>
-          </div>
-          <div className="ai-chat-controls">
-            <button
-              onClick={clearChat}
-              className="ai-control-btn"
-              title="Xóa tin nhắn"
-            >
-              <Trash2 size={18} />
-              Xóa chat
-            </button>
-            <button
-              onClick={() => setShowSettings(!showSettings)}
-              className="ai-control-btn"
-              title="Cài đặt"
-            >
-              <Settings size={18} />
-              Cài đặt
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Settings Panel */}
-      {showSettings && (
-        <div className="ai-settings-panel">
-          <div className="container">
-            <div className="settings-content">
-              <h3>🔧 Cài đặt AI Assistant</h3>
-              <div className="setting-item">
-                <label>Trạng thái API Key</label>
-                <input
-                  type="text"
-                  value={apiKey ? '✅ Đã cấu hình' : '❌ Chưa cấu hình'}
-                  readOnly
-                  className="setting-input"
-                />
-                <p className="setting-help">
-                  API Key được cấu hình trong file .env. 
-                  Lấy API Key tại: <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Chat Container */}
-      <div className="ai-chat-container">
-        <div className="container">
-          <div className="ai-chat-wrapper">
-            {/* Messages Area */}
-            <div className="ai-messages-area">
-              {messages.length === 0 && (
-                <div className="ai-welcome-message">
-                  <div className="welcome-icon">🤖</div>
-                  <h2>Chào mừng đến với AI Assistant</h2>
-                  <p>Tôi là trợ lý AI thông minh, sẵn sàng hỗ trợ bạn học tập và giải đáp thắc mắc 24/7</p>
-                  <div className="welcome-features">
-                    <div className="feature-item">✓ Giải thích lệnh Linux</div>
-                    <div className="feature-item">✓ Hướng dẫn Penetration Testing</div>
-                    <div className="feature-item">✓ Debug và Troubleshooting</div>
-                    <div className="feature-item">✓ Gợi ý giải pháp bảo mật</div>
-                  </div>
-                </div>
-              )}
-
-              {messages.map((message) => (
-                <div key={message.id} className={`message-bubble ${message.role}`}>
-                  <div className="message-avatar">
-                    {message.role === 'assistant' ? (
-                      <Bot size={20} />
-                    ) : (
-                      <User size={20} />
-                    )}
-                  </div>
-                  <div className="message-content">
-                    <div className="message-text">{message.content}</div>
-                    <div className="message-time">
-                      {message.timestamp.toLocaleTimeString()}
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {isLoading && (
-                <div className="message-bubble assistant loading">
-                  <div className="message-avatar">
-                    <Bot size={20} />
-                  </div>
-                  <div className="message-content">
-                    <div className="typing-indicator">
-                      <div className="typing-dot"></div>
-                      <div className="typing-dot"></div>
-                      <div className="typing-dot"></div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input Area */}
-            <div className="ai-input-area">
-              <div className="input-wrapper">
-                <textarea
-                  ref={textareaRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Nhập câu hỏi của bạn..."
-                  className="message-input"
-                  rows={1}
-                  disabled={isLoading}
-                />
-                <button
-                  onClick={sendMessage}
-                  disabled={isLoading || !input.trim()}
-                  className="send-button"
-                >
-                  <Send size={20} />
-                </button>
-              </div>
-              <div className="input-help">
-                Nhấn Enter để gửi, Shift + Enter để xuống dòng
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div className="ai-assistant">
       <style>{`
-        /* AI Chat Page Styles */
-        .ai-chat-page {
+        .ai-assistant {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
           min-height: 100vh;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .ai-chat-header {
+        .ai-header {
           background: rgba(255, 255, 255, 0.1);
           backdrop-filter: blur(10px);
           border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-          padding: 2rem 0;
-        }
-
-        .ai-chat-header-content {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 2rem;
+          padding: 1rem 1.5rem;
           display: flex;
+          align-items: center;
           justify-content: space-between;
-          align-items: center;
         }
 
-        .ai-chat-title {
+        .ai-header-left {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 0.75rem;
+        }
+
+        .ai-logo {
+          width: 2.5rem;
+          height: 2.5rem;
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          border-radius: 0.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           color: white;
         }
 
-        .ai-chat-icon {
-          font-size: 3rem;
-          background: rgba(255, 255, 255, 0.1);
-          padding: 1rem;
-          border-radius: 1rem;
-          backdrop-filter: blur(10px);
+        .ai-title {
+          color: white;
         }
 
-        .ai-chat-title h1 {
-          font-size: 2rem;
+        .ai-title h1 {
+          font-size: 1.25rem;
           font-weight: bold;
           margin: 0;
         }
 
-        .ai-chat-title p {
-          margin: 0.5rem 0 0 0;
-          opacity: 0.8;
-          font-size: 1rem;
+        .ai-title p {
+          font-size: 0.75rem;
+          color: rgba(255, 255, 255, 0.7);
+          margin: 0;
         }
 
-        .ai-chat-controls {
+        .ai-header-right {
           display: flex;
-          gap: 1rem;
-        }
-
-        .ai-control-btn {
-          display: flex;
-          align-items: center;
           gap: 0.5rem;
-          padding: 0.75rem 1.5rem;
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ai-btn {
+          padding: 0.5rem;
           border-radius: 0.5rem;
+          background: rgba(255, 255, 255, 0.1);
+          border: none;
           color: white;
-          font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;
-          backdrop-filter: blur(10px);
         }
 
-        .ai-control-btn:hover {
+        .ai-btn:hover {
           background: rgba(255, 255, 255, 0.2);
-          transform: translateY(-2px);
         }
 
-        /* Settings Panel */
-        .ai-settings-panel {
+        .ai-settings {
           background: rgba(255, 255, 255, 0.1);
           backdrop-filter: blur(10px);
           border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-          padding: 2rem 0;
+          padding: 1rem 1.5rem;
         }
 
-        .settings-content {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 1rem;
-          padding: 2rem;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .settings-content h3 {
-          color: white;
-          margin: 0 0 1.5rem 0;
-          font-size: 1.25rem;
-        }
-
-        .setting-item {
-          margin-bottom: 1.5rem;
-        }
-
-        .setting-item label {
+        .ai-settings label {
           display: block;
-          color: white;
+          font-size: 0.875rem;
           font-weight: 500;
+          color: rgba(255, 255, 255, 0.9);
           margin-bottom: 0.5rem;
         }
 
-        .setting-input {
+        .ai-settings input {
           width: 100%;
-          padding: 0.75rem 1rem;
+          padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
           background: rgba(255, 255, 255, 0.1);
           border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 0.5rem;
           color: white;
-          font-size: 1rem;
+          outline: none;
         }
 
-        .setting-help {
+        .ai-settings input::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+
+        .ai-settings input:focus {
+          border-color: rgba(255, 255, 255, 0.4);
+          box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-settings p {
+          font-size: 0.75rem;
+          color: rgba(255, 255, 255, 0.6);
           margin: 0.5rem 0 0 0;
-          color: rgba(255, 255, 255, 0.7);
-          font-size: 0.875rem;
         }
 
-        .setting-help a {
-          color: rgba(255, 255, 255, 0.9);
+        .ai-settings a {
+          color: rgba(255, 255, 255, 0.8);
           text-decoration: underline;
         }
 
-        /* Chat Container */
-        .ai-chat-container {
-          flex: 1;
-          padding: 2rem 0;
-        }
-
-        .ai-chat-wrapper {
-          max-width: 800px;
-          margin: 0 auto;
-          background: rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(10px);
-          border-radius: 1rem;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          height: 70vh;
-        }
-
-        /* Messages Area */
-        .ai-messages-area {
+        .ai-messages {
           flex: 1;
           overflow-y: auto;
-          padding: 2rem;
+          padding: 1.5rem;
           display: flex;
           flex-direction: column;
           gap: 1.5rem;
         }
 
-        .ai-welcome-message {
+        .ai-welcome {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
           text-align: center;
-          color: white;
-          padding: 2rem;
         }
 
-        .welcome-icon {
-          font-size: 4rem;
+        .ai-welcome-logo {
+          width: 5rem;
+          height: 5rem;
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          border-radius: 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
           margin-bottom: 1rem;
         }
 
-        .ai-welcome-message h2 {
+        .ai-welcome h2 {
           font-size: 1.5rem;
           font-weight: bold;
-          margin: 0 0 1rem 0;
+          color: white;
+          margin: 0 0 0.5rem 0;
         }
 
-        .ai-welcome-message p {
-          margin: 0 0 2rem 0;
-          opacity: 0.8;
-          line-height: 1.6;
+        .ai-welcome p {
+          color: rgba(255, 255, 255, 0.7);
+          max-width: 24rem;
+          margin: 0;
         }
 
-        .welcome-features {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 1rem;
-          margin-top: 2rem;
-        }
-
-        .feature-item {
-          background: rgba(255, 255, 255, 0.1);
-          padding: 1rem;
-          border-radius: 0.5rem;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        /* Message Bubbles */
-        .message-bubble {
+        .ai-message {
           display: flex;
           gap: 1rem;
           align-items: flex-start;
         }
 
-        .message-bubble.user {
-          flex-direction: row-reverse;
+        .ai-message.user {
+          justify-content: flex-end;
         }
 
-        .message-avatar {
-          width: 2.5rem;
-          height: 2.5rem;
+        .ai-message-avatar {
+          width: 2rem;
+          height: 2rem;
           border-radius: 0.5rem;
           display: flex;
           align-items: center;
@@ -474,59 +280,60 @@ const AIAssistant: React.FC = () => {
           flex-shrink: 0;
         }
 
-        .message-bubble.assistant .message-avatar {
+        .ai-message-avatar.assistant {
           background: linear-gradient(135deg, #667eea, #764ba2);
         }
 
-        .message-bubble.user .message-avatar {
+        .ai-message-avatar.user {
           background: linear-gradient(135deg, #3b82f6, #06b6d4);
         }
 
-        .message-content {
-          max-width: 70%;
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+        .ai-message-content {
+          max-width: 48rem;
+          padding: 0.75rem 1rem;
           border-radius: 1rem;
-          padding: 1rem 1.25rem;
-          backdrop-filter: blur(10px);
         }
 
-        .message-bubble.user .message-content {
+        .ai-message-content.user {
           background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        .message-text {
           color: white;
-          line-height: 1.6;
-          white-space: pre-wrap;
+        }
+
+        .ai-message-content.assistant {
+          background: rgba(255, 255, 255, 0.1);
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ai-message-content p {
           margin: 0;
+          white-space: pre-wrap;
+          line-height: 1.5;
         }
 
-        .message-time {
-          font-size: 0.75rem;
-          color: rgba(255, 255, 255, 0.6);
-          margin-top: 0.5rem;
-        }
-
-        /* Typing Indicator */
-        .typing-indicator {
+        .ai-loading {
           display: flex;
-          gap: 0.25rem;
-          padding: 0.5rem 0;
+          gap: 1rem;
+          align-items: flex-start;
         }
 
-        .typing-dot {
+        .ai-loading-dots {
+          display: flex;
+          gap: 0.5rem;
+        }
+
+        .ai-loading-dot {
           width: 0.5rem;
           height: 0.5rem;
           background: rgba(255, 255, 255, 0.6);
           border-radius: 50%;
-          animation: typing 1.4s ease-in-out infinite both;
+          animation: bounce 1.4s ease-in-out infinite both;
         }
 
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        .ai-loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .ai-loading-dot:nth-child(2) { animation-delay: -0.16s; }
 
-        @keyframes typing {
+        @keyframes bounce {
           0%, 80%, 100% {
             transform: scale(0);
           } 40% {
@@ -534,99 +341,217 @@ const AIAssistant: React.FC = () => {
           }
         }
 
-        /* Input Area */
-        .ai-input-area {
-          padding: 1.5rem 2rem;
+        .ai-input-container {
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
           border-top: 1px solid rgba(255, 255, 255, 0.2);
-          background: rgba(255, 255, 255, 0.05);
+          padding: 1rem 1.5rem;
         }
 
-        .input-wrapper {
+        .ai-input-wrapper {
+          max-width: 64rem;
+          margin: 0 auto;
           display: flex;
-          gap: 1rem;
-          align-items: flex-end;
+          gap: 0.75rem;
         }
 
-        .message-input {
+        .ai-textarea {
           flex: 1;
           padding: 0.75rem 1rem;
+          border-radius: 0.75rem;
           background: rgba(255, 255, 255, 0.1);
           border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 0.75rem;
           color: white;
           resize: none;
           max-height: 8rem;
           outline: none;
-          font-family: inherit;
-          font-size: 1rem;
         }
 
-        .message-input::placeholder {
+        .ai-textarea::placeholder {
           color: rgba(255, 255, 255, 0.5);
         }
 
-        .message-input:focus {
+        .ai-textarea:focus {
           border-color: rgba(255, 255, 255, 0.4);
           box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
         }
 
-        .send-button {
-          padding: 0.75rem;
+        .ai-send-btn {
+          padding: 0.75rem 1.5rem;
+          border-radius: 0.75rem;
           background: linear-gradient(135deg, #667eea, #764ba2);
           border: none;
-          border-radius: 0.75rem;
           color: white;
+          font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
         }
 
-        .send-button:hover:not(:disabled) {
+        .ai-send-btn:hover:not(:disabled) {
           background: linear-gradient(135deg, #5a6fd8, #6a4190);
-          transform: translateY(-2px);
+          transform: translateY(-1px);
         }
 
-        .send-button:disabled {
+        .ai-send-btn:disabled {
           opacity: 0.5;
           cursor: not-allowed;
           transform: none;
         }
 
-        .input-help {
-          text-align: center;
+        .ai-input-help {
           font-size: 0.75rem;
           color: rgba(255, 255, 255, 0.5);
+          text-align: center;
           margin-top: 0.5rem;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-          .ai-chat-header-content {
+          .ai-header {
+            padding: 1rem;
+          }
+          
+          .ai-messages {
+            padding: 1rem;
+          }
+          
+          .ai-input-container {
+            padding: 1rem;
+          }
+          
+          .ai-input-wrapper {
             flex-direction: column;
-            gap: 1rem;
-            text-align: center;
           }
           
-          .ai-chat-controls {
-            justify-content: center;
-          }
-          
-          .ai-chat-wrapper {
-            margin: 0 1rem;
-            height: 60vh;
-          }
-          
-          .message-content {
-            max-width: 85%;
-          }
-          
-          .welcome-features {
-            grid-template-columns: 1fr;
+          .ai-send-btn {
+            align-self: flex-end;
           }
         }
       `}</style>
+
+      {/* Header */}
+      <div className="ai-header">
+        <div className="ai-header-left">
+          <div className="ai-logo">
+            <Bot size={20} />
+          </div>
+          <div className="ai-title">
+            <h1>AI Assistant</h1>
+            <p>Powered by Gemini AI</p>
+          </div>
+      </div>
+        <div className="ai-header-right">
+          <button
+            onClick={clearChat}
+            className="ai-btn"
+            title="Xóa tin nhắn"
+          >
+            <Trash2 size={18} />
+          </button>
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="ai-btn"
+            title="Cài đặt"
+          >
+            <Settings size={18} />
+          </button>
+          </div>
+      </div>
+
+      {/* Settings Panel */}
+      {showSettings && (
+        <div className="ai-settings">
+          <label>Gemini API Key Status</label>
+        <input
+          type="text"
+            value={apiKey ? '••••••••••••••••••••••••••••••••••••••••' : 'Chưa cấu hình'}
+            readOnly
+            placeholder="API Key chưa được cấu hình"
+          />
+          <p>
+            API Key được cấu hình trong file .env. 
+            Liên hệ admin để cấu hình API Key từ: <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a>
+          </p>
+        </div>
+      )}
+
+      {/* Messages */}
+      <div className="ai-messages">
+        {messages.length === 0 && (
+          <div className="ai-welcome">
+            <div className="ai-welcome-logo">
+              <Bot size={48} />
+            </div>
+            <h2>Chào mừng đến với AI Assistant</h2>
+            <p>
+              Tôi là trợ lý AI thông minh, sẵn sàng trả lời câu hỏi và hỗ trợ bạn 24/7
+            </p>
+          </div>
+        )}
+
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`ai-message ${message.role}`}
+          >
+            {message.role === 'assistant' && (
+              <div className="ai-message-avatar assistant">
+                <Bot size={16} />
+              </div>
+            )}
+            <div className={`ai-message-content ${message.role}`}>
+              <p>{message.content}</p>
+            </div>
+            {message.role === 'user' && (
+              <div className="ai-message-avatar user">
+                <User size={16} />
+              </div>
+            )}
+          </div>
+        ))}
+
+        {isLoading && (
+          <div className="ai-loading">
+            <div className="ai-message-avatar assistant">
+              <Bot size={16} />
+            </div>
+            <div className="ai-message-content assistant">
+              <div className="ai-loading-dots">
+                <div className="ai-loading-dot"></div>
+                <div className="ai-loading-dot"></div>
+                <div className="ai-loading-dot"></div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input */}
+      <div className="ai-input-container">
+        <div className="ai-input-wrapper">
+          <textarea
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Nhập câu hỏi của bạn..."
+            className="ai-textarea"
+            rows={1}
+            disabled={isLoading}
+          />
+          <button
+            onClick={sendMessage}
+            disabled={isLoading || !input.trim()}
+            className="ai-send-btn"
+          >
+            <Send size={18} />
+          </button>
+        </div>
+        <p className="ai-input-help">
+          Nhấn Enter để gửi, Shift + Enter để xuống dòng
+        </p>
+      </div>
     </div>
   );
 };

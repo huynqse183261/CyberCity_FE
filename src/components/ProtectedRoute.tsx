@@ -27,7 +27,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (isAuthenticated && allowedRoles && currentUser) {
     // Chặn người dùng không Active
     const status = (currentUser as any).status as string | undefined;
-    if (status && status !== 'Active') {
+    if (status && status.toLowerCase() !== 'active') {
       return <Navigate to="/access-denied" replace />;
     }
 
@@ -40,9 +40,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     const hasPermission = allowedRoles.includes(mappedRole);
 
     if (!hasPermission) {
-      // Redirect based on user role
+      // Redirect based on user role, tránh loop nếu trùng đường dẫn
       const redirectPath = getDefaultRouteForRole(mappedRole);
-      return <Navigate to={redirectPath} replace />;
+      if (location.pathname !== redirectPath) {
+        return <Navigate to={redirectPath} replace />;
+      }
     }
   }
 

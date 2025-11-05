@@ -1,8 +1,13 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { message } from 'antd';
 import * as THREE from 'three';
 import '../styles/HeroSection.css';
 
 const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -89,8 +94,29 @@ const HeroSection: React.FC = () => {
             và AI hỗ trợ hỏi đáp.
           </p>
           <div className="hero-buttons">
-            <a href="#courses" className="btn-primary">Khám phá khóa học</a>
-            <a href="#demo" className="btn-secondary">Dùng thử AI miễn phí</a>
+            <button 
+              className="btn-primary" 
+              onClick={(e) => {
+                e.preventDefault();
+                if (!isAuthenticated) {
+                  message.info('Vui lòng đăng nhập để khám phá khóa học');
+                  navigate('/login', { state: { from: '/student' } });
+                } else {
+                  navigate('/student');
+                }
+              }}
+            >
+              Khám phá khóa học
+            </button>
+            <button 
+              className="btn-secondary"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/ai-assistant');
+              }}
+            >
+              Dùng thử AI miễn phí
+            </button>
           </div>
         </div>
         <div className="hero-visual">

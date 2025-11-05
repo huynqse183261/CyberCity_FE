@@ -27,9 +27,7 @@ import TeacherStudents from './pages/TeacherStudents';
 import TeacherStudentDetail from './pages/TeacherStudentDetail';
 import TeacherStudentProgress from './pages/TeacherStudentProgress';
 import TeacherSettings from './pages/TeacherSettings';
-import StudentSettings from './pages/StudentSettings';
 import StudentProfile from './pages/StudentProfile';
-import StudentPaymentHistory from './pages/StudentPaymentHistory';
 import AdminSettings from './pages/AdminSettings';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
@@ -39,14 +37,22 @@ import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
 import WarrantyPage from './pages/WarrantyPage';
 import PricingPage from './pages/PricingPage';
+import CheckoutPage from './pages/CheckoutPage';
+import DownloadVMPage from './pages/DownloadVMPage';
 
 // Import protected route components
-import { AdminRoute, TeacherRoute, StudentRoute, AllUserRoute } from './components/ProtectedRoute';
+import { AdminRoute, TeacherRoute, StudentRoute, AllUserRoute, PublicRoute } from './components/ProtectedRoute';
 import AdminMessages from './pages/AdminMessages';
+import AdminOrderManagement from './pages/AdminOrderManagement';
+import InvoiceManagement from './pages/InvoiceManagement';
 
 // Import PenTest Learning Pages
 import PenTestPage from './pages/PenTestPage';
 import PenTestModule1 from './pages/PenTestModule1';
+
+// Import Module Detail Page
+import ModuleDetailPage from './pages/ModuleDetailPage';
+import CourseDetailPage from './pages/CourseDetailPage';
 
 // Import AI Assistant Page
 import AIAssistantPage from './pages/AIAssistantPage';
@@ -93,18 +99,34 @@ function App() {
                 } 
               />
               <Route 
-                path="/linux" 
+                path="/linux/course/:courseUid" 
                 element={
                   <StudentRoute>
-                    <LinuxPage />
+                    <CourseDetailPage />
                   </StudentRoute>
                 } 
               />
               <Route 
-                path="/linux/module-1" 
+                path="/linux/course/:courseUid/module/:moduleIndex" 
                 element={
                   <StudentRoute>
-                    <LinuxModule1 />
+                    <ModuleDetailPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/linux/module/:moduleIndex" 
+                element={
+                  <StudentRoute>
+                    <ModuleDetailPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/linux" 
+                element={
+                  <StudentRoute>
+                    <LinuxPage />
                   </StudentRoute>
                 } 
               />
@@ -162,7 +184,7 @@ function App() {
                 path="/admin/orders" 
                 element={
                   <AdminRoute>
-                    <AdminDashboard />
+                    <AdminOrderManagement />
                   </AdminRoute>
                 } 
               />
@@ -194,7 +216,7 @@ function App() {
                 path="/admin/invoices" 
                 element={
                   <AdminRoute>
-                    <AdminDashboard />
+                    <InvoiceManagement />
                   </AdminRoute>
                 } 
               />
@@ -290,17 +312,6 @@ function App() {
                   </AdminRoute>
                 } 
               />
-
-              {/* Student Settings */}
-              <Route 
-                path="/student/settings" 
-                element={
-                  <StudentRoute>
-                    <StudentSettings />
-                  </StudentRoute>
-                } 
-              />
-
               {/* Student Profile */}
               <Route 
                 path="/student/profile" 
@@ -311,22 +322,28 @@ function App() {
                 } 
               />
 
-              {/* Student Payment History */}
+              {/* PenTest Learning Routes */}
               <Route 
-                path="/student/payment-history" 
+                path="/pentest/course/:courseUid" 
                 element={
                   <StudentRoute>
-                    <StudentPaymentHistory />
+                    <CourseDetailPage />
                   </StudentRoute>
                 } 
               />
-
-              {/* PenTest Learning Routes */}
               <Route 
-                path="/pentest" 
+                path="/pentest/course/:courseUid/module/:moduleIndex" 
                 element={
                   <StudentRoute>
-                    <PenTestPage />
+                    <ModuleDetailPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/pentest/module/:moduleIndex" 
+                element={
+                  <StudentRoute>
+                    <ModuleDetailPage />
                   </StudentRoute>
                 } 
               />
@@ -339,28 +356,36 @@ function App() {
                 } 
               />
               <Route 
-                path="/pentest/module-1" 
+                path="/pentest" 
                 element={
                   <StudentRoute>
-                    <PenTestModule1 />
+                    <PenTestPage />
                   </StudentRoute>
                 } 
               />
 
-              {/* AI Assistant Route */}
+              {/* AI Assistant Route - Public */}
               <Route 
                 path="/ai-assistant" 
                 element={
-                  <StudentRoute>
+                  <PublicRoute>
                     <AIAssistantPage />
-                  </StudentRoute>
+                  </PublicRoute>
                 } 
               />
+
 
               {/* Other Pages */}
               <Route path="/lien-he" element={<ContactPage />} />
               <Route path="/gioi-thieu" element={<AboutPage />} />
               <Route path="/pricing" element={<PricingPage />} />
+              <Route 
+                path="/checkout" 
+                element={
+                  <CheckoutPage />
+                } 
+              />
+              <Route path="/download-vm" element={<DownloadVMPage />} />
               <Route path="/dieu-kien-giao-dich" element={<TermsPage />} />
               <Route path="/quy-trinh-su-dung" element={<ServiceProcessPage />} />
               <Route path="/chinh-sach-bao-hanh" element={<WarrantyPage />} />
