@@ -26,12 +26,14 @@ export type CreatePaymentLinkResponse = {
 export type PaymentStatusResponse = {
   success: boolean;
   data?: {
-    uid: string;
     orderCode: number;
+    amount: number;
     amountPaid: string;
+    amountRemaining: number;
     status: 'PENDING' | 'PAID' | 'CANCELLED';
-    paidAt?: string | null;
-    cancellationReason?: string;
+    createdAt: string;
+    canceledAt?: string | null;
+    cancellationReason?: string | null;
   };
 };
 
@@ -46,10 +48,10 @@ const paymentService = {
     return res.data;
   },
 
-  async getPaymentStatus(paymentUid: string): Promise<PaymentStatusResponse> {
-    const res = await axiosInstance.get(`/api/payment/status/${paymentUid}`);
+  async getPaymentStatus(orderCode: number): Promise<PaymentStatusResponse> {
+    const res = await axiosInstance.get(`/api/payment/status/${orderCode}`);
     return res.data;
-    },
+  },
 
   async getInvoice(paymentUid: string): Promise<PaymentInvoiceResponse> {
     const res = await axiosInstance.get(`/api/payment/invoice/${paymentUid}`);
@@ -58,6 +60,12 @@ const paymentService = {
 
   async getPaymentHistory(userUid: string): Promise<{ success: boolean; data?: any[] }> {
     const res = await axiosInstance.get(`/api/payment/history/${userUid}`);
+    return res.data;
+  },
+
+  async cancelPayment(orderCode: number, reason?: string): Promise<{ success: boolean; message?: string }> {
+    const params = reason ? `?reason=${encodeURIComponent(reason)}` : '';
+    const res = await axiosInstance.post(`/api/payment/cancel/${orderCode}${params}`);
     return res.data;
   }
 };

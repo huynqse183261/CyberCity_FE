@@ -27,6 +27,7 @@ const StudentCheckoutPage: React.FC = () => {
 
   const [creating, setCreating] = useState(false);
   const [paymentUid, setPaymentUid] = useState<string | null>(null);
+  const [orderCode, setOrderCode] = useState<number | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [status, setStatus] = useState<'PENDING' | 'PAID' | 'CANCELLED' | null>(null);
@@ -47,6 +48,19 @@ const StudentCheckoutPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [planUid]);
 
+  // Cleanup: Hủy payment khi unmount (khi navigate away hoặc component bị destroy)
+  useEffect(() => {
+    return () => {
+      // Cleanup khi component unmount - hủy payment nếu vẫn đang pending
+      if (orderCode && status === 'PENDING') {
+        paymentService.cancelPayment(orderCode, 'User navigated away').catch(() => {
+          // Ignore errors khi cancel - không block unmount
+        });
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderCode, status]);
+
   const createPayment = async () => {
     const userUid = (currentUser as any)?.uid || (currentUser as any)?.userUid || (currentUser as any)?.id || (currentUser as any)?.userId;
     if (!userUid || !planUid) {
@@ -65,6 +79,7 @@ const StudentCheckoutPage: React.FC = () => {
       });
       if (res?.success && res.data) {
         setPaymentUid(res.data.uid);
+        setOrderCode(res.data.orderCode);
         setCheckoutUrl(res.data.checkoutUrl);
         setQrCode(res.data.qrCode);
         setStatus(res.data.status);
@@ -83,7 +98,7 @@ const StudentCheckoutPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!paymentUid) return;
+    if (!orderCode) return;
     let stopped = false;
     const startedAt = Date.now();
     const timer = setInterval(async () => {
@@ -93,7 +108,7 @@ const StudentCheckoutPage: React.FC = () => {
         return;
       }
       try {
-        const res = await paymentService.getPaymentStatus(paymentUid);
+        const res = await paymentService.getPaymentStatus(orderCode);
         if (res?.success && res.data) {
           setStatus(res.data.status);
           if (res.data.status === 'PAID' || res.data.status === 'CANCELLED') {
@@ -105,7 +120,7 @@ const StudentCheckoutPage: React.FC = () => {
       }
     }, POLL_INTERVAL_MS);
     return () => { stopped = true; clearInterval(timer); };
-  }, [paymentUid]);
+  }, [orderCode]);
 
   return (
     <div className="linux-lab-page">
@@ -127,15 +142,15 @@ const StudentCheckoutPage: React.FC = () => {
 
       <section className="main-features-section">
         <div className="features-container" style={{ maxWidth: 900 }}>
-          {!paymentUid ? (
-            <div style={{ textAlign: 'center' }}>
-              {error && <p style={{ color: '#ff6b6b' }}>{error}</p>}
-              <button className="feature-btn linux-btn" onClick={createPayment} disabled={creating || !planUid} style={{ height: 56, fontSize: 18, padding: '0 28px' }}>
-                {creating ? 'Đang tạo liên kết thanh toán...' : 'Tạo liên kết thanh toán'}
-              </button>
-              <div style={{ marginTop: 16 }}>
-                <button className="feature-btn ai-btn" onClick={() => navigate('/student/pricing')} style={{ height: 48, fontSize: 16, padding: '0 22px' }}>← Quay lại bảng giá</button>
-              </div>
+          {creating && !paymentUid ? (
+            <div style={{ textAlign: 'center', padding: 24 }}>
+              <p>Đang tạo liên kết thanh toán...</p>
+              {error && <p style={{ color: '#ff6b6b', marginTop: 12 }}>{error}</p>}
+            </div>
+          ) : error && !paymentUid ? (
+            <div style={{ textAlign: 'center', padding: 24 }}>
+              <p style={{ color: '#ff6b6b' }}>{error}</p>
+              <button className="feature-btn ai-btn" onClick={() => navigate('/student/pricing')} style={{ height: 48, fontSize: 16, padding: '0 22px', marginTop: 16 }}>← Quay lại bảng giá</button>
             </div>
           ) : (
             <div className="main-features-grid">
@@ -155,15 +170,15 @@ const StudentCheckoutPage: React.FC = () => {
               <div className="main-feature-card pentest-card" style={{ alignItems: 'center', textAlign: 'center', padding: 24 }}>
                 <h3 className="feature-title">Bước 2: Trạng thái</h3>
                 <p>Trạng thái hiện tại: <strong>{status || 'PENDING'}</strong></p>
-                {paymentUid && (
+                {orderCode && (
                   <button className="feature-btn ai-btn" style={{ height: 48, fontSize: 16, padding: '0 22px', marginBottom: 12 }}
                     onClick={async () => {
                       try {
                         setChecking(true);
-                        const res = await paymentService.getPaymentStatus(paymentUid);
+                        const res = await paymentService.getPaymentStatus(orderCode);
                         if (res?.success && res.data) {
                           setStatus(res.data.status);
-                          if (res.data.status === 'PAID') {
+                          if (res.data.status === 'PAID' && paymentUid) {
                             try { window.open(`/api/payment/invoice/${encodeURIComponent(paymentUid)}`, '_blank'); } catch {}
                           }
                         }
@@ -185,9 +200,22 @@ const StudentCheckoutPage: React.FC = () => {
                 {status === 'CANCELLED' && (
                   <>
                     <p style={{ color: '#dc2626', fontWeight: 600 }}>Thanh toán bị hủy.</p>
-                    <button className="feature-btn pentest-btn" onClick={() => { setPaymentUid(null); setCheckoutUrl(null); setQrCode(null); setStatus(null); }} style={{ height: 52, fontSize: 16, padding: '0 24px' }}>Tạo lại liên kết</button>
+                    <button className="feature-btn pentest-btn" onClick={() => { setPaymentUid(null); setOrderCode(null); setCheckoutUrl(null); setQrCode(null); setStatus(null); }} style={{ height: 52, fontSize: 16, padding: '0 24px' }}>Tạo lại liên kết</button>
                   </>
                 )}
+                <div style={{ marginTop: 16 }}>
+                  <button className="feature-btn ai-btn" onClick={() => {
+                    if (orderCode && status === 'PENDING') {
+                      paymentService.cancelPayment(orderCode, 'User cancelled').then(() => {
+                        navigate('/student/pricing');
+                      }).catch(() => {
+                        navigate('/student/pricing');
+                      });
+                    } else {
+                      navigate('/student/pricing');
+                    }
+                  }} style={{ height: 48, fontSize: 16, padding: '0 22px' }}>← Hủy thanh toán</button>
+                </div>
               </div>
             </div>
           )}
