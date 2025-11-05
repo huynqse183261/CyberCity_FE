@@ -18,19 +18,21 @@ const StudentPricingPage: React.FC = () => {
     avatar: currentUser?.fullName?.charAt(0).toUpperCase() || 'U'
   };
 
-  const { data, isLoading, error } = usePricingPlans();
+  const { data, isLoading, error } = usePricingPlans({ useStudentEndpoint: false });
 
   const plans = React.useMemo(() => {
-    const raw = Array.isArray(data) ? data : (data as any)?.items || [];
+    if (!data) return [];
+    const raw = Array.isArray(data) ? data : (data as any)?.items || (data as any)?.data || [];
+    console.log('Pricing plans data:', raw);
     return raw.map((plan: any) => ({
       uid: plan.uid,
-      planName: plan.planName,
+      planName: plan.planName || plan.plan_name || plan.name,
       price: plan.price || 0,
-      durationDays: plan.durationDays || 30,
+      durationDays: plan.durationDays || plan.duration_days || plan.duration || 30,
       features: typeof plan.features === 'string' && plan.features.startsWith('[')
         ? JSON.parse(plan.features)
-        : plan.features?.split?.('\n') || [],
-      isFeatured: plan.planName?.toLowerCase?.().includes('premium') || plan.planName?.toLowerCase?.().includes('pro')
+        : plan.features?.split?.('\n') || (Array.isArray(plan.features) ? plan.features : []),
+      isFeatured: plan.planName?.toLowerCase?.().includes('premium') || plan.planName?.toLowerCase?.().includes('pro') || plan.plan_name?.toLowerCase?.().includes('premium') || plan.plan_name?.toLowerCase?.().includes('pro')
     }));
   }, [data]);
 
@@ -61,7 +63,12 @@ const StudentPricingPage: React.FC = () => {
             <div style={{ textAlign: 'center', padding: 24 }}>Đang tải gói giá...</div>
           )}
           {error && (
-            <div style={{ textAlign: 'center', padding: 24, color: '#ff6b6b' }}>Không thể tải gói giá. Vui lòng thử lại.</div>
+            <div style={{ textAlign: 'center', padding: 24, color: '#ff6b6b' }}>
+              <p>Không thể tải gói giá. Vui lòng thử lại.</p>
+              {error instanceof Error && (
+                <p style={{ fontSize: 12, marginTop: 8, opacity: 0.8 }}>{error.message}</p>
+              )}
+            </div>
           )}
 
           {!isLoading && !error && (

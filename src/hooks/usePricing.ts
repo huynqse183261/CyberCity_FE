@@ -8,11 +8,11 @@ export const PRICING_QUERY_KEYS = {
   plan: (id: string) => ['pricing', 'plan', id] as const,
 } as const;
 
-export const usePricingPlans = (options?: { enabled?: boolean }) => {
+export const usePricingPlans = (options?: { enabled?: boolean; useStudentEndpoint?: boolean }) => {
   return useQuery({
-    queryKey: PRICING_QUERY_KEYS.plans,
+    queryKey: [...PRICING_QUERY_KEYS.plans, options?.useStudentEndpoint ? 'student' : 'admin'],
     queryFn: async () => {
-      const data = await pricingService.getAllPlans(true);
+      const data = await pricingService.getAllPlans(true, options?.useStudentEndpoint ?? false);
       return data;
     },
     enabled: options?.enabled ?? true,
