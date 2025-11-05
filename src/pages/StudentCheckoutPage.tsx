@@ -71,12 +71,20 @@ const StudentCheckoutPage: React.FC = () => {
       setError(null);
       setCreating(true);
       const origin = window.location.origin;
-      const res = await paymentService.createPaymentLink({
+      // Có thể config từ env hoặc dùng mặc định
+      const returnUrl = import.meta.env.VITE_PAYMENT_RETURN_URL || `${origin}/student/payment/success`;
+      const cancelUrl = import.meta.env.VITE_PAYMENT_CANCEL_URL || `${origin}/student/payment/cancel`;
+      
+      const requestBody = {
         userUid,
         planUid,
-        returnUrl: `${origin}/student/pricing`,
-        cancelUrl: `${origin}/student/pricing`
-      });
+        returnUrl,
+        cancelUrl
+      };
+      
+      console.log('Creating payment link with request:', requestBody);
+      
+      const res = await paymentService.createPaymentLink(requestBody);
       if (res?.success && res.data) {
         setPaymentUid(res.data.uid);
         setOrderCode(res.data.orderCode);

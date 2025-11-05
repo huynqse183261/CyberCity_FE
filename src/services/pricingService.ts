@@ -3,13 +3,28 @@ import type { PricingPlanDTO, PricingListDTO } from '../models/PricingTypes';
 
 class PricingService {
   private readonly baseUrl = '/api/pricing-plans';
+  private readonly studentBaseUrl = '/api/student/pricing-plans';
 
-  async getAllPlans(descending = true): Promise<PricingListDTO | PricingPlanDTO[]> {
+  async getAllPlans(descending = true, useStudentEndpoint = false): Promise<PricingListDTO | PricingPlanDTO[]> {
     try {
+      const url = useStudentEndpoint ? this.studentBaseUrl : this.baseUrl;
       const params = descending ? '?descending=true' : '';
-      const response = await axiosInstance.get(`${this.baseUrl}${params}`);
-      // Backend may return an array or a paged object; return as-is
-      return response.data;
+      const response = await axiosInstance.get(`${url}${params}`);
+      
+      // Xử lý response có thể là { data: [...] } hoặc { items: [...] } hoặc array trực tiếp
+      const responseData = response.data;
+      if (Array.isArray(responseData)) {
+        return responseData;
+      }
+      if (responseData?.data && Array.isArray(responseData.data)) {
+        return responseData.data;
+      }
+      if (responseData?.items && Array.isArray(responseData.items)) {
+        return responseData.items;
+      }
+      
+      console.warn('Unexpected response format:', responseData);
+      return [];
     } catch (error: any) {
       console.error('Error fetching pricing plans:', error);
       throw error;
