@@ -36,6 +36,7 @@ const ModuleDetailPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingSubtopic, setLoadingSubtopic] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [quizInstantResult, setQuizInstantResult] = useState<{ [questionUid: string]: 'correct' | 'incorrect' | null }>({});
 
   useEffect(() => {
     if (!courseSlug || !moduleIndex) {
@@ -171,26 +172,60 @@ const ModuleDetailPage: React.FC = () => {
   const handleQuizAnswerChange = (questionUid: string, answerUid: string, isMultiple: boolean) => {
     setQuizAnswers(prev => {
       const currentAnswers = prev[questionUid] || [];
+      let nextAnswers: string[];
       if (isMultiple) {
         // Toggle answer for multiple choice
         if (currentAnswers.includes(answerUid)) {
-          return {
-            ...prev,
-            [questionUid]: currentAnswers.filter(a => a !== answerUid)
-          };
+          nextAnswers = currentAnswers.filter(a => a !== answerUid);
         } else {
-          return {
-            ...prev,
-            [questionUid]: [...currentAnswers, answerUid]
-          };
+          nextAnswers = [...currentAnswers, answerUid];
         }
       } else {
         // Single choice - replace
-        return {
-          ...prev,
-          [questionUid]: [answerUid]
-        };
+        nextAnswers = [answerUid];
       }
+
+      // Đánh giá đúng/sai tức thì dựa trên dữ liệu isCorrect từ selectedQuiz
+      try {
+        if (selectedQuiz) {
+          const question = selectedQuiz.questions.find(q => q.uid === questionUid);
+          if (question) {
+            const correctUids = (question.answers || []).filter(a => a.isCorrect).map(a => a.uid).sort();
+            const picked = nextAnswers.slice().sort();
+
+            if (!question.multipleChoice) {
+              // Single choice: chỉ cần đáp án được chọn là đúng thì Đúng, ngược lại Sai
+              const selectedIsCorrect = (question.answers || []).some(a => a.uid === answerUid && a.isCorrect);
+              setQuizInstantResult(prevRes => ({
+                ...prevRes,
+                [questionUid]: selectedIsCorrect ? 'correct' : 'incorrect'
+              }));
+            } else {
+              // Multiple choice:
+              // - Nếu có bất kỳ lựa chọn nào thuộc tập đáp án sai -> Sai ngay
+              const pickedHasWrong = picked.some(uid => !correctUids.includes(uid));
+              if (pickedHasWrong) {
+                setQuizInstantResult(prevRes => ({ ...prevRes, [questionUid]: 'incorrect' }));
+              } else {
+                // - Nếu tất cả lựa chọn đều thuộc tập đúng và số lượng bằng tập đúng -> Đúng
+                const isExactlyCorrect = picked.length > 0 && JSON.stringify(correctUids) === JSON.stringify(picked);
+                // - Nếu mới chọn một phần đúng (subset) -> chưa kết luận
+                setQuizInstantResult(prevRes => ({
+                  ...prevRes,
+                  [questionUid]: isExactlyCorrect ? 'correct' : null
+                }));
+              }
+            }
+          }
+        }
+      } catch (e) {
+        // Bỏ qua lỗi đánh giá tức thì
+      }
+
+      return {
+        ...prev,
+        [questionUid]: nextAnswers
+      };
     });
   };
 
@@ -217,6 +252,27 @@ const ModuleDetailPage: React.FC = () => {
       }
     } catch (err) {
       console.error('Error submitting quiz:', err);
+      // Fallback chấm tạm trên client nếu API chưa sẵn (dev only)
+      try {
+        const totalQuestions = selectedQuiz.questions.length;
+        let correctCount = 0;
+        for (const q of selectedQuiz.questions) {
+          const correct = (q.answers || []).filter(a => a.isCorrect).map(a => a.uid).sort();
+          const picked = (quizAnswers[q.uid] || []).slice().sort();
+          if (correct.length > 0 && JSON.stringify(correct) === JSON.stringify(picked)) {
+            correctCount += 1;
+          }
+        }
+        if (totalQuestions > 0) {
+          const score = Math.round((correctCount / totalQuestions) * 100);
+          setQuizScore(score);
+          setShowQuizResult(true);
+          console.warn('Đã chấm điểm tạm thời trên client (dev fallback).');
+          return;
+        }
+      } catch (e) {
+        console.error('Local grading failed:', e);
+      }
       alert('Không thể nộp bài quiz. Vui lòng thử lại.');
     }
   };
@@ -404,25 +460,35 @@ const ModuleDetailPage: React.FC = () => {
                           Câu {idx + 1}: {question.content}
                         </h3>
                         <div className="question-answers">
-                          {question.answers.map((answer) => (
-                            <label 
-                              key={answer.uid}
-                              className={`answer-option ${question.multipleChoice ? 'multiple' : 'single'}`}
-                            >
-                              <input
-                                type={question.multipleChoice ? 'checkbox' : 'radio'}
-                                name={`question-${question.uid}`}
-                                checked={quizAnswers[question.uid]?.includes(answer.uid) || false}
-                                onChange={() => handleQuizAnswerChange(
-                                  question.uid, 
-                                  answer.uid, 
-                                  question.multipleChoice || false
-                                )}
-                              />
-                              <span>{answer.content}</span>
-                            </label>
-                          ))}
+                          {question.answers.map((answer) => {
+                            const isSelected = (quizAnswers[question.uid] || []).includes(answer.uid);
+                            const color = isSelected ? (answer.isCorrect ? '#16a34a' : '#dc2626') : undefined;
+                            return (
+                              <label 
+                                key={answer.uid}
+                                className={`answer-option ${question.multipleChoice ? 'multiple' : 'single'}`}
+                                style={{ color }}
+                              >
+                                <input
+                                  type={question.multipleChoice ? 'checkbox' : 'radio'}
+                                  name={`question-${question.uid}`}
+                                  checked={isSelected}
+                                  onChange={() => handleQuizAnswerChange(
+                                    question.uid, 
+                                    answer.uid, 
+                                    question.multipleChoice || false
+                                  )}
+                                />
+                                <span>{answer.content}</span>
+                              </label>
+                            );
+                          })}
                         </div>
+                        {quizInstantResult[question.uid] && (
+                          <div style={{ marginTop: 8, fontWeight: 600, color: quizInstantResult[question.uid] === 'correct' ? '#16a34a' : '#dc2626' }}>
+                            {quizInstantResult[question.uid] === 'correct' ? 'Kết quả: Đúng' : 'Kết quả: Sai'}
+                          </div>
+                        )}
                       </div>
                     ))}
                     <div className="quiz-actions">

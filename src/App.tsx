@@ -7,10 +7,10 @@ import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
-import InboxPage from './pages/InboxPage';
+// import InboxPage from './pages/InboxPage';
 import HomeLogin from './pages/HomeLogin';
 import LinuxPage from './pages/LinuxPage';
-import LinuxModule1 from './pages/LinuxModule1';
+// import LinuxModule1 from './pages/LinuxModule1';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminCourseManagement from './pages/AdminCourseManagement';
 import AdminModuleManagement from './pages/AdminModuleManagement';
@@ -36,19 +36,23 @@ import PaymentGuidePage from './pages/PaymentGuidePage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
 import WarrantyPage from './pages/WarrantyPage';
-import PricingPage from './pages/PricingPage';
+// import PricingPage from './pages/PricingPage';
+import StudentPricingPage from './pages/StudentPricingPage';
+import StudentCheckoutPage from './pages/StudentCheckoutPage';
+import StudentPaymentHistoryPage from './pages/StudentPaymentHistoryPage';
+import StudentConfirmOrderPage from './pages/StudentConfirmOrderPage';
 import CheckoutPage from './pages/CheckoutPage';
 import DownloadVMPage from './pages/DownloadVMPage';
 
 // Import protected route components
-import { AdminRoute, TeacherRoute, StudentRoute, AllUserRoute, PublicRoute } from './components/ProtectedRoute';
+import { AdminRoute, TeacherRoute, StudentRoute, PublicRoute } from './components/ProtectedRoute';
 import AdminMessages from './pages/AdminMessages';
 import AdminOrderManagement from './pages/AdminOrderManagement';
 import InvoiceManagement from './pages/InvoiceManagement';
 
 // Import PenTest Learning Pages
 import PenTestPage from './pages/PenTestPage';
-import PenTestModule1 from './pages/PenTestModule1';
+// import PenTestModule1 from './pages/PenTestModule1';
 
 // Import Module Detail Page
 import ModuleDetailPage from './pages/ModuleDetailPage';
@@ -71,15 +75,7 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/access-denied" element={<AccessDenied />} />
 
-              {/* Shared Protected Routes - Available for all authenticated users */}
-              <Route 
-                path="/inbox" 
-                element={
-                  <AllUserRoute>
-                    <InboxPage />
-                  </AllUserRoute>
-                } 
-              />
+              {/* Removed inbox route for students */}
                 
                 {/* Student Protected Routes */}
                 <Route 
@@ -95,6 +91,38 @@ function App() {
                 element={
                   <StudentRoute>
                     <LinuxPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/student/pricing" 
+                element={
+                  <StudentRoute>
+                    <StudentPricingPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/student/confirm" 
+                element={
+                  <StudentRoute>
+                    <StudentConfirmOrderPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/student/checkout" 
+                element={
+                  <StudentRoute>
+                    <StudentCheckoutPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/student/payment-history" 
+                element={
+                  <StudentRoute>
+                    <StudentPaymentHistoryPage />
                   </StudentRoute>
                 } 
               />
@@ -378,7 +406,7 @@ function App() {
               {/* Other Pages */}
               <Route path="/lien-he" element={<ContactPage />} />
               <Route path="/gioi-thieu" element={<AboutPage />} />
-              <Route path="/pricing" element={<PricingPage />} />
+              {/* Removed public pricing sample page */}
               <Route 
                 path="/checkout" 
                 element={

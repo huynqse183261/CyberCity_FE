@@ -170,6 +170,41 @@ const HomeLogin: React.FC = () => {
                 Trò chuyện với AI →
               </button>
             </div>
+
+            {/* Pricing Card */}
+            <div className="main-feature-card pricing-card">
+              <div className="feature-icon-large">💳</div>
+              <h3 className="feature-title">Mua gói học</h3>
+              <p className="feature-description">
+                Chọn gói học phù hợp để mở khóa toàn bộ nội dung và tính năng nâng cao
+              </p>
+              <ul className="feature-highlights">
+                <li>✓ Truy cập đầy đủ khóa Linux & Pentest</li>
+                <li>✓ Làm quiz không giới hạn</li>
+                <li>✓ Theo dõi tiến độ và chứng chỉ</li>
+                <li>✓ Hỗ trợ ưu tiên</li>
+              </ul>
+              <div className="feature-stats-row">
+                <div className="mini-stat">
+                  <span className="mini-stat-value">Pro</span>
+                  <span className="mini-stat-label">Gói đề xuất</span>
+                </div>
+                <div className="mini-stat">
+                  <span className="mini-stat-value">-10%</span>
+                  <span className="mini-stat-label">Ưu đãi</span>
+                </div>
+                <div className="mini-stat">
+                  <span className="mini-stat-value">24/7</span>
+                  <span className="mini-stat-label">Hỗ trợ</span>
+                </div>
+              </div>
+              <button 
+                className="feature-btn pricing-btn"
+                onClick={() => navigate('/student/pricing')}
+              >
+                Xem bảng giá →
+              </button>
+            </div>
           </div>
         </div>
       </section>

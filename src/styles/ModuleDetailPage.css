@@ -44,7 +44,7 @@
 }
 
 .topic-item h5 {
-  color: #b0b0b0;
+  color: #ddd; /* Màu sáng hơn để dễ nhìn */
   font-size: 14px;
   margin-bottom: 8px;
 }
@@ -57,7 +57,7 @@
 }
 
 .subtopic-item {
-  color: #888;
+  color: #ccc; /* Màu sáng hơn để dễ nhìn */
   font-size: 13px;
   padding: 8px 12px;
   margin-bottom: 5px;
@@ -70,19 +70,20 @@
   z-index: 1;
 }
 
-.subtopic-item:active {
-  transform: scale(0.98);
-}
-
 .subtopic-item:hover {
   background: #2a2a3e;
-  color: #00d4ff;
+  color: #fff; /* Màu trắng khi hover */
 }
 
 .subtopic-item.active {
   background: #00d4ff;
-  color: #000;
+  color: #fff; /* Màu trắng khi active/selected */
   font-weight: bold;
+}
+
+.subtopic-item:active {
+  transform: scale(0.98);
+  color: #fff; /* Màu trắng khi đang nhấn */
 }
 
 .theory-content {

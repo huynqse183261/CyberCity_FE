@@ -124,7 +124,7 @@ const LinuxPage: React.FC = () => {
                   <div className="module-content">
                     <div className="topics">
                       <h4>📋 Mô tả:</h4>
-                      <p style={{ color: '#b0b0b0', lineHeight: '1.6', marginBottom: '15px' }}>
+                      <p className="topics-description">
                         {course.description}
                       </p>
                       <div className="progress-bar">
