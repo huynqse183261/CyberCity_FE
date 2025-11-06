@@ -87,11 +87,8 @@ class AuthService {
         data
       );
       
-      console.log('Login response:', response.data);
-      
       // Xử lý response từ backend
       const backendData = response.data;
-      console.log('Backend data:', backendData);
       
       // API trả về trực tiếp object user, không có isSuccess wrapper
       if (backendData.isSuccess && backendData.data) {
@@ -185,16 +182,6 @@ class AuthService {
         message: backendData.message || 'Đăng nhập thất bại',
       };
     } catch (error: any) {
-      console.error('Login error:', error);
-      console.error('Login error details:', {
-        message: error.message,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        url: error.config?.url,
-        baseURL: error.config?.baseURL
-      });
-      
       // Xử lý lỗi từ backend
       if (error?.response?.data) {
         const errorData = error.response.data;
@@ -260,26 +247,15 @@ class AuthService {
         };
       }
 
-      console.log('=== Register Debug ===');
-      console.log('1. Input data:', data);
-      console.log('2. Cleaned request data:', requestData);
-      console.log('3. Endpoint:', this.endpoints.REGISTER);
-
       const response = await axiosInstance.post<BackendApiResponse<any>>(
         this.endpoints.REGISTER,
         requestData
       );
       
-      console.log('4. Raw response status:', response.status);
-      console.log('5. Raw response data:', response.data);
-      
       const backendData = response.data;
       
       // Handle cả 2 format: isSuccess và success
       const isSuccessful = backendData.isSuccess || (backendData as any).success;
-      console.log('6. Backend isSuccess:', backendData.isSuccess);
-      console.log('6a. Backend success:', (backendData as any).success);
-      console.log('7. Final isSuccessful:', isSuccessful);
       
       return {
         success: isSuccessful,
@@ -287,15 +263,8 @@ class AuthService {
         message: backendData.message || 'Đăng ký thành công',
       };
     } catch (error: any) {
-      console.error('=== Register Error ===');
-      console.error('Error object:', error);
-      console.error('Error response:', error?.response);
-      console.error('Error data:', error?.response?.data);
-      console.error('Error status:', error?.response?.status);
-      
       if (error?.response?.data) {
         const errorData = error.response.data;
-        console.log('Backend error data:', errorData);
         
         // Xử lý specific error messages
         let errorMessage = errorData.message || 'Đăng ký thất bại';
@@ -329,25 +298,13 @@ class AuthService {
   // Google Login
   async googleLogin(idToken: string): Promise<ApiResponse<LoginResponse>> {
     try {
-      console.log('=== Google Login Debug ===');
-      console.log('1. Input idToken:', idToken?.substring(0, 50) + '...');
-      console.log('2. Endpoint:', this.endpoints.GOOGLE_LOGIN);
-      console.log('3. Request payload:', { idToken: idToken?.substring(0, 50) + '...' });
-      
       const response = await axiosInstance.post<BackendApiResponse<LoginResponse>>(
         this.endpoints.GOOGLE_LOGIN,
         { idToken }
       );
       
-      console.log('4. Raw response status:', response.status);
-      console.log('5. Raw response data:', response.data);
-      
       // Xử lý response từ backend
       const backendData = response.data;
-      console.log('6. Backend isSuccess:', backendData.isSuccess);
-      console.log('6a. Backend success:', (backendData as any).success);
-      console.log('7. Backend data exists:', !!backendData.data);
-      console.log('8. Backend message:', backendData.message);
 
       // Chuẩn hóa userData từ nhiều format: {data}, {items[0]}, hoặc object trực tiếp
       const userData: any = backendData?.data
@@ -358,14 +315,11 @@ class AuthService {
       const isSuccessful = backendData.isSuccess || (backendData as any).success || !!userData;
 
       if (isSuccessful && userData) {
-        console.log('9. User data normalized from backend:', userData);
-
         // Lấy id và token từ nhiều key phổ biến
         const uid = userData.userId ?? userData.uid ?? userData.id ?? null;
         const token = userData.token ?? userData.access_token ?? null;
 
         if (!uid) {
-          console.error('Missing required user id:', { uid });
           return {
             success: false,
             message: 'Thiếu userId/uid/id trong dữ liệu từ server',
@@ -393,8 +347,6 @@ class AuthService {
           status: (userData.status as string)?.toLowerCase() || 'active',
         };
         localStorage.setItem('user', JSON.stringify(userInfo));
-        console.log('10. Saved user info:', userInfo);
-        console.log('11. Token saved:', !!localStorage.getItem('access_token'));
 
         return {
           success: true,
@@ -402,21 +354,12 @@ class AuthService {
           message: backendData.message || 'Đăng nhập Google thành công!',
         };
       } else {
-        console.log('12. Backend response not successful');
-        console.log('    - isSuccess:', backendData.isSuccess);
-        console.log('    - success:', (backendData as any).success);
-        console.log('    - data:', backendData.data);
         return {
           success: false,
           message: backendData.message || 'Đăng nhập Google thất bại',
         };
       }
     } catch (error: any) {
-      console.error('=== Google Login Error ===');
-      console.error('Error object:', error);
-      console.error('Error response:', error?.response);
-      console.error('Error data:', error?.response?.data);
-      
       if (error?.response?.data) {
         const errorData = error.response.data;
         return {
@@ -436,13 +379,9 @@ class AuthService {
   // Đăng xuất
   async logout(): Promise<ApiResponse<null>> {
     try {
-      console.log('Logout: Starting logout...');
-      
       const response = await axiosInstance.post<BackendApiResponse<null>>(
         this.endpoints.LOGOUT
       );
-      
-      console.log('Logout response:', response.data);
       
       // Xóa tokens khỏi localStorage
       this.clearAuthData();
@@ -452,16 +391,6 @@ class AuthService {
         message: response.data.message || 'Đăng xuất thành công',
       };
     } catch (error: any) {
-      console.error('Logout error:', error);
-      console.error('Logout error details:', {
-        message: error.message,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        url: error.config?.url,
-        baseURL: error.config?.baseURL
-      });
-      
       // Vẫn xóa data local dù API lỗi
       this.clearAuthData();
       return {
@@ -509,7 +438,6 @@ class AuthService {
         message: backendData.message || 'Không thể lấy thông tin profile',
       };
     } catch (error: any) {
-      console.error('Get profile error:', error);
       return {
         success: false,
         message: error?.response?.data?.message || 'Lỗi kết nối server',
@@ -551,7 +479,6 @@ class AuthService {
         message: backendData.message || 'Refresh token thất bại',
       };
     } catch (error: any) {
-      console.error('Refresh token error:', error);
       // Nếu refresh token thất bại, xóa auth data
       this.clearAuthData();
       // Chỉ redirect nếu không ở trang login/register
@@ -577,7 +504,6 @@ class AuthService {
         message: backendData.message,
       };
     } catch (error: any) {
-      console.error('Reset password error:', error);
       return {
         success: false,
         message: error?.response?.data?.message || 'Lỗi kết nối server',
@@ -600,7 +526,6 @@ class AuthService {
         message: backendData.message,
       };
     } catch (error: any) {
-      console.error('Change password error:', error);
       return {
         success: false,
         message: error?.response?.data?.message || 'Lỗi kết nối server',
@@ -622,7 +547,6 @@ class AuthService {
         message: backendData.message,
       };
     } catch (error: any) {
-      console.error('Verify email error:', error);
       return {
         success: false,
         message: error?.response?.data?.message || 'Lỗi kết nối server',
@@ -645,7 +569,6 @@ class AuthService {
     try {
       return JSON.parse(userStr) as UserInfo;
     } catch (error) {
-      console.error('Error parsing user data:', error);
       return null;
     }
   }
@@ -697,7 +620,6 @@ class AuthService {
       }).join(''));
       return JSON.parse(jsonPayload);
     } catch (error) {
-      console.error('Error decoding token:', error);
       return null;
     }
   }
@@ -717,14 +639,11 @@ class AuthService {
   // Forgot Password - Gửi mã xác thực
   async sendForgotPasswordCode(email: string): Promise<ApiResponse<any>> {
     try {
-      console.log('Sending forgot password code to:', email);
-      
       const response = await axiosInstance.post<BackendApiResponse<any>>(
         this.endpoints.FORGOT_PASSWORD_SEND,
         { email }
       );
       
-      console.log('Send code response:', response.data);
       const backendData = response.data;
       
       // Handle cả 2 format: isSuccess và success
@@ -736,8 +655,6 @@ class AuthService {
         message: backendData.message || 'Mã xác thực đã được gửi đến email của bạn',
       };
     } catch (error: any) {
-      console.error('Send forgot password code error:', error);
-      
       if (error?.response?.data) {
         const errorData = error.response.data;
         return {
@@ -757,14 +674,11 @@ class AuthService {
   // Forgot Password - Xác thực mã
   async verifyForgotPasswordCode(email: string, code: string): Promise<ApiResponse<any>> {
     try {
-      console.log('Verifying forgot password code for:', email);
-      
       const response = await axiosInstance.post<BackendApiResponse<any>>(
         this.endpoints.FORGOT_PASSWORD_VERIFY,
         { email, code }
       );
       
-      console.log('Verify code response:', response.data);
       const backendData = response.data;
       
       // Handle cả 2 format: isSuccess và success
@@ -776,8 +690,6 @@ class AuthService {
         message: backendData.message || 'Mã xác thực hợp lệ',
       };
     } catch (error: any) {
-      console.error('Verify forgot password code error:', error);
-      
       if (error?.response?.data) {
         const errorData = error.response.data;
         return {
@@ -797,14 +709,11 @@ class AuthService {
   // Forgot Password - Đặt lại mật khẩu
   async resetForgotPassword(email: string, code: string, newPassword: string): Promise<ApiResponse<any>> {
     try {
-      console.log('Resetting password for:', email);
-      
       const response = await axiosInstance.post<BackendApiResponse<any>>(
         this.endpoints.FORGOT_PASSWORD_RESET,
         { email, code, newPassword }
       );
       
-      console.log('Reset password response:', response.data);
       const backendData = response.data;
       
       // Handle cả 2 format: isSuccess và success
@@ -816,8 +725,6 @@ class AuthService {
         message: backendData.message || 'Mật khẩu đã được đặt lại thành công',
       };
     } catch (error: any) {
-      console.error('Reset forgot password error:', error);
-      
       if (error?.response?.data) {
         const errorData = error.response.data;
         return {

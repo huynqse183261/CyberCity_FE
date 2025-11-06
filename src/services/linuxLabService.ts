@@ -84,15 +84,15 @@ class LinuxLabService extends BaseApiService {
     const ws = new WebSocket(`${wsUrl}?token=${token}`);
     
     ws.onopen = () => {
-      console.log('🔗 Terminal WebSocket connected');
+      // Terminal WebSocket connected
     };
     
     ws.onerror = (error) => {
-      console.error('❌ Terminal WebSocket error:', error);
+      // Terminal WebSocket error
     };
     
     ws.onclose = () => {
-      console.log('🔌 Terminal WebSocket disconnected');
+      // Terminal WebSocket disconnected
     };
     
     return ws;

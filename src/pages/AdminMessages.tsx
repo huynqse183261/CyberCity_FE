@@ -180,7 +180,7 @@ const AdminMessagesPage: React.FC = () => {
         setReplyModalVisible(false);
       }
     } catch (error) {
-      console.error('Validation failed:', error);
+      // console.error('Validation failed:', error);
     }
   };
 

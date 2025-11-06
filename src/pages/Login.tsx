@@ -97,18 +97,14 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      console.log('Starting login process...');
-      
       // Use authentication service to login
       const result = await login(email, password);
-      console.log('Login result:', result);
       
       if (result.success) {
         message.success(result.message || 'Đăng nhập thành công!');
         
         // Get current user immediately after successful login
         const currentUser = authService.getCurrentUser();
-        console.log('Login successful, current user:', currentUser);
         
         if (currentUser) {
           // Nếu tài khoản không Active, đưa sang trang Access Denied (tự quay lại sau 30s)
@@ -127,20 +123,16 @@ const Login: React.FC = () => {
           };
           
           const redirectPath = roleRoutes[currentUser.role as keyof typeof roleRoutes];
-          console.log('Redirecting to:', redirectPath, 'for role:', currentUser.role);
           navigate(redirectPath, { replace: true });
         } else {
-          console.warn('User data not available after login');
           navigate('/');
         }
       } else {
         // Hiển thị lỗi mà không reload trang
-        console.error('Login failed:', result.message);
         message.error(result.message || 'Đăng nhập thất bại!');
         // Không reload trang, giữ nguyên form để user có thể thử lại
       }
     } catch (error: any) {
-      console.error('Login error:', error);
       
       // Xử lý lỗi chi tiết hơn
       let errorMessage = 'Đăng nhập thất bại. Vui lòng thử lại!';

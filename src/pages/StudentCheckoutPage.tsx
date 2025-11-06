@@ -65,14 +65,12 @@ const StudentCheckoutPage: React.FC = () => {
     const userUid = (currentUser as any)?.uid || (currentUser as any)?.userUid || (currentUser as any)?.id || (currentUser as any)?.userId;
     if (!userUid || !planUid) {
       setError('Thông tin không hợp lệ. Vui lòng đăng nhập lại.');
-      console.error('Missing userUid or planUid:', { userUid, planUid, currentUser });
       return;
     }
     
     // Validate userUid format (should be UUID)
     if (typeof userUid !== 'string' || userUid.length < 10) {
       setError('Mã người dùng không hợp lệ.');
-      console.error('Invalid userUid format:', userUid);
       return;
     }
     
@@ -85,8 +83,6 @@ const StudentCheckoutPage: React.FC = () => {
       setError(null);
       setCreating(true);
       
-      console.log('Creating payment link with request:', JSON.stringify(requestBody, null, 2));
-      
       const res = await paymentService.createPaymentLink(requestBody);
       if (res?.success && res.data) {
         setPaymentUid(res.data.uid);
@@ -97,23 +93,13 @@ const StudentCheckoutPage: React.FC = () => {
       } else {
         const errorMsg = res?.message || 'Không thể tạo liên kết thanh toán.';
         setError(errorMsg);
-        console.error('Payment link creation failed:', res);
       }
     } catch (e: any) {
-      console.error('Payment link creation error:', e);
       const errorMsg = e?.response?.data?.message 
         || e?.response?.data?.error 
         || e?.message 
         || 'Lỗi khi tạo liên kết thanh toán. Vui lòng thử lại.';
       setError(errorMsg);
-      
-      // Log chi tiết để debug
-      if (e?.response?.data) {
-        console.error('API Error Response:', e.response.data);
-      }
-      if (e?.response?.status === 400) {
-        console.error('Bad Request - Check request body format:', requestBody);
-      }
     } finally {
       setCreating(false);
     }

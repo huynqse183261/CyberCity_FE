@@ -1,11 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import LinuxLabNavigation from '../components/LinuxLabNavigation';
 import UserDropdown from '../components/UserDropdown';
 import { useAuth } from '../contexts/AuthContext';
 import type { User } from '../models/LinuxLabTypes';
-import contentService, { type CourseOutline, type Module as ModuleType, type Subtopic } from '../services/contentService';
-import quizService, { type QuizSummary, type QuizDetail, type QuizSubmissionRequest } from '../services/quizService';
+import { type QuizSubmissionRequest } from '../services/quizService';
+import {
+  useCourseOutlineBySlug,
+  useCourseOutlineByUid,
+  useSubtopic,
+  usePrefetchSubtopic,
+  useUpdateSubtopicProgress,
+  useQuizzesByModule,
+  useQuiz,
+  usePrefetchQuiz,
+  useModuleAccess,
+} from '../hooks/useCourseContent';
+import quizService from '../services/quizService';
 import '../styles/LinuxLabPage.css';
 import '../styles/ModuleDetailPage.css';
 
@@ -25,151 +36,149 @@ const ModuleDetailPage: React.FC = () => {
   };
 
   const [currentSection, setCurrentSection] = useState<'theory' | 'quiz'>('theory');
-  const [outline, setOutline] = useState<CourseOutline | null>(null);
-  const [currentModule, setCurrentModule] = useState<ModuleType | null>(null);
-  const [selectedSubtopic, setSelectedSubtopic] = useState<Subtopic | null>(null);
-  const [quizzes, setQuizzes] = useState<QuizSummary[]>([]);
-  const [selectedQuiz, setSelectedQuiz] = useState<QuizDetail | null>(null);
+  const [selectedSubtopicUid, setSelectedSubtopicUid] = useState<string | null>(null);
+  const [selectedQuizUid, setSelectedQuizUid] = useState<string | null>(null);
   const [quizAnswers, setQuizAnswers] = useState<{[questionUid: string]: string[]}>({});
   const [quizScore, setQuizScore] = useState<number | null>(null);
   const [showQuizResult, setShowQuizResult] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [loadingSubtopic, setLoadingSubtopic] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
   const [quizInstantResult, setQuizInstantResult] = useState<{ [questionUid: string]: 'correct' | 'incorrect' | null }>({});
+  
+  // Memoize module index
+  const moduleIdx = useMemo(() => {
+    return moduleIndex ? parseInt(moduleIndex) - 1 : -1;
+  }, [moduleIndex]);
 
-  useEffect(() => {
-    if (!courseSlug || !moduleIndex) {
-      setError('Không tìm thấy thông tin khóa học');
-      setLoading(false);
-      return;
+  // React Query hooks cho course outline
+  const { data: outlineBySlug, isLoading: loadingOutlineBySlug } = useCourseOutlineBySlug(
+    courseSlug,
+    !courseUid && !!courseSlug
+  );
+  const { data: outlineByUid, isLoading: loadingOutlineByUid } = useCourseOutlineByUid(
+    courseUid,
+    !!courseUid
+  );
+  
+  // Combine outline data
+  const outline = outlineByUid || outlineBySlug || null;
+  const loadingOutline = courseUid ? loadingOutlineByUid : loadingOutlineBySlug;
+  
+  // Get current module from outline
+  const currentModule = useMemo(() => {
+    if (!outline || moduleIdx < 0 || !outline.modules?.[moduleIdx]) {
+      return null;
     }
+    return outline.modules[moduleIdx];
+  }, [outline, moduleIdx]);
 
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const moduleIdx = parseInt(moduleIndex) - 1; // Convert 1-based to 0-based
+  // Check module access
+  const { data: accessData } = useModuleAccess(
+    courseUid,
+    moduleIdx,
+    !!courseUid && moduleIdx >= 0
+  );
+  const hasAccess = useMemo(() => {
+    return accessData?.success ? (accessData.data?.canAccess ?? true) : true;
+  }, [accessData]);
+  const accessError = useMemo(() => {
+    return accessData?.success && !accessData.data?.canAccess 
+      ? accessData.data?.reason || 'Bạn không có quyền truy cập module này.'
+      : null;
+  }, [accessData]);
 
-        // Load course outline - dùng courseUid nếu có, nếu không dùng slug
-        let courseOutline: CourseOutline;
-        if (courseUid) {
-          // Load outline theo courseUid (từ CourseDetailPage)
-          courseOutline = await contentService.getCourseOutlineByUid(courseUid);
-        } else {
-          // Load outline theo slug (từ route cũ)
-          courseOutline = await contentService.getCourseOutlineBySlug(courseSlug);
-        }
-        setOutline(courseOutline);
+  // Get quizzes for current module
+  const { data: quizzes = [] } = useQuizzesByModule(
+    currentModule?.uid,
+    courseSlug,
+    !!currentModule
+  );
 
-        // Find current module
-        if (courseOutline.modules && courseOutline.modules[moduleIdx]) {
-          const module = courseOutline.modules[moduleIdx];
-          setCurrentModule(module);
+  // Get selected quiz
+  const { data: selectedQuiz } = useQuiz(selectedQuizUid, !!selectedQuizUid);
 
-          // Load quizzes for this module
-          const moduleQuizzes = await quizService.listQuizzes({ 
-            courseSlug, 
-            moduleUid: module.uid 
-          });
-          setQuizzes(moduleQuizzes);
-        } else {
-          setError('Không tìm thấy module');
-        }
-      } catch (err) {
-        console.error('Error loading module data:', err);
-        setError('Không thể tải dữ liệu module');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Get selected subtopic with lazy loading
+  const { data: subtopicData, isLoading: loadingSubtopic } = useSubtopic(
+    selectedSubtopicUid,
+    !!selectedSubtopicUid
+  );
 
-    loadData();
-  }, [courseSlug, moduleIndex, courseUid, location.pathname]);
+  // Prefetch hooks
+  const prefetchSubtopic = usePrefetchSubtopic();
+  const prefetchQuiz = usePrefetchQuiz();
 
-  const handleSubtopicClick = async (subtopicUid: string) => {
-    console.log('handleSubtopicClick called with:', subtopicUid);
-    console.log('currentModule:', currentModule);
-    console.log('loadingSubtopic:', loadingSubtopic);
-    
-    // Prevent multiple clicks
-    if (loadingSubtopic) {
-      console.log('Already loading, skipping...');
-      return;
+  // Update progress mutation
+  const updateProgressMutation = useUpdateSubtopicProgress();
+  
+  // Find subtopic in outline for immediate display
+  const selectedSubtopic = useMemo(() => {
+    if (subtopicData) {
+      return subtopicData; // Use API data if available
     }
-    
-    if (!subtopicUid) {
-      console.error('No subtopicUid provided');
-      return;
-    }
-    
-    setLoadingSubtopic(true);
-    
-    try {
-      // Find subtopic in current module để hiển thị ngay
-      let foundSubtopic = null;
-      if (currentModule) {
-        console.log('Searching in currentModule.lessons:', currentModule.lessons);
-        for (const lesson of currentModule.lessons || []) {
-          console.log('Checking lesson:', lesson.title, 'topics:', lesson.topics);
-          for (const topic of lesson.topics || []) {
-            console.log('Checking topic:', topic.title, 'subtopics:', topic.subtopics);
-            const subtopic = topic.subtopics?.find(s => s.uid === subtopicUid);
-            if (subtopic) {
-              console.log('Found subtopic in outline:', subtopic);
-              foundSubtopic = subtopic;
-              // Set ngay để hiển thị title
-              setSelectedSubtopic(subtopic);
-              break;
-            }
+    // Fallback to outline data for immediate display
+    if (selectedSubtopicUid && currentModule) {
+      for (const lesson of currentModule.lessons || []) {
+        for (const topic of lesson.topics || []) {
+          const subtopic = topic.subtopics?.find(s => s.uid === selectedSubtopicUid);
+          if (subtopic) {
+            return subtopic;
           }
-          if (foundSubtopic) break;
         }
       }
-      
-      // Load full content from API
-      try {
-        console.log('Fetching subtopic from API:', subtopicUid);
-        const fullSubtopic = await contentService.getSubtopic(subtopicUid);
-        console.log('Loaded subtopic from API:', fullSubtopic);
-        setSelectedSubtopic(fullSubtopic);
-        
-        // Cập nhật progress khi người dùng đọc subtopic (100% khi đọc xong)
-        try {
-          await contentService.updateSubtopicProgress(subtopicUid, 100);
-        } catch (progressErr) {
-          console.error('Error updating progress:', progressErr);
-          // Không block nếu cập nhật progress thất bại
-        }
-      } catch (apiErr: any) {
-        console.error('Error loading subtopic from API:', apiErr);
-        // Nếu API lỗi nhưng đã có subtopic từ outline, vẫn hiển thị
-        if (foundSubtopic) {
-          console.log('Using subtopic from outline since API failed');
-        } else if (apiErr?.response?.status !== 404) {
-          alert('Không thể tải nội dung bài học. Vui lòng thử lại.');
-        }
-      }
-    } catch (err) {
-      console.error('Error loading subtopic:', err);
-      alert('Không thể tải nội dung bài học. Vui lòng thử lại.');
-    } finally {
-      setLoadingSubtopic(false);
     }
-  };
+    return null;
+  }, [subtopicData, selectedSubtopicUid, currentModule]);
 
-  const handleQuizClick = async (quizUid: string) => {
-    try {
-      const quiz = await quizService.getQuiz(quizUid);
-      setSelectedQuiz(quiz);
-      setQuizAnswers({});
-      setQuizScore(null);
-      setShowQuizResult(false);
-    } catch (err) {
-      console.error('Error loading quiz:', err);
+  const loading = loadingOutline;
+  const error = useMemo(() => {
+    if (!courseSlug || !moduleIndex) {
+      return 'Không tìm thấy thông tin khóa học';
     }
-  };
+    if (!loading && !outline) {
+      return 'Không thể tải dữ liệu khóa học';
+    }
+    if (!loading && !currentModule) {
+      return 'Không tìm thấy module';
+    }
+    return null;
+  }, [courseSlug, moduleIndex, loading, outline, currentModule]);
 
-  const handleQuizAnswerChange = (questionUid: string, answerUid: string, isMultiple: boolean) => {
+  // Update progress when subtopic is loaded
+  useEffect(() => {
+    if (subtopicData && selectedSubtopicUid) {
+      // Update progress to 100% when user reads subtopic
+      updateProgressMutation.mutate({
+        subtopicUid: selectedSubtopicUid,
+        progress: 100,
+      });
+    }
+  }, [subtopicData, selectedSubtopicUid, updateProgressMutation]);
+
+  // Memoized handlers
+  const handleSubtopicClick = useCallback((subtopicUid: string) => {
+    if (!subtopicUid || loadingSubtopic) {
+      return;
+    }
+    setSelectedSubtopicUid(subtopicUid);
+  }, [loadingSubtopic]);
+
+  // Prefetch subtopic on hover
+  const handleSubtopicHover = useCallback((subtopicUid: string) => {
+    prefetchSubtopic(subtopicUid);
+  }, [prefetchSubtopic]);
+
+  const handleQuizClick = useCallback((quizUid: string) => {
+    setSelectedQuizUid(quizUid);
+    setQuizAnswers({});
+    setQuizScore(null);
+    setShowQuizResult(false);
+    setQuizInstantResult({});
+  }, []);
+
+  // Prefetch quiz on hover
+  const handleQuizHover = useCallback((quizUid: string) => {
+    prefetchQuiz(quizUid);
+  }, [prefetchQuiz]);
+
+  const handleQuizAnswerChange = useCallback((questionUid: string, answerUid: string, isMultiple: boolean) => {
     setQuizAnswers(prev => {
       const currentAnswers = prev[questionUid] || [];
       let nextAnswers: string[];
@@ -227,9 +236,9 @@ const ModuleDetailPage: React.FC = () => {
         [questionUid]: nextAnswers
       };
     });
-  };
+  }, [selectedQuiz]);
 
-  const handleSubmitQuiz = async () => {
+  const handleSubmitQuiz = useCallback(async () => {
     if (!selectedQuiz) return;
 
     try {
@@ -248,10 +257,8 @@ const ModuleDetailPage: React.FC = () => {
       // Lưu submissionUid để có thể xem lại sau
       if (result.submissionUid) {
         // Có thể lưu vào state hoặc localStorage nếu cần
-        console.log('Quiz submitted:', result.submissionUid);
       }
     } catch (err) {
-      console.error('Error submitting quiz:', err);
       // Fallback chấm tạm trên client nếu API chưa sẵn (dev only)
       try {
         const totalQuestions = selectedQuiz.questions.length;
@@ -267,15 +274,14 @@ const ModuleDetailPage: React.FC = () => {
           const score = Math.round((correctCount / totalQuestions) * 100);
           setQuizScore(score);
           setShowQuizResult(true);
-          console.warn('Đã chấm điểm tạm thời trên client (dev fallback).');
           return;
         }
       } catch (e) {
-        console.error('Local grading failed:', e);
+        // Local grading failed
       }
       alert('Không thể nộp bài quiz. Vui lòng thử lại.');
     }
-  };
+  }, [selectedQuiz, quizAnswers]);
 
   if (loading) {
     return (
@@ -288,6 +294,55 @@ const ModuleDetailPage: React.FC = () => {
         </nav>
         <div className="loading-container">
           <p>Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Hiển thị access error nếu không có quyền
+  if (!hasAccess && accessError) {
+    return (
+      <div className="linux-lab-page">
+        <nav className="navigation">
+          <div className="nav-container">
+            <LinuxLabNavigation />
+            <UserDropdown user={user} />
+          </div>
+        </nav>
+        <div className="container" style={{ padding: '4rem 2rem', textAlign: 'center' }}>
+          <div style={{ 
+            padding: '2rem', background: 'rgba(255, 68, 68, 0.1)', 
+            border: '2px solid rgba(255, 68, 68, 0.3)', 
+            borderRadius: '20px',
+            maxWidth: '600px',
+            margin: '0 auto'
+          }}>
+            <h2 style={{ color: '#ff4444', marginBottom: '1rem' }}>🔒 Khóa học nâng cao</h2>
+            <p style={{ color: '#b8c5d1', marginBottom: '1.5rem', fontSize: '1.1rem' }}>
+              {accessError}
+            </p>
+            <p style={{ color: '#b8c5d1', marginBottom: '1.5rem' }}>
+              Module này chỉ dành cho học viên đã mua gói. Vui lòng mua gói để tiếp tục học.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button 
+                className="btn pentest-btn" 
+                onClick={() => navigate('/student/pricing')}
+                style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
+              >
+                Mua gói học ngay →
+              </button>
+              {courseUid && (
+                <button 
+                  className="btn ai-btn" 
+                  onClick={() => navigate(`/${courseSlug}/course/${courseUid}`)}
+                  style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
+                >
+                  ← Quay lại khóa học
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -356,7 +411,6 @@ const ModuleDetailPage: React.FC = () => {
                         <h5>{topic.title}</h5>
                         <ul className="subtopic-list">
                           {(topic.subtopics || []).map((subtopic) => {
-                            console.log('Rendering subtopic:', subtopic.uid, subtopic.title);
                             return (
                               <li 
                                 key={subtopic.uid}
@@ -364,9 +418,9 @@ const ModuleDetailPage: React.FC = () => {
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  console.log('Subtopic clicked:', subtopic.uid, subtopic.title);
                                   handleSubtopicClick(subtopic.uid);
                                 }}
+                                onMouseEnter={() => handleSubtopicHover(subtopic.uid)}
                                 onMouseDown={(e) => {
                                   e.preventDefault();
                                 }}
@@ -425,6 +479,7 @@ const ModuleDetailPage: React.FC = () => {
                         key={quiz.uid} 
                         className="quiz-card"
                         onClick={() => handleQuizClick(quiz.uid)}
+                        onMouseEnter={() => handleQuizHover(quiz.uid)}
                       >
                         <h3>{quiz.title}</h3>
                         <p>{quiz.description || 'Không có mô tả'}</p>
@@ -444,7 +499,7 @@ const ModuleDetailPage: React.FC = () => {
             ) : (
               <div className="quiz-detail">
                 <div className="quiz-header">
-                  <button onClick={() => setSelectedQuiz(null)}>← Quay lại danh sách</button>
+                  <button onClick={() => setSelectedQuizUid(null)}>← Quay lại danh sách</button>
                   <h2>{selectedQuiz.title}</h2>
                   {selectedQuiz.description && <p>{selectedQuiz.description}</p>}
                   {selectedQuiz.timeLimitSeconds && (
@@ -514,7 +569,7 @@ const ModuleDetailPage: React.FC = () => {
                       </div>
                     </div>
                     <button onClick={() => {
-                      setSelectedQuiz(null);
+                      setSelectedQuizUid(null);
                       setQuizAnswers({});
                       setQuizScore(null);
                       setShowQuizResult(false);

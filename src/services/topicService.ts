@@ -69,11 +69,7 @@ class TopicService {
         queryParams.append('search', search);
       }
 
-      console.log('Fetching topics with params:', Object.fromEntries(queryParams));
-      
       const response = await axiosInstance.get(`${this.baseUrl}?${queryParams}`);
-      
-      console.log('Topics API response:', response.data);
 
       // Handle response structure
       if (response.status === 200) {
@@ -96,8 +92,6 @@ class TopicService {
         message: 'Failed to retrieve topics'
       };
     } catch (error: any) {
-      console.error('Error fetching topics:', error);
-      
       return {
         success: false,
         data: {
@@ -116,11 +110,7 @@ class TopicService {
   // Create new topic
   async createTopic(data: CreateTopicRequest): Promise<ApiResponse<Topic>> {
     try {
-      console.log('Creating topic with data:', data);
-      
       const response = await axiosInstance.post(this.baseUrl, data);
-      
-      console.log('Create topic response:', response.data);
 
       if (response.status === 200 || response.status === 201) {
         return {
@@ -136,8 +126,6 @@ class TopicService {
         message: 'Failed to create topic'
       };
     } catch (error: any) {
-      console.error('Error creating topic:', error);
-      
       return {
         success: false,
         data: {} as Topic,
@@ -150,11 +138,7 @@ class TopicService {
   // Update existing topic
   async updateTopic(id: string, data: UpdateTopicRequest): Promise<ApiResponse<Topic>> {
     try {
-      console.log('Updating topic:', id, 'with data:', data);
-      
       const response = await axiosInstance.put(`${this.baseUrl}/${id}`, data);
-      
-      console.log('Update topic response:', response.data);
 
       if (response.status === 200) {
         return {
@@ -170,8 +154,6 @@ class TopicService {
         message: 'Failed to update topic'
       };
     } catch (error: any) {
-      console.error('Error updating topic:', error);
-      
       return {
         success: false,
         data: {} as Topic,
@@ -184,11 +166,7 @@ class TopicService {
   // Delete topic
   async deleteTopic(id: string): Promise<ApiResponse<void>> {
     try {
-      console.log('Deleting topic:', id);
-      
       const response = await axiosInstance.delete(`${this.baseUrl}/${id}`);
-      
-      console.log('Delete topic response:', response.status);
 
       if (response.status === 200 || response.status === 204) {
         return {
@@ -204,8 +182,6 @@ class TopicService {
         message: 'Failed to delete topic'
       };
     } catch (error: any) {
-      console.error('Error deleting topic:', error);
-      
       return {
         success: false,
         data: undefined,
@@ -218,11 +194,7 @@ class TopicService {
   // Get topic by ID (if needed)
   async getTopicById(id: string): Promise<ApiResponse<Topic>> {
     try {
-      console.log('Fetching topic by ID:', id);
-      
       const response = await axiosInstance.get(`${this.baseUrl}/${id}`);
-      
-      console.log('Get topic by ID response:', response.data);
 
       if (response.status === 200) {
         return {
@@ -238,8 +210,6 @@ class TopicService {
         message: 'Failed to retrieve topic'
       };
     } catch (error: any) {
-      console.error('Error fetching topic by ID:', error);
-      
       return {
         success: false,
         data: {} as Topic,

@@ -105,7 +105,6 @@ class UserService extends BaseApiService {
    */
   async getMyProfile(): Promise<GetProfileResponse> {
     const resp = await axiosInstance.get(`${this.endpoint}/me`);
-    console.log('🔍 Raw API response for /me:', resp.data);
     
     // Handle different response structures
     if (resp.data.success !== undefined) {

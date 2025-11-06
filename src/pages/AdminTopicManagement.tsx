@@ -107,7 +107,7 @@ const AdminTopicManagement: React.FC<AdminTopicManagementProps> = () => {
       refetchTopics();
     },
     onError: (error) => {
-      console.error('Create topic error:', error);
+      // console.error('Create topic error:', error);
     }
   });
 
@@ -119,7 +119,7 @@ const AdminTopicManagement: React.FC<AdminTopicManagementProps> = () => {
       refetchTopics();
     },
     onError: (error) => {
-      console.error('Update topic error:', error);
+      // console.error('Update topic error:', error);
     }
   });
 
@@ -128,7 +128,7 @@ const AdminTopicManagement: React.FC<AdminTopicManagementProps> = () => {
       refetchTopics();
     },
     onError: (error) => {
-      console.error('Delete topic error:', error);
+      // console.error('Delete topic error:', error);
     }
   });
 
@@ -167,18 +167,18 @@ const AdminTopicManagement: React.FC<AdminTopicManagementProps> = () => {
   // Handle create/edit topic
   const handleSaveTopic = (values: any) => {
     if (!values.lessonUid) {
-      console.error('Lesson UID is required');
+      // console.error('Lesson UID is required');
       return;
     }
 
     const selectedLesson = lessons.find((l: any) => l.uid === values.lessonUid);
     if (!selectedLesson) {
-      console.error('Selected lesson not found');
+      // console.error('Selected lesson not found');
       return;
     }
 
-    console.log('Selected lesson for topic:', selectedLesson);
-    console.log('Form values:', values);
+    // console.log('Selected lesson for topic:', selectedLesson);
+    // console.log('Form values:', values);
 
     if (editingTopic) {
       // Update topic

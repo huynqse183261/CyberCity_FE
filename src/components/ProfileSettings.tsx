@@ -36,13 +36,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ title = 'Cài đặt 
   const [passwordForm] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
-  // Debug logging
-  React.useEffect(() => {
-    console.log('ProfileSettings mounted');
-    console.log('Loading:', loading);
-    console.log('Profile:', profile);
-  }, [loading, profile]);
-
   // Update profile form initial values when profile loads
   React.useEffect(() => {
     if (profile) {

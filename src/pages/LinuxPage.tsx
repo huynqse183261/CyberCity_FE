@@ -34,7 +34,6 @@ const LinuxPage: React.FC = () => {
         }
       })
       .catch((err) => {
-        console.error('Error loading courses:', err);
         if (isMounted) setLoading(false);
       });
     return () => {
@@ -151,12 +150,6 @@ const LinuxPage: React.FC = () => {
               ))}
             </div>
           )}
-        </div>
-
-        <div className="footer">
-          <h3>🎓 Hoàn Thành Khóa Học</h3>
-          <p>Chúc mừng bạn đã hoàn thành hành trình học Linux! Hãy tiếp tục thực hành và khám phá thêm nhiều điều thú vị khác.</p>
-          <button className="btn" style={{ marginTop: 20 }}>Nhận Chứng Chỉ</button>
         </div>
       </div>
     </div>

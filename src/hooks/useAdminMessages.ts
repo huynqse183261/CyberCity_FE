@@ -20,7 +20,6 @@ export const useAdminMessages = () => {
       const statsData = await adminMessageService.getStats();
       setStats(statsData);
     } catch (error) {
-      console.error("Error loading stats:", error);
       message.error("Không thể tải thống kê");
     }
   }, []);
@@ -37,7 +36,6 @@ export const useAdminMessages = () => {
       setTotalConversations(response.totalItems);
       setTotalPages(response.totalPages);
     } catch (error) {
-      console.error("Error loading conversations:", error);
       message.error("Không thể tải danh sách cuộc hội thoại");
     } finally {
       setLoading(false);
@@ -53,7 +51,6 @@ export const useAdminMessages = () => {
       });
       setMessages(response.items);
     } catch (error) {
-      console.error("Error loading messages:", error);
       message.error("Không thể tải tin nhắn");
     } finally {
       setLoading(false);
@@ -77,7 +74,6 @@ export const useAdminMessages = () => {
         return false;
       }
     } catch (error) {
-      console.error("Error sending message:", error);
       message.error("Không thể gửi tin nhắn");
       return false;
     }
@@ -97,7 +93,6 @@ export const useAdminMessages = () => {
         return false;
       }
     } catch (error) {
-      console.error("Error deleting message:", error);
       message.error("Không thể xóa tin nhắn");
       return false;
     }

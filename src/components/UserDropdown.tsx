@@ -24,7 +24,6 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
   }, []);
 
   const handleMenuItemClick = async (action: string) => {
-    console.log('Navigating to:', action);
     setIsOpen(false);
     
     if (action === 'logout') {
@@ -34,14 +33,11 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
           message.success('Đăng xuất thành công!');
           navigate('/login');
         } catch (error) {
-          console.error('Logout error:', error);
           message.error('Có lỗi xảy ra khi đăng xuất!');
         }
       }
     } else if (action === 'profile') {
       navigate('/student/profile');
-    } else if (action === 'inbox') {
-      navigate('/inbox');
     } else if (action === 'payment-history') {
       navigate('/student/payment-history');
     } else if (action === 'settings') {
@@ -68,14 +64,8 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
           <div onClick={() => handleMenuItemClick('profile')}>
             👤 Thông tin tài khoản
           </div>
-          <div onClick={() => handleMenuItemClick('inbox')}>
-            💬 Hộp thư
-          </div>
           <div onClick={() => handleMenuItemClick('payment-history')}>
             💳 Lịch sử thanh toán
-          </div>
-          <div onClick={() => handleMenuItemClick('payment-settings')}>
-            ⚙️ Quản lý thanh toán
           </div>
           <div onClick={() => handleMenuItemClick('logout')} className="logout-item">
             🚪 Đăng xuất

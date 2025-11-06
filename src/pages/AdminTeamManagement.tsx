@@ -109,7 +109,7 @@ const AdminTeamManagement: React.FC = () => {
       setEditModalVisible(false);
       setSelectedUser({ ...selectedUser, ...values });
     } catch (error) {
-      console.error('Update failed:', error);
+      // console.error('Update failed:', error);
       message.error('Update failed');
     }
   };
@@ -126,7 +126,7 @@ const AdminTeamManagement: React.FC = () => {
       await updateStatusMutation.mutateAsync({ id: userId, status: newStatus });
       message.success('Status updated successfully');
     } catch (error) {
-      console.error('Status update failed:', error);
+      // console.error('Status update failed:', error);
       message.error('Status update failed');
     }
   };

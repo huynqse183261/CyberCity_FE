@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Settings, Trash2 } from 'lucide-react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 
 interface Message {
   id: string;
@@ -17,8 +17,8 @@ const AIAssistant: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Lấy API key từ environment variables
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  // API key trực tiếp
+  const apiKey = 'AIzaSyAyV4aVzWNhKzlSfWWb8XSw0GZB5gDxqdU';
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -52,16 +52,16 @@ const AIAssistant: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Khởi tạo Google Generative AI
-      const genAI = new GoogleGenerativeAI(apiKey);
+      // Khởi tạo Google GenAI với API key mới
+      const ai = new GoogleGenAI({ apiKey: apiKey });
       
-      // Sử dụng model gemini-2.5-flash như yêu cầu
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
-      // Gửi prompt và nhận phản hồi
-      const result = await model.generateContent(currentInput);
-      const response = result.response;
-      const aiResponse = response.text() || 'Không nhận được phản hồi từ AI';
+      // Sử dụng model gemini-2.5-flash
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: currentInput,
+      });
+      
+      const aiResponse = response.text || 'Không nhận được phản hồi từ AI';
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -71,12 +71,24 @@ const AIAssistant: React.FC = () => {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error('Error:', error);
+    } catch (error: any) {
+      let errorContent = 'Không thể kết nối với Gemini API. Vui lòng thử lại sau.';
+      
+      if (error instanceof Error) {
+        // Xử lý lỗi model không tồn tại
+        if (error.message.includes('not found') || error.message.includes('404')) {
+          errorContent = 'Model không tồn tại. Vui lòng kiểm tra API key hoặc liên hệ admin.';
+        } else if (error.message.includes('API key') || error.message.includes('401') || error.message.includes('403')) {
+          errorContent = 'API Key không hợp lệ hoặc đã hết hạn. Vui lòng kiểm tra lại.';
+        } else {
+          errorContent = `Lỗi: ${error.message}`;
+        }
+      }
+      
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `Lỗi: ${error instanceof Error ? error.message : 'Không thể kết nối với Gemini API. Vui lòng thử lại sau.'}`,
+        content: errorContent,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -99,14 +111,23 @@ const AIAssistant: React.FC = () => {
   };
 
   return (
-    <div className="ai-assistant">
+    <div className="ai-assistant-page">
       <style>{`
-        .ai-assistant {
+        .ai-assistant-page {
           display: flex;
           flex-direction: column;
-          height: 100%;
-          min-height: 100vh;
+          min-height: 600px;
+          height: 70vh;
+          max-height: 800px;
+          width: 100%;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .ai-assistant-page * {
+          box-sizing: border-box;
         }
 
         .ai-header {

@@ -103,7 +103,7 @@ const CheckoutPage: React.FC = () => {
         });
       }
     } catch (error: any) {
-      console.error('Error creating order:', error);
+      // console.error('Error creating order:', error);
       message.error(error.response?.data?.message || 'Không thể tạo đơn hàng');
     }
   };

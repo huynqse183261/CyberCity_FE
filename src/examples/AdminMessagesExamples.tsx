@@ -396,7 +396,7 @@ export const DirectServiceExample = () => {
         
         setConversations(response.items);
       } catch (error) {
-        console.error('Error:', error);
+        // console.error('Error:', error);
       } finally {
         setLoading(false);
       }
@@ -419,7 +419,7 @@ export const CustomHookExample = () => {
   const hook = useAdminMessages();
 
   // Log everything for debugging
-  console.log('Hook state:', hook);
+  // console.log('Hook state:', hook);
 
   return (
     <div>

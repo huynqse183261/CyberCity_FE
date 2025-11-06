@@ -23,10 +23,8 @@ class PricingService {
         return responseData.items;
       }
       
-      console.warn('Unexpected response format:', responseData);
       return [];
     } catch (error: any) {
-      console.error('Error fetching pricing plans:', error);
       throw error;
     }
   }
@@ -36,7 +34,6 @@ class PricingService {
       const response = await axiosInstance.post(this.baseUrl, data);
       return response.data;
     } catch (error: any) {
-      console.error('Error creating pricing plan:', error);
       throw error;
     }
   }
@@ -46,7 +43,6 @@ class PricingService {
       const response = await axiosInstance.put(`${this.baseUrl}/${id}`, data);
       return response.data;
     } catch (error: any) {
-      console.error('Error updating pricing plan:', error);
       throw error;
     }
   }
@@ -56,7 +52,6 @@ class PricingService {
       const response = await axiosInstance.delete(`${this.baseUrl}/${id}`);
       return response.data;
     } catch (error: any) {
-      console.error('Error deleting pricing plan:', error);
       throw error;
     }
   }

@@ -55,7 +55,6 @@ export const useCreateSubtopic = (options?: {
       options?.onSuccess?.(data);
     },
     onError: (error) => {
-      console.error('Create subtopic mutation error:', error);
       options?.onError?.(error);
     },
   });
@@ -84,7 +83,6 @@ export const useUpdateSubtopic = (options?: {
       options?.onSuccess?.(data);
     },
     onError: (error) => {
-      console.error('Update subtopic mutation error:', error);
       options?.onError?.(error);
     },
   });
@@ -112,7 +110,6 @@ export const useDeleteSubtopic = (options?: {
       options?.onSuccess?.(data);
     },
     onError: (error) => {
-      console.error('Delete subtopic mutation error:', error);
       options?.onError?.(error);
     },
   });

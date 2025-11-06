@@ -36,7 +36,6 @@ export const useMessages = () => {
         loading: false
       }));
     } catch (error) {
-      console.error('Error loading conversations:', error);
       setState(prev => ({ ...prev, loading: false }));
     }
   }, []);
@@ -60,7 +59,6 @@ export const useMessages = () => {
       // Update unread count
       loadUnreadCount();
     } catch (error) {
-      console.error('Error loading messages:', error);
       setState(prev => ({ ...prev, loading: false }));
     }
   }, []);
@@ -79,7 +77,6 @@ export const useMessages = () => {
       
       return newConversation;
     } catch (error) {
-      console.error('Error creating conversation:', error);
       throw error;
     }
   }, [selectConversation]);
@@ -116,7 +113,6 @@ export const useMessages = () => {
       }));
 
     } catch (error) {
-      console.error('Error sending message:', error);
       throw error;
     }
   }, [state.selectedConversation, state.newMessageText]);
@@ -129,7 +125,6 @@ export const useMessages = () => {
         messages: prev.messages.filter(msg => msg.uid !== messageId)
       }));
     } catch (error) {
-      console.error('Error deleting message:', error);
       throw error;
     }
   }, []);
@@ -142,7 +137,6 @@ export const useMessages = () => {
     try {
       return await messageService.searchUsers(query, state.selectedConversation?.uid);
     } catch (error) {
-      console.error('Error searching users:', error);
       return [];
     }
   }, [state.selectedConversation]);
@@ -179,7 +173,6 @@ export const useMessages = () => {
       }));
 
     } catch (error) {
-      console.error('Error searching messages:', error);
       setState(prev => ({ ...prev, loading: false }));
     }
   }, [loadConversations]);
@@ -193,7 +186,7 @@ export const useMessages = () => {
       const count = await messageService.getUnreadCount();
       setUnreadCount(count);
     } catch (error) {
-      console.error('Error loading unread count:', error);
+      // Silently fail
     }
   }, []);
 

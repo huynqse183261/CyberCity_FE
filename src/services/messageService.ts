@@ -27,7 +27,6 @@ class MessageService {
       });
       return response.data;
     } catch (error) {
-      console.error('Error fetching conversations:', error);
       throw error;
     }
   }
@@ -40,7 +39,6 @@ class MessageService {
       const response = await axiosInstance.get(`${this.baseURL}/conversations/${conversationId}`);
       return response.data;
     } catch (error) {
-      console.error('Error fetching conversation:', error);
       throw error;
     }
   }
@@ -53,7 +51,6 @@ class MessageService {
       const response = await axiosInstance.post(`${this.baseURL}/conversations`, data);
       return response.data;
     } catch (error) {
-      console.error('Error creating conversation:', error);
       throw error;
     }
   }
@@ -67,7 +64,6 @@ class MessageService {
         user_uids: userIds
       });
     } catch (error) {
-      console.error('Error adding members:', error);
       throw error;
     }
   }
@@ -79,7 +75,6 @@ class MessageService {
     try {
       await axiosInstance.delete(`${this.baseURL}/conversations/${conversationId}/members/${userId}`);
     } catch (error) {
-      console.error('Error removing member:', error);
       throw error;
     }
   }
@@ -91,7 +86,6 @@ class MessageService {
     try {
       await axiosInstance.post(`${this.baseURL}/conversations/${conversationId}/leave`);
     } catch (error) {
-      console.error('Error leaving conversation:', error);
       throw error;
     }
   }
@@ -110,7 +104,6 @@ class MessageService {
       });
       return response.data;
     } catch (error) {
-      console.error('Error fetching messages:', error);
       throw error;
     }
   }
@@ -123,7 +116,6 @@ class MessageService {
       const response = await axiosInstance.post(`${this.baseURL}/messages`, data);
       return response.data;
     } catch (error) {
-      console.error('Error sending message:', error);
       throw error;
     }
   }
@@ -135,7 +127,6 @@ class MessageService {
     try {
       await axiosInstance.put(`${this.baseURL}/messages/${messageId}/read`);
     } catch (error) {
-      console.error('Error marking message as read:', error);
       throw error;
     }
   }
@@ -147,7 +138,6 @@ class MessageService {
     try {
       await axiosInstance.put(`${this.baseURL}/conversations/${conversationId}/read`);
     } catch (error) {
-      console.error('Error marking conversation as read:', error);
       throw error;
     }
   }
@@ -159,7 +149,6 @@ class MessageService {
     try {
       await axiosInstance.delete(`${this.baseURL}/messages/${messageId}`);
     } catch (error) {
-      console.error('Error deleting message:', error);
       throw error;
     }
   }
@@ -176,7 +165,6 @@ class MessageService {
       const response = await axiosInstance.get(`${this.baseURL}/search`, { params });
       return response.data;
     } catch (error) {
-      console.error('Error searching messages:', error);
       throw error;
     }
   }
@@ -194,7 +182,6 @@ class MessageService {
       });
       return response.data;
     } catch (error) {
-      console.error('Error searching users:', error);
       throw error;
     }
   }
@@ -211,7 +198,6 @@ class MessageService {
       const response = await axiosInstance.get(`${this.baseURL}/unread-count`);
       return response.data.count;
     } catch (error) {
-      console.error('Error fetching unread count:', error);
       return 0;
     }
   }
@@ -226,7 +212,6 @@ class MessageService {
       });
       return response.data;
     } catch (error) {
-      console.error('Error fetching recent conversations:', error);
       throw error;
     }
   }

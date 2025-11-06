@@ -18,8 +18,6 @@ class CourseService {
   // Lấy danh sách courses với pagination và filter
   async getCourses(params?: CourseListParams): Promise<ApiResponse<CourseListResponse>> {
     try {
-      console.log('Getting courses with params:', params);
-      
       const queryParams = new URLSearchParams();
       
       if (params?.pageNumber) {
@@ -36,10 +34,8 @@ class CourseService {
       }
 
       const url = `${this.endpoints.COURSES}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-      console.log('Request URL:', url);
 
       const response = await axiosInstance.get(url);
-      console.log('Courses response:', response.data);
       
       const raw = response.data as any;
       
@@ -90,8 +86,6 @@ class CourseService {
         message: 'Không thể lấy danh sách khóa học',
       };
     } catch (error: any) {
-      console.error('Get courses error:', error);
-      
       // Return empty data on error
       return {
         success: false,
@@ -110,13 +104,9 @@ class CourseService {
   // Lấy chi tiết course theo ID
   async getCourseById(id: string): Promise<ApiResponse<Course>> {
     try {
-      console.log('Getting course detail for ID:', id);
-      
       const response = await axiosInstance.get<BackendApiResponse<Course>>(
         this.endpoints.COURSE_DETAIL(id)
       );
-      
-      console.log('Course detail response:', response.data);
       
       const backendData = response.data;
       
@@ -133,8 +123,6 @@ class CourseService {
         message: backendData.message || 'Không tìm thấy khóa học',
       };
     } catch (error: any) {
-      console.error('Get course detail error:', error);
-      
       return {
         success: false,
         message: 'Lỗi kết nối server',
@@ -145,8 +133,6 @@ class CourseService {
   // Tạo course mới  
   async createCourse(data: CreateCourseRequest): Promise<ApiResponse<Course>> {
     try {
-      console.log('Creating course with data:', data);
-      
       // Theo API docs, chỉ gửi title, description, level
       const requestBody = {
         title: data.title,
@@ -155,7 +141,6 @@ class CourseService {
       };
       
       const response = await axiosInstance.post(this.endpoints.COURSES, requestBody);
-      console.log('Create course response:', response.data);
       
       const raw = response.data as any;
       
@@ -181,7 +166,6 @@ class CourseService {
         message: 'Tạo khóa học thành công',
       };
     } catch (error: any) {
-      console.error('Create course error:', error);
       throw error;
     }
   }
@@ -189,8 +173,6 @@ class CourseService {
   // Cập nhật course
   async updateCourse(data: UpdateCourseRequest): Promise<ApiResponse<Course>> {
     try {
-      console.log('Updating course with data:', data);
-      
       // Theo API docs, chỉ gửi title, description, level
       const requestBody = {
         title: data.title,
@@ -202,7 +184,6 @@ class CourseService {
         this.endpoints.COURSE_DETAIL(data.uid),
         requestBody
       );
-      console.log('Update course response:', response.data);
       
       const raw = response.data as any;
       
@@ -228,7 +209,6 @@ class CourseService {
         message: 'Cập nhật khóa học thành công',
       };
     } catch (error: any) {
-      console.error('Update course error:', error);
       throw error;
     }
   }
@@ -236,18 +216,12 @@ class CourseService {
   // Xóa course
   async deleteCourse(id: string): Promise<ApiResponse<boolean>> {
     try {
-      console.log('CourseService: Deleting course with ID:', id);
-      console.log('Delete endpoint:', this.endpoints.COURSE_DETAIL(id));
-      
       const response = await axiosInstance.delete(this.endpoints.COURSE_DETAIL(id));
-      console.log('CourseService: Delete course response:', response.data);
-      console.log('CourseService: Delete course status:', response.status);
       
       const raw = response.data as any;
       
       // Xử lý response format từ backend
       if (raw && typeof raw === 'object' && 'isSuccess' in raw) {
-        console.log('CourseService: Response has isSuccess flag:', raw.isSuccess);
         if (raw.isSuccess) {
           return {
             success: true,
@@ -263,7 +237,6 @@ class CourseService {
       
       // Nếu status 200 nhưng không có isSuccess flag
       if (response.status === 200) {
-        console.log('CourseService: Status 200, assuming success');
         return {
           success: true,
           data: true,
@@ -278,14 +251,6 @@ class CourseService {
         message: 'Xóa khóa học thành công',
       };
     } catch (error: any) {
-      console.error('CourseService: Delete course error:', error);
-      console.error('CourseService: Error details:', {
-        message: error.message,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        url: error.config?.url,
-      });
       throw error;
     }
   }

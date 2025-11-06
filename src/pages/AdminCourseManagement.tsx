@@ -88,7 +88,7 @@ const AdminCourseManagement: React.FC<AdminCourseManagementProps> = () => {
       refetchCourses();
     },
     onError: (error) => {
-      console.error('Create course error:', error);
+      // console.error('Create course error:', error);
     }
   });
 
@@ -101,18 +101,18 @@ const AdminCourseManagement: React.FC<AdminCourseManagementProps> = () => {
       refetchCourses();
     },
     onError: (error) => {
-      console.error('Update course error:', error);
+      // console.error('Update course error:', error);
     }
   });
 
   const deleteCourseMutation = useDeleteCourse({
     onSuccess: () => {
-      console.log('Delete course success');
+      // console.log('Delete course success');
       // Use global refetch
       refetchCourses();
     },
     onError: (error) => {
-      console.error('Delete course error:', error);
+      // console.error('Delete course error:', error);
     }
   });
 
@@ -134,7 +134,7 @@ const AdminCourseManagement: React.FC<AdminCourseManagementProps> = () => {
       level: values.level,
     };
     
-    console.log('Saving course data:', courseData);
+    // console.log('Saving course data:', courseData);
     
     if (editingCourse) {
       updateCourseMutation.mutate({
@@ -148,7 +148,7 @@ const AdminCourseManagement: React.FC<AdminCourseManagementProps> = () => {
 
   // Handle delete course
   const handleDeleteCourse = async (id: string) => {
-    console.log('Attempting to delete course with ID:', id);
+    // console.log('Attempting to delete course with ID:', id);
     deleteCourseMutation.mutate(id);
   };
 

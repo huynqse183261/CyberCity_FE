@@ -22,8 +22,8 @@ export default defineConfig(({ mode }) => {
     build: {
       chunkSizeWarningLimit: 1600, // Giữ warning limit hợp lý
       rollupOptions: {
-      output: {
-        manualChunks: {
+        output: {
+          manualChunks: {
           // Vendor chunks - tách các thư viện lớn
           'react-vendor': ['react', 'react-dom'],
           'antd-vendor': ['antd'],
@@ -48,19 +48,16 @@ export default defineConfig(({ mode }) => {
             './src/pages/PricingManagement.tsx'
           ],
           
-          'teacher-pages': [
-            './src/pages/TeacherDashboard.tsx',
-            './src/pages/TeacherClasses.tsx',
-            './src/pages/TeacherStudents.tsx',
-            './src/pages/TeacherAssignments.tsx',
-            './src/pages/TeacherGrading.tsx',
-            './src/pages/TeacherReports.tsx',
-            './src/pages/TeacherSettings.tsx'
-          ],
-          
-          'linux-pages': [
-            './src/pages/LinuxModule1.tsx',
-            './src/pages/LinuxPage.tsx'
+          'student-pages': [
+            './src/pages/LinuxPage.tsx',
+            './src/pages/PenTestPage.tsx',
+            './src/pages/CourseDetailPage.tsx',
+            './src/pages/ModuleDetailPage.tsx',
+            './src/pages/StudentPricingPage.tsx',
+            './src/pages/StudentCheckoutPage.tsx',
+            './src/pages/StudentPaymentHistoryPage.tsx',
+            './src/pages/MySubscriptionPage.tsx',
+            './src/pages/AIAssistantPage.tsx'
           ],
           
           'auth-pages': [
@@ -98,13 +95,6 @@ export default defineConfig(({ mode }) => {
           }
           return `assets/[name]-[hash].${ext}`;
         }
-      }
-    },
-    // Tối ưu terser
-    terserOptions: {
-      compress: {
-        drop_console: true, // Xóa console.log trong production
-        drop_debugger: true
       }
     }
   },

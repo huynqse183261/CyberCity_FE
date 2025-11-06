@@ -126,7 +126,7 @@ const TeamManagement: React.FC = () => {
       // call delete API
       await deleteUserMutation.mutateAsync(key);
     } catch (err) {
-      console.error('Delete user error', err);
+      // console.error('Delete user error', err);
     }
   };
 

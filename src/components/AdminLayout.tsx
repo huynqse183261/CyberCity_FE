@@ -138,7 +138,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       message.success('Đăng xuất thành công!');
       navigate('/');
     } catch (error) {
-      console.error('Logout error:', error);
       message.error('Có lỗi xảy ra khi đăng xuất!');
     }
   };

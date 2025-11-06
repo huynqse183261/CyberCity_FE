@@ -122,7 +122,6 @@ export const useOrders = (): UseOrdersReturn => {
       setHasPrevious(response.pagination.hasPrevious);
       
     } catch (error: any) {
-      console.error('Failed to load orders:', error);
       message.error('Không thể tải danh sách đơn hàng');
       setOrders([]);
     } finally {
@@ -140,7 +139,6 @@ export const useOrders = (): UseOrdersReturn => {
       setSelectedOrder(order);
       return order;
     } catch (error: any) {
-      console.error('Failed to load order:', error);
       message.error('Không thể tải thông tin đơn hàng');
       return null;
     } finally {
@@ -161,7 +159,6 @@ export const useOrders = (): UseOrdersReturn => {
       return newOrder;
       
     } catch (error: any) {
-      console.error('Failed to create order:', error);
       message.error(error.response?.data?.error?.message || 'Không thể tạo đơn hàng');
       return null;
     } finally {
@@ -190,7 +187,6 @@ export const useOrders = (): UseOrdersReturn => {
       return updatedOrder;
       
     } catch (error: any) {
-      console.error('Failed to update order:', error);
       message.error(error.response?.data?.error?.message || 'Không thể cập nhật đơn hàng');
       return null;
     } finally {
@@ -217,7 +213,6 @@ export const useOrders = (): UseOrdersReturn => {
       return true;
       
     } catch (error: any) {
-      console.error('Failed to delete order:', error);
       message.error(error.response?.data?.error?.message || 'Không thể xóa đơn hàng');
       return false;
     } finally {
@@ -247,7 +242,6 @@ export const useOrders = (): UseOrdersReturn => {
       return approvedOrder;
       
     } catch (error: any) {
-      console.error('Failed to approve order:', error);
       message.error(error.response?.data?.error?.message || 'Không thể phê duyệt đơn hàng');
       return null;
     } finally {
@@ -277,7 +271,6 @@ export const useOrders = (): UseOrdersReturn => {
       return rejectedOrder;
       
     } catch (error: any) {
-      console.error('Failed to reject order:', error);
       message.error(error.response?.data?.error?.message || 'Không thể từ chối đơn hàng');
       return null;
     } finally {
@@ -302,7 +295,6 @@ export const useOrders = (): UseOrdersReturn => {
       return true;
       
     } catch (error: any) {
-      console.error('Failed to process payment:', error);
       message.error(error.response?.data?.error?.message || 'Không thể xử lý thanh toán');
       return false;
     } finally {
@@ -370,7 +362,6 @@ export const useOrders = (): UseOrdersReturn => {
       const statsData = await orderService.getOrderStats();
       setStats(statsData);
     } catch (error: any) {
-      console.error('Failed to load order stats:', error);
       message.error('Không thể tải thống kê đơn hàng');
     }
   }, []);
@@ -392,7 +383,6 @@ export const useOrders = (): UseOrdersReturn => {
       return result.downloadUrl;
       
     } catch (error: any) {
-      console.error('Failed to export orders:', error);
       message.error('Không thể xuất dữ liệu đơn hàng');
       return null;
     }
@@ -406,7 +396,6 @@ export const useOrders = (): UseOrdersReturn => {
       const result = await orderService.getPendingApprovals();
       return result.orders;
     } catch (error: any) {
-      console.error('Failed to get pending approvals:', error);
       message.error('Không thể tải danh sách đơn hàng chờ phê duyệt');
       return [];
     }
