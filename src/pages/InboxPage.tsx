@@ -41,7 +41,7 @@ const InboxPage: React.FC = () => {
     try {
       await sendMessage();
     } catch (error) {
-      console.error('Failed to send message');
+      // console.error('Failed to send message');
     }
   };
 
@@ -59,7 +59,7 @@ const InboxPage: React.FC = () => {
       const filteredUsers = users.filter(u => u.uid !== user?.id);
       setUserSearchResults(filteredUsers);
     } catch (error) {
-      console.error('Error searching users:', error);
+      // console.error('Error searching users:', error);
     }
   };
 
@@ -83,7 +83,7 @@ const InboxPage: React.FC = () => {
       setUserSearchQuery('');
       setUserSearchResults([]);
     } catch (error) {
-      console.error('Failed to create conversation');
+      // console.error('Failed to create conversation');
     }
   };
 

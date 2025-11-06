@@ -38,7 +38,7 @@ const AdminPricingManagement: React.FC = () => {
     try {
       await deleteMutation.mutateAsync(id);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   };
 
@@ -53,7 +53,7 @@ const AdminPricingManagement: React.FC = () => {
       setModalVisible(false);
       form.resetFields();
     } catch (err: any) {
-      console.error(err);
+      // console.error(err);
       // message shown by mutations on error
     }
   };

@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import type { User } from '../models/LinuxLabTypes';
 import contentService, { type CourseOutline, type Module as ModuleType, type Subtopic } from '../services/contentService';
 import quizService, { type QuizSummary, type QuizDetail, type QuizSubmissionRequest } from '../services/quizService';
+import subscriptionService from '../services/subscriptionService';
 import '../styles/LinuxLabPage.css';
 import '../styles/ModuleDetailPage.css';
 
@@ -37,6 +38,8 @@ const ModuleDetailPage: React.FC = () => {
   const [loadingSubtopic, setLoadingSubtopic] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [quizInstantResult, setQuizInstantResult] = useState<{ [questionUid: string]: 'correct' | 'incorrect' | null }>({});
+  const [hasAccess, setHasAccess] = useState<boolean>(true);
+  const [accessError, setAccessError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!courseSlug || !moduleIndex) {
@@ -63,6 +66,25 @@ const ModuleDetailPage: React.FC = () => {
 
         // Find current module
         if (courseOutline.modules && courseOutline.modules[moduleIdx]) {
+          // Check access nếu có courseUid
+          if (courseUid) {
+            try {
+              const accessRes = await subscriptionService.checkModuleAccess(courseUid, moduleIdx);
+              if (accessRes.success && accessRes.data) {
+                if (!accessRes.data.canAccess) {
+                  setHasAccess(false);
+                  setAccessError(accessRes.data.reason || 'Bạn không có quyền truy cập module này.');
+                  setLoading(false);
+                  return;
+                }
+                setHasAccess(true);
+              }
+            } catch (err) {
+              // Nếu không check được, default cho phép truy cập (fallback)
+              setHasAccess(true);
+            }
+          }
+          
           const module = courseOutline.modules[moduleIdx];
           setCurrentModule(module);
 
@@ -76,7 +98,6 @@ const ModuleDetailPage: React.FC = () => {
           setError('Không tìm thấy module');
         }
       } catch (err) {
-        console.error('Error loading module data:', err);
         setError('Không thể tải dữ liệu module');
       } finally {
         setLoading(false);
@@ -87,18 +108,12 @@ const ModuleDetailPage: React.FC = () => {
   }, [courseSlug, moduleIndex, courseUid, location.pathname]);
 
   const handleSubtopicClick = async (subtopicUid: string) => {
-    console.log('handleSubtopicClick called with:', subtopicUid);
-    console.log('currentModule:', currentModule);
-    console.log('loadingSubtopic:', loadingSubtopic);
-    
     // Prevent multiple clicks
     if (loadingSubtopic) {
-      console.log('Already loading, skipping...');
       return;
     }
     
     if (!subtopicUid) {
-      console.error('No subtopicUid provided');
       return;
     }
     
@@ -108,14 +123,10 @@ const ModuleDetailPage: React.FC = () => {
       // Find subtopic in current module để hiển thị ngay
       let foundSubtopic = null;
       if (currentModule) {
-        console.log('Searching in currentModule.lessons:', currentModule.lessons);
         for (const lesson of currentModule.lessons || []) {
-          console.log('Checking lesson:', lesson.title, 'topics:', lesson.topics);
           for (const topic of lesson.topics || []) {
-            console.log('Checking topic:', topic.title, 'subtopics:', topic.subtopics);
             const subtopic = topic.subtopics?.find(s => s.uid === subtopicUid);
             if (subtopic) {
-              console.log('Found subtopic in outline:', subtopic);
               foundSubtopic = subtopic;
               // Set ngay để hiển thị title
               setSelectedSubtopic(subtopic);
@@ -128,29 +139,24 @@ const ModuleDetailPage: React.FC = () => {
       
       // Load full content from API
       try {
-        console.log('Fetching subtopic from API:', subtopicUid);
         const fullSubtopic = await contentService.getSubtopic(subtopicUid);
-        console.log('Loaded subtopic from API:', fullSubtopic);
         setSelectedSubtopic(fullSubtopic);
         
         // Cập nhật progress khi người dùng đọc subtopic (100% khi đọc xong)
         try {
           await contentService.updateSubtopicProgress(subtopicUid, 100);
         } catch (progressErr) {
-          console.error('Error updating progress:', progressErr);
           // Không block nếu cập nhật progress thất bại
         }
       } catch (apiErr: any) {
-        console.error('Error loading subtopic from API:', apiErr);
         // Nếu API lỗi nhưng đã có subtopic từ outline, vẫn hiển thị
         if (foundSubtopic) {
-          console.log('Using subtopic from outline since API failed');
+          // Sử dụng subtopic từ outline
         } else if (apiErr?.response?.status !== 404) {
           alert('Không thể tải nội dung bài học. Vui lòng thử lại.');
         }
       }
     } catch (err) {
-      console.error('Error loading subtopic:', err);
       alert('Không thể tải nội dung bài học. Vui lòng thử lại.');
     } finally {
       setLoadingSubtopic(false);
@@ -165,7 +171,7 @@ const ModuleDetailPage: React.FC = () => {
       setQuizScore(null);
       setShowQuizResult(false);
     } catch (err) {
-      console.error('Error loading quiz:', err);
+      // Error loading quiz
     }
   };
 
@@ -248,10 +254,8 @@ const ModuleDetailPage: React.FC = () => {
       // Lưu submissionUid để có thể xem lại sau
       if (result.submissionUid) {
         // Có thể lưu vào state hoặc localStorage nếu cần
-        console.log('Quiz submitted:', result.submissionUid);
       }
     } catch (err) {
-      console.error('Error submitting quiz:', err);
       // Fallback chấm tạm trên client nếu API chưa sẵn (dev only)
       try {
         const totalQuestions = selectedQuiz.questions.length;
@@ -267,11 +271,10 @@ const ModuleDetailPage: React.FC = () => {
           const score = Math.round((correctCount / totalQuestions) * 100);
           setQuizScore(score);
           setShowQuizResult(true);
-          console.warn('Đã chấm điểm tạm thời trên client (dev fallback).');
           return;
         }
       } catch (e) {
-        console.error('Local grading failed:', e);
+        // Local grading failed
       }
       alert('Không thể nộp bài quiz. Vui lòng thử lại.');
     }
@@ -288,6 +291,55 @@ const ModuleDetailPage: React.FC = () => {
         </nav>
         <div className="loading-container">
           <p>Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Hiển thị access error nếu không có quyền
+  if (!hasAccess && accessError) {
+    return (
+      <div className="linux-lab-page">
+        <nav className="navigation">
+          <div className="nav-container">
+            <LinuxLabNavigation />
+            <UserDropdown user={user} />
+          </div>
+        </nav>
+        <div className="container" style={{ padding: '4rem 2rem', textAlign: 'center' }}>
+          <div style={{ 
+            padding: '2rem', background: 'rgba(255, 68, 68, 0.1)', 
+            border: '2px solid rgba(255, 68, 68, 0.3)', 
+            borderRadius: '20px',
+            maxWidth: '600px',
+            margin: '0 auto'
+          }}>
+            <h2 style={{ color: '#ff4444', marginBottom: '1rem' }}>🔒 Khóa học nâng cao</h2>
+            <p style={{ color: '#b8c5d1', marginBottom: '1.5rem', fontSize: '1.1rem' }}>
+              {accessError}
+            </p>
+            <p style={{ color: '#b8c5d1', marginBottom: '1.5rem' }}>
+              Module này chỉ dành cho học viên đã mua gói. Vui lòng mua gói để tiếp tục học.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button 
+                className="btn pentest-btn" 
+                onClick={() => navigate('/student/pricing')}
+                style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
+              >
+                Mua gói học ngay →
+              </button>
+              {courseUid && (
+                <button 
+                  className="btn ai-btn" 
+                  onClick={() => navigate(`/${courseSlug}/course/${courseUid}`)}
+                  style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
+                >
+                  ← Quay lại khóa học
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -356,7 +408,6 @@ const ModuleDetailPage: React.FC = () => {
                         <h5>{topic.title}</h5>
                         <ul className="subtopic-list">
                           {(topic.subtopics || []).map((subtopic) => {
-                            console.log('Rendering subtopic:', subtopic.uid, subtopic.title);
                             return (
                               <li 
                                 key={subtopic.uid}
@@ -364,7 +415,6 @@ const ModuleDetailPage: React.FC = () => {
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  console.log('Subtopic clicked:', subtopic.uid, subtopic.title);
                                   handleSubtopicClick(subtopic.uid);
                                 }}
                                 onMouseDown={(e) => {

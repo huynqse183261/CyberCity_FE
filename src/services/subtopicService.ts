@@ -64,11 +64,9 @@ class SubtopicService {
         ...(search && { search })
       });
 
-      console.log('Fetching subtopics with params:', params);
       const response = await axiosInstance.get(`${this.basePath}?${queryParams}`);
       
       if (response.status === 200) {
-        console.log('Subtopics fetched successfully:', response.data);
         return {
           success: true,
           message: 'Subtopics retrieved successfully',
@@ -79,7 +77,6 @@ class SubtopicService {
       
       throw new Error(`Unexpected status code: ${response.status}`);
     } catch (error: any) {
-      console.error('Error fetching subtopics:', error);
       throw {
         success: false,
         message: error?.response?.data?.message || error.message || 'Failed to fetch subtopics',
@@ -92,11 +89,9 @@ class SubtopicService {
   // Create new subtopic
   async createSubtopic(data: CreateSubtopicRequest): Promise<ApiResponse<Subtopic>> {
     try {
-      console.log('Creating subtopic with data:', data);
       const response = await axiosInstance.post(this.basePath, data);
       
       if (response.status === 200 || response.status === 201) {
-        console.log('Subtopic created successfully:', response.data);
         return {
           success: true,
           message: 'Subtopic created successfully',
@@ -107,7 +102,6 @@ class SubtopicService {
       
       throw new Error(`Unexpected status code: ${response.status}`);
     } catch (error: any) {
-      console.error('Error creating subtopic:', error);
       throw {
         success: false,
         message: error?.response?.data?.message || error.message || 'Failed to create subtopic',
@@ -120,11 +114,9 @@ class SubtopicService {
   // Update subtopic
   async updateSubtopic(id: string, data: UpdateSubtopicRequest): Promise<ApiResponse<Subtopic>> {
     try {
-      console.log('Updating subtopic:', id, 'with data:', data);
       const response = await axiosInstance.put(`${this.basePath}/${id}`, data);
       
       if (response.status === 200) {
-        console.log('Subtopic updated successfully:', response.data);
         return {
           success: true,
           message: 'Subtopic updated successfully',
@@ -135,7 +127,6 @@ class SubtopicService {
       
       throw new Error(`Unexpected status code: ${response.status}`);
     } catch (error: any) {
-      console.error('Error updating subtopic:', error);
       throw {
         success: false,
         message: error?.response?.data?.message || error.message || 'Failed to update subtopic',
@@ -148,11 +139,9 @@ class SubtopicService {
   // Delete subtopic
   async deleteSubtopic(id: string): Promise<ApiResponse<null>> {
     try {
-      console.log('Deleting subtopic:', id);
       const response = await axiosInstance.delete(`${this.basePath}/${id}`);
       
       if (response.status === 200 || response.status === 204) {
-        console.log('Subtopic deleted successfully');
         return {
           success: true,
           message: 'Subtopic deleted successfully',
@@ -163,7 +152,6 @@ class SubtopicService {
       
       throw new Error(`Unexpected status code: ${response.status}`);
     } catch (error: any) {
-      console.error('Error deleting subtopic:', error);
       throw {
         success: false,
         message: error?.response?.data?.message || error.message || 'Failed to delete subtopic',
@@ -176,11 +164,9 @@ class SubtopicService {
   // Get subtopic by ID
   async getSubtopicById(id: string): Promise<ApiResponse<Subtopic>> {
     try {
-      console.log('Fetching subtopic by ID:', id);
       const response = await axiosInstance.get(`${this.basePath}/${id}`);
       
       if (response.status === 200) {
-        console.log('Subtopic fetched successfully:', response.data);
         return {
           success: true,
           message: 'Subtopic retrieved successfully',
@@ -191,7 +177,6 @@ class SubtopicService {
       
       throw new Error(`Unexpected status code: ${response.status}`);
     } catch (error: any) {
-      console.error('Error fetching subtopic:', error);
       throw {
         success: false,
         message: error?.response?.data?.message || error.message || 'Failed to fetch subtopic',

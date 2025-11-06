@@ -98,7 +98,7 @@ const AdminSubtopicManagement: React.FC<AdminSubtopicManagementProps> = () => {
       refetchSubtopics();
     },
     onError: (error) => {
-      console.error('Create subtopic error:', error);
+      // console.error('Create subtopic error:', error);
     }
   });
 
@@ -110,7 +110,7 @@ const AdminSubtopicManagement: React.FC<AdminSubtopicManagementProps> = () => {
       refetchSubtopics();
     },
     onError: (error) => {
-      console.error('Update subtopic error:', error);
+      // console.error('Update subtopic error:', error);
     }
   });
 
@@ -119,7 +119,7 @@ const AdminSubtopicManagement: React.FC<AdminSubtopicManagementProps> = () => {
       refetchSubtopics();
     },
     onError: (error) => {
-      console.error('Delete subtopic error:', error);
+      // console.error('Delete subtopic error:', error);
     }
   });
 
@@ -148,18 +148,18 @@ const AdminSubtopicManagement: React.FC<AdminSubtopicManagementProps> = () => {
   // Handle create/edit subtopic
   const handleSaveSubtopic = (values: any) => {
     if (!values.topicId) {
-      console.error('Topic ID is required');
+      // console.error('Topic ID is required');
       return;
     }
 
     const selectedTopic = topics.find((t: any) => t.uid === values.topicId);
     if (!selectedTopic) {
-      console.error('Selected topic not found');
+      // console.error('Selected topic not found');
       return;
     }
 
-    console.log('Selected topic for subtopic:', selectedTopic);
-    console.log('Form values:', values);
+    // console.log('Selected topic for subtopic:', selectedTopic);
+    // console.log('Form values:', values);
 
     if (editingSubtopic) {
       // Update subtopic

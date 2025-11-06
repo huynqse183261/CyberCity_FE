@@ -252,19 +252,14 @@ const Register: React.FC = () => {
     setIsLoading(true);
 
     try {
-      console.log('Starting registration process...');
-      
       // Sử dụng register function từ AuthContext
       const registrationResult = await register(formData);
-      
-      console.log('Registration result:', registrationResult);
       
       if (registrationResult.success) {
         message.success(registrationResult.message || 'Đăng ký thành công! Vui lòng đăng nhập.');
         navigate('/login');
       } else {
         // Hiển thị lỗi chi tiết từ server
-        console.error('Registration failed:', registrationResult.message);
         message.error(registrationResult.message || 'Đăng ký thất bại!');
         
         // Nếu có lỗi validation chi tiết, hiển thị chúng
@@ -282,8 +277,6 @@ const Register: React.FC = () => {
       }
       
     } catch (error: any) {
-      console.error('Registration error:', error);
-      
       // Xử lý lỗi chi tiết hơn
       let errorMessage = 'Đăng ký thất bại. Vui lòng thử lại!';
       

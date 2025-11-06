@@ -68,7 +68,7 @@ const UserProfile: React.FC = () => {
         editForm.resetFields();
       }
     } catch (error) {
-      console.error('Validation failed:', error);
+      // Validation failed
     }
   };
 
@@ -81,7 +81,7 @@ const UserProfile: React.FC = () => {
         passwordForm.resetFields();
       }
     } catch (error) {
-      console.error('Validation failed:', error);
+      // Validation failed
     }
   };
 

@@ -4,7 +4,7 @@ import authService from '../services/authService';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: Array<'admin' | 'teacher' | 'student'>;
+  allowedRoles?: Array<'admin' | 'student'>;
   requireAuth?: boolean;
 }
 
@@ -33,10 +33,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
     const roleMap = {
       admin: 'admin',
-      teacher: 'teacher',
       student: 'student'
     } as const;
-    const mappedRole = roleMap[currentUser.role as keyof typeof roleMap] as 'admin' | 'teacher' | 'student';
+    const mappedRole = roleMap[currentUser.role as keyof typeof roleMap] as 'admin' | 'student';
     const hasPermission = allowedRoles.includes(mappedRole);
 
     if (!hasPermission) {
@@ -52,16 +51,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 };
 
 // Helper function để lấy default route theo role
-const getDefaultRouteForRole = (role: 'admin' | 'teacher' | 'student'): string => {
+const getDefaultRouteForRole = (role: 'admin' | 'student'): string => {
   switch (role) {
     case 'admin':
       return '/admin';
-    case 'teacher':
-      return '/teacher';
     case 'student':
       return '/student';
     default:
-      console.warn('Unknown role:', role);
       return '/';
   }
 };
@@ -75,12 +71,6 @@ export const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }
   </ProtectedRoute>
 );
 
-export const TeacherRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <ProtectedRoute allowedRoles={['teacher', 'admin']}>
-    {children}
-  </ProtectedRoute>
-);
-
 export const StudentRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <ProtectedRoute allowedRoles={['student']}>
     {children}
@@ -88,7 +78,7 @@ export const StudentRoute: React.FC<{ children: React.ReactNode }> = ({ children
 );
 
 export const AllUserRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <ProtectedRoute allowedRoles={['admin', 'teacher', 'student']}>
+  <ProtectedRoute allowedRoles={['admin', 'student']}>
     {children}
   </ProtectedRoute>
 );

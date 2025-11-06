@@ -50,8 +50,6 @@ class DashboardService {
     try {
       const response = await axiosInstance.get('/api/admin/quick-stats');
       
-      console.log('Quick stats response:', response.data);
-      
       // Map backend response to our interface
       const stats: DashboardStats = {
         totalUsers: response.data.totalUsers || 0,
@@ -82,8 +80,6 @@ class DashboardService {
     try {
       const response = await axiosInstance.get(`/api/admin/orders-by-month?year=${year}`);
       
-      console.log('Sales data response:', response.data);
-      
       // Map backend response to our interface
       const salesData: SalesData[] = response.data.map((item: any) => ({
         month: item.month,
@@ -109,8 +105,6 @@ class DashboardService {
   async getRecentOrders(count: number = 10): Promise<ApiResponse<RecentOrder[]>> {
     try {
       const response = await axiosInstance.get(`/api/admin/recent-orders?count=${count}`);
-      
-      console.log('Recent orders response:', response.data);
       
       // Map backend response to our interface
       const orders: RecentOrder[] = response.data.map((item: any) => ({
@@ -142,8 +136,6 @@ class DashboardService {
   async getRecentActivities(count: number = 20): Promise<ApiResponse<RecentActivity[]>> {
     try {
       const response = await axiosInstance.get(`/api/admin/recent-activities?count=${count}`);
-      
-      console.log('Recent activities response:', response.data);
       
       // Map backend response to our interface
       const activities: RecentActivity[] = response.data.map((item: any) => ({

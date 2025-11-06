@@ -129,7 +129,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       setHasPrevious(response.pagination.hasPrevious);
       
     } catch (error: any) {
-      console.error('Failed to load invoices:', error);
       message.error('Không thể tải danh sách hóa đơn');
       setInvoices([]);
     } finally {
@@ -147,7 +146,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       setSelectedInvoice(invoice);
       return invoice;
     } catch (error: any) {
-      console.error('Failed to load invoice:', error);
       message.error('Không thể tải thông tin hóa đơn');
       return null;
     } finally {
@@ -168,7 +166,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       return newInvoice;
       
     } catch (error: any) {
-      console.error('Failed to create invoice:', error);
       message.error(error.response?.data?.error?.message || 'Không thể tạo hóa đơn');
       return null;
     } finally {
@@ -189,7 +186,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       return newInvoice;
       
     } catch (error: any) {
-      console.error('Failed to create manual invoice:', error);
       message.error(error.response?.data?.error?.message || 'Không thể tạo hóa đơn thủ công');
       return null;
     } finally {
@@ -218,7 +214,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       return updatedInvoice;
       
     } catch (error: any) {
-      console.error('Failed to update invoice:', error);
       message.error(error.response?.data?.error?.message || 'Không thể cập nhật hóa đơn');
       return null;
     } finally {
@@ -245,7 +240,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       return true;
       
     } catch (error: any) {
-      console.error('Failed to delete invoice:', error);
       message.error(error.response?.data?.error?.message || 'Không thể xóa hóa đơn');
       return false;
     } finally {
@@ -274,7 +268,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       return true;
       
     } catch (error: any) {
-      console.error('Failed to send invoice:', error);
       message.error(error.response?.data?.error?.message || 'Không thể gửi hóa đơn');
       return false;
     } finally {
@@ -304,7 +297,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       return paidInvoice;
       
     } catch (error: any) {
-      console.error('Failed to mark as paid:', error);
       message.error(error.response?.data?.error?.message || 'Không thể đánh dấu thanh toán');
       return null;
     } finally {
@@ -334,7 +326,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       return overdueInvoice;
       
     } catch (error: any) {
-      console.error('Failed to mark as overdue:', error);
       message.error(error.response?.data?.error?.message || 'Không thể đánh dấu quá hạn');
       return null;
     } finally {
@@ -364,7 +355,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       return cancelledInvoice;
       
     } catch (error: any) {
-      console.error('Failed to cancel invoice:', error);
       message.error(error.response?.data?.error?.message || 'Không thể hủy hóa đơn');
       return null;
     } finally {
@@ -431,7 +421,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       const statsData = await invoiceService.getInvoiceStats();
       setStats(statsData);
     } catch (error: any) {
-      console.error('Failed to load invoice stats:', error);
       message.error('Không thể tải thống kê hóa đơn');
     }
   }, []);
@@ -453,7 +442,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       return result.downloadUrl;
       
     } catch (error: any) {
-      console.error('Failed to export invoices:', error);
       message.error('Không thể xuất dữ liệu hóa đơn');
       return null;
     }
@@ -468,7 +456,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       message.success('Tạo PDF thành công!');
       return result.pdfUrl;
     } catch (error: any) {
-      console.error('Failed to generate PDF:', error);
       message.error('Không thể tạo file PDF');
       return null;
     }
@@ -482,7 +469,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       const result = await invoiceService.getOverdueInvoices();
       setOverdueInvoices(result.overdueInvoices);
     } catch (error: any) {
-      console.error('Failed to load overdue invoices:', error);
       message.error('Không thể tải danh sách hóa đơn quá hạn');
     }
   }, []);
@@ -496,7 +482,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       message.success('Gửi nhắc nhở thanh toán thành công!');
       return result.sent;
     } catch (error: any) {
-      console.error('Failed to send payment reminder:', error);
       message.error('Không thể gửi nhắc nhở thanh toán');
       return false;
     }
@@ -515,7 +500,6 @@ export const useInvoices = (): UseInvoicesReturn => {
       return duplicatedInvoice;
       
     } catch (error: any) {
-      console.error('Failed to duplicate invoice:', error);
       message.error(error.response?.data?.error?.message || 'Không thể sao chép hóa đơn');
       return null;
     } finally {

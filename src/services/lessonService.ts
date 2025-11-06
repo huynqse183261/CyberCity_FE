@@ -52,9 +52,6 @@ class LessonService {
 
   async getAllLessons(params?: LessonListParams): Promise<ApiResponse<LessonListResponse>> {
     try {
-      console.log('=== LESSON SERVICE GET ALL ===');
-      console.log('Request params:', params);
-      
       const response = await axiosInstance.get(this.endpoints.LESSONS, {
         params: {
           pageNumber: params?.pageNumber || 1,
@@ -63,9 +60,6 @@ class LessonService {
           ...(params?.search && { search: params.search })
         }
       });
-      
-      console.log('Response status:', response.status);
-      console.log('Response data:', response.data);
       
       const raw = response.data as any;
       if (raw && raw.items) {
@@ -84,22 +78,13 @@ class LessonService {
       
       return { success: false, message: 'Không có dữ liệu lessons' };
     } catch (error: any) {
-      console.error('=== LESSON SERVICE GET ALL ERROR ===');
-      console.error('Error:', error);
-      console.error('Error Response:', error.response?.data);
       return { success: false, message: error.response?.data?.message || 'Lỗi khi lấy danh sách lessons' };
     }
   }
 
   async createLesson(data: CreateLessonRequest): Promise<ApiResponse<Lesson>> {
     try {
-      console.log('=== LESSON SERVICE CREATE ===');
-      console.log('Create data:', data);
-      
       const response = await axiosInstance.post(this.endpoints.LESSONS, data);
-      
-      console.log('Create Response Status:', response.status);
-      console.log('Create Response Data:', response.data);
       
       // Check for successful response status codes
       if (response.status >= 200 && response.status < 300) {
@@ -121,24 +106,13 @@ class LessonService {
         return { success: false, message: 'Tạo lesson thất bại' };
       }
     } catch (error: any) {
-      console.error('=== LESSON SERVICE CREATE ERROR ===');
-      console.error('Create Error:', error);
-      console.error('Error Response:', error.response?.data);
       return { success: false, message: error.response?.data?.message || 'Lỗi khi tạo lesson' };
     }
   }
 
   async updateLesson(id: string, data: UpdateLessonRequest): Promise<ApiResponse<Lesson>> {
     try {
-      console.log('=== LESSON SERVICE UPDATE ===');
-      console.log('Update URL:', this.endpoints.LESSON_DETAIL(id));
-      console.log('Update ID:', id);
-      console.log('Update Data:', data);
-      
       const response = await axiosInstance.put(this.endpoints.LESSON_DETAIL(id), data);
-      
-      console.log('Update Response Status:', response.status);
-      console.log('Update Response Data:', response.data);
       
       // Check for successful response status codes
       if (response.status >= 200 && response.status < 300) {
@@ -160,22 +134,13 @@ class LessonService {
         return { success: false, message: 'Cập nhật lesson thất bại' };
       }
     } catch (error: any) {
-      console.error('=== LESSON SERVICE UPDATE ERROR ===');
-      console.error('Update Error:', error);
-      console.error('Error Response:', error.response?.data);
       return { success: false, message: error.response?.data?.message || 'Lỗi khi cập nhật lesson' };
     }
   }
 
   async deleteLesson(id: string): Promise<ApiResponse<boolean>> {
     try {
-      console.log('=== LESSON SERVICE DELETE ===');
-      console.log('Delete ID:', id);
-      
       const response = await axiosInstance.delete(this.endpoints.LESSON_DETAIL(id));
-      
-      console.log('Delete Response Status:', response.status);
-      console.log('Delete Response Data:', response.data);
       
       // Check for successful response status codes
       if (response.status >= 200 && response.status < 300) {
@@ -197,9 +162,6 @@ class LessonService {
         return { success: false, message: 'Xóa lesson thất bại' };
       }
     } catch (error: any) {
-      console.error('=== LESSON SERVICE DELETE ERROR ===');
-      console.error('Delete Error:', error);
-      console.error('Error Response:', error.response?.data);
       return { success: false, message: error.response?.data?.message || 'Lỗi khi xóa lesson' };
     }
   }
@@ -223,7 +185,6 @@ class LessonService {
       
       return { success: false, message: 'Không tìm thấy lesson' };
     } catch (error: any) {
-      console.error('Get lesson by ID error:', error);
       return { success: false, message: error.response?.data?.message || 'Lỗi khi lấy lesson' };
     }
   }

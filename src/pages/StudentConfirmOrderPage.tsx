@@ -26,9 +26,7 @@ const StudentConfirmOrderPage: React.FC = () => {
   const plan = useMemo(() => {
     if (!data) return null;
     const raw = Array.isArray(data) ? data : (data as any)?.items || (data as any)?.data || [];
-    console.log('Looking for plan with UID:', planUid, 'in data:', raw);
     const found = raw.find((p: any) => p.uid === planUid || p.id === planUid);
-    console.log('Found plan:', found);
     return found;
   }, [data, planUid]);
 

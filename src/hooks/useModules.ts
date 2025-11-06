@@ -47,21 +47,16 @@ export const useUpdateModule = (options?: { onSuccess?: () => void; onError?: (e
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateModuleRequest }) => moduleService.updateModule(id, data),
     onSuccess: (data) => {
-      console.log('useUpdateModule onSuccess called with data:', data);
       if (data.success) {
         message.success(data.message || 'Cập nhật module thành công');
-        console.log('About to call options.onSuccess callback');
         options?.onSuccess?.();
-        console.log('options.onSuccess callback completed');
       } else {
         // API returned error, but HTTP was successful
-        console.log('API returned error, calling onError callback');
         message.error(data.message || 'Cập nhật module thất bại');
         options?.onError?.(new Error(data.message));
       }
     },
     onError: (error: any) => {
-      console.error('useUpdateModule onError called with error:', error);
       message.error('Lỗi khi cập nhật module');
       options?.onError?.(error);
     },
@@ -96,7 +91,6 @@ export const usePublishModule = (options?: {
   
   return useMutation({
     mutationFn: (id: string) => {
-      console.log('usePublishModule: Publish not implemented yet, module:', id);
       // Mock success for now
       return Promise.resolve({
         success: true,
@@ -110,7 +104,6 @@ export const usePublishModule = (options?: {
       options?.onSuccess?.();
     },
     onError: (error: any) => {
-      console.error('usePublishModule: Error:', error);
       message.error('Lỗi khi publish module');
       options?.onError?.(error);
     },
@@ -125,7 +118,6 @@ export const useUnpublishModule = (options?: {
   
   return useMutation({
     mutationFn: (id: string) => {
-      console.log('useUnpublishModule: Unpublish not implemented yet, module:', id);
       // Mock success for now
       return Promise.resolve({
         success: true,
@@ -139,7 +131,6 @@ export const useUnpublishModule = (options?: {
       options?.onSuccess?.();
     },
     onError: (error: any) => {
-      console.error('useUnpublishModule: Error:', error);
       message.error('Lỗi khi unpublish module');
       options?.onError?.(error);
     },
@@ -154,7 +145,6 @@ export const useDuplicateModule = (options?: {
   
   return useMutation({
     mutationFn: ({ id, newCourseId }: { id: string; newCourseId: string }) => {
-      console.log('useDuplicateModule: Duplicate not implemented yet, module:', id, 'to course:', newCourseId);
       // Mock success for now
       return Promise.resolve({
         success: true,
@@ -168,7 +158,6 @@ export const useDuplicateModule = (options?: {
       options?.onSuccess?.();
     },
     onError: (error: any) => {
-      console.error('useDuplicateModule: Error:', error);
       message.error('Lỗi khi duplicate module');
       options?.onError?.(error);
     },

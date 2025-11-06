@@ -1083,8 +1083,12 @@
 .topics { background: rgba(0, 212, 255, 0.05); padding: 15px; border-radius: 10px; backdrop-filter: blur(5px); }
 .topics h4 { margin-bottom: 10px; color: #00d4ff; transition: color 0.3s ease; }
 .module:hover .topics h4 { color: #fff; }
-.topics-description { color: #b8c5d1; line-height: 1.6; margin-bottom: 15px; }
+.topics-description { color: #b8c5d1; line-height: 1.6; margin-bottom: 15px; transition: color 0.3s ease; }
 .module:hover .topics .topics-description { color: #fff; }
+/* Hover trực tiếp vào p tag cũng chuyển thành màu trắng */
+.topics p { color: #b8c5d1; line-height: 1.6; margin-bottom: 15px; transition: color 0.3s ease; }
+.module:hover .topics p { color: #fff; }
+.topics p:hover { color: #fff !important; }
 .topics ul { list-style: none; padding-left: 0; }
 .topics li { padding: 5px 0; position: relative; padding-left: 20px; transition: color 0.2s ease; color:#e0e6ed; }
 .topics li:before { content: '▶'; position: absolute; left: 0; color: #00d4ff; transition: color 0.2s ease; }

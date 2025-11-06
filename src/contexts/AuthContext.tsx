@@ -62,7 +62,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(false);
       }
     } catch (error) {
-      console.error('Initialize auth error:', error);
       setUser(null);
       setIsAuthenticated(false);
     } finally {
@@ -72,15 +71,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (usernameOrEmail: string, password: string) => {
     try {
-      console.log('AuthContext: Starting login...');
       const response = await authService.login({ usernameOrEmail, password });
-      console.log('AuthContext: Login response:', response);
       
       if (response.success) {
         // AuthService đã xử lý và lưu token + user info
         // Chỉ cần lấy user info từ authService
         const currentUser = authService.getCurrentUser();
-        console.log('AuthContext: Current user from authService:', currentUser);
         
         if (currentUser) {
           setUser(currentUser);
@@ -99,8 +95,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         message: response.message || 'Đăng nhập thất bại!' 
       };
     } catch (error: any) {
-      console.error('Login error:', error);
-      
       // Xử lý lỗi chi tiết hơn
       let errorMessage = 'Lỗi kết nối server';
       
@@ -130,7 +124,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await authService.logout();
     } catch (error) {
-      console.error('Logout error:', error);
+      // Logout error
     } finally {
       setUser(null);
       setIsAuthenticated(false);
@@ -139,9 +133,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (data: RegisterFormData) => {
     try {
-      console.log('AuthContext: Starting registration...');
       const response = await authService.register(data);
-      console.log('AuthContext: Register response:', response);
       
       return {
         success: response.success,
@@ -149,8 +141,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         errors: response.errors
       };
     } catch (error: any) {
-      console.error('AuthContext: Register error:', error);
-      
       // Xử lý lỗi chi tiết hơn
       let errorMessage = 'Lỗi kết nối server';
       let errors = null;
@@ -185,14 +175,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const googleLogin = async (idToken: string) => {
     try {
-      console.log('AuthContext: Starting Google login...');
       const response = await authService.googleLogin(idToken);
-      console.log('AuthContext: Google login response:', response);
       
       if (response.success) {
         // AuthService đã lưu token và user info, chỉ cần update state
         const currentUser = authService.getCurrentUser();
-        console.log('Google login successful, current user:', currentUser);
         
         // Update state regardless of currentUser availability
         setUser(currentUser);
@@ -210,8 +197,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         message: response.message || 'Đăng nhập Google thất bại!' 
       };
     } catch (error: any) {
-      console.error('Google login error:', error);
-      
       let errorMessage = 'Lỗi đăng nhập Google';
       
       if (error.response) {
@@ -240,7 +225,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true);
       }
     } catch (error) {
-      console.error('Refresh user data error:', error);
+      // Refresh user data error
     }
   };
 

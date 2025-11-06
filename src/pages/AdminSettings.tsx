@@ -56,7 +56,6 @@ const AdminSettings: React.FC = () => {
     setLoading(true);
     try {
       const response = await userService.getMyProfile();
-      console.log('✅ Admin profile loaded:', response);
       if (response.success && response.data) {
         setProfile(response.data);
         profileForm.setFieldsValue({
@@ -71,7 +70,6 @@ const AdminSettings: React.FC = () => {
         });
       }
     } catch (error: any) {
-      console.error('❌ Error loading admin profile:', error);
       message.error('Không thể tải thông tin cá nhân');
     } finally {
       setLoading(false);
@@ -87,7 +85,6 @@ const AdminSettings: React.FC = () => {
         setProfile(response.data);
       }
     } catch (error: any) {
-      console.error('❌ Error updating profile:', error);
       message.error(error.response?.data?.message || 'Không thể cập nhật thông tin');
     }
   };
@@ -104,7 +101,6 @@ const AdminSettings: React.FC = () => {
         passwordForm.resetFields();
       }
     } catch (error: any) {
-      console.error('❌ Error changing password:', error);
       message.error(error.response?.data?.message || 'Không thể đổi mật khẩu');
     }
   };
@@ -139,7 +135,6 @@ const AdminSettings: React.FC = () => {
         setFileList([]);
         await refreshUserData();
       } catch (error: any) {
-        console.error('❌ Error uploading avatar:', error);
         message.error('Không thể tải lên avatar');
       } finally {
         setAvatarUploading(false);

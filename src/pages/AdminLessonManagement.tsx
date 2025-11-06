@@ -97,46 +97,35 @@ const AdminLessonManagement: React.FC<AdminLessonManagementProps> = () => {
   // Handle course response - có thể là array trực tiếp hoặc wrapped trong items
   const courses = (coursesResponse?.data as any)?.items || coursesResponse?.data || [];
 
-  console.log('AdminLessonManagement: lessonsResponse:', lessonsResponse);
-  console.log('AdminLessonManagement: paginationInfo:', paginationInfo);
-  console.log('AdminLessonManagement: modulesResponse:', modulesResponse);
-  console.log('AdminLessonManagement: lessons:', lessons);
-  console.log('AdminLessonManagement: modules:', modules);
 
   // Mutation hooks
   const createLessonMutation = useCreateLesson({
     onSuccess: () => {
-      console.log('Create lesson success');
       setModalVisible(false);
       setEditingLesson(null);
       form.resetFields();
       refetchLessons();
     },
     onError: (error) => {
-      console.error('Create lesson error:', error);
     }
   });
 
   const updateLessonMutation = useUpdateLesson({
     onSuccess: () => {
-      console.log('AdminLessonManagement: Update lesson success callback called');
       setModalVisible(false);
       setEditingLesson(null);
       form.resetFields();
       refetchLessons();
     },
     onError: (error) => {
-      console.error('AdminLessonManagement: Update lesson error:', error);
     }
   });
 
   const deleteLessonMutation = useDeleteLesson({
     onSuccess: () => {
-      console.log('AdminLessonManagement: Delete lesson success callback called');
       refetchLessons();
     },
     onError: (error) => {
-      console.error('AdminLessonManagement: Delete lesson error:', error);
     }
   });
 
@@ -176,19 +165,14 @@ const AdminLessonManagement: React.FC<AdminLessonManagementProps> = () => {
   const handleSaveLesson = (values: any) => {
     // Validation: Kiểm tra moduleUid có tồn tại không
     if (!values.moduleUid) {
-      console.error('Module UID is required');
       return;
     }
 
     const selectedModule = modules.find((m: any) => m.uid === values.moduleUid);
     if (!selectedModule) {
-      console.error('Selected module not found');
       return;
     }
 
-    console.log('Selected module for lesson:', selectedModule);
-    console.log('Form values:', values);
-    console.log('Editing lesson:', editingLesson);
 
     if (editingLesson) {
       // Update lesson - gửi đúng theo API spec
@@ -200,8 +184,6 @@ const AdminLessonManagement: React.FC<AdminLessonManagementProps> = () => {
         orderIndex: parseInt(values.orderIndex) || 0
       };
       
-      console.log('Updating lesson data:', updateData);
-      console.log('Lesson ID to update:', editingLesson.uid);
 
       updateLessonMutation.mutate({
         id: editingLesson.uid!,
@@ -217,8 +199,6 @@ const AdminLessonManagement: React.FC<AdminLessonManagementProps> = () => {
         orderIndex: parseInt(values.orderIndex) || 0
       };
       
-      console.log('Creating lesson data:', createData);
-      console.log('Available modules:', modules);
 
       createLessonMutation.mutate(createData);
     }
@@ -231,7 +211,6 @@ const AdminLessonManagement: React.FC<AdminLessonManagementProps> = () => {
 
   // Handle edit lesson
   const handleEditLesson = (lesson: Lesson) => {
-    console.log('Editing lesson:', lesson);
     setEditingLesson(lesson);
     form.setFieldsValue({
       title: lesson.title,

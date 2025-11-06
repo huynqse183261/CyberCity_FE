@@ -78,11 +78,6 @@ const AdminModuleManagement: React.FC = () => {
   // Handle course response - có thể là array trực tiếp hoặc wrapped trong items
   const courses = (coursesResponse?.data as any)?.items || coursesResponse?.data || [];
 
-  console.log('AdminModuleManagement: modulesResponse:', modulesResponse);
-  console.log('AdminModuleManagement: paginationInfo:', paginationInfo);
-  console.log('AdminModuleManagement: coursesResponse:', coursesResponse);
-  console.log('AdminModuleManagement: allModules:', allModules);
-  console.log('AdminModuleManagement: courses:', courses);
 
   // Handle pagination change
   const handleTableChange = (page: number, pageSize?: number) => {
@@ -104,7 +99,6 @@ const AdminModuleManagement: React.FC = () => {
 
   const createModuleMutation = useCreateModule({
     onSuccess: () => {
-      console.log('Create module success');
       setModalVisible(false);
       form.resetFields();
       setEditingModule(null);
@@ -112,13 +106,11 @@ const AdminModuleManagement: React.FC = () => {
       refetchModules();
     },
     onError: (error) => {
-      console.error('Create module error:', error);
     }
   });
 
   const updateModuleMutation = useUpdateModule({
     onSuccess: () => {
-      console.log('AdminModuleManagement: Update module success callback called');
       setModalVisible(false);
       form.resetFields();
       setEditingModule(null);
@@ -126,18 +118,15 @@ const AdminModuleManagement: React.FC = () => {
       refetchModules();
     },
     onError: (error) => {
-      console.error('AdminModuleManagement: Update module error:', error);
     }
   });
 
   const deleteModuleMutation = useDeleteModule({
     onSuccess: () => {
-      console.log('AdminModuleManagement: Delete module success callback called');
       // Reload data instead of full page
       refetchModules();
     },
     onError: (error) => {
-      console.error('AdminModuleManagement: Delete module error:', error);
     }
   });
 
@@ -161,9 +150,6 @@ const AdminModuleManagement: React.FC = () => {
       return;
     }
 
-    console.log('Selected course for module:', selectedCourse);
-    console.log('Form values:', values);
-    console.log('Editing module:', editingModule);
 
     if (editingModule) {
       // Update module - gửi đúng theo API spec
@@ -174,8 +160,6 @@ const AdminModuleManagement: React.FC = () => {
         orderIndex: parseInt(values.orderIndex) || 0
       };
       
-      console.log('Updating module data:', updateData);
-      console.log('Module ID to update:', editingModule.uid);
 
       updateModuleMutation.mutate({
         id: editingModule.uid!,
@@ -190,8 +174,6 @@ const AdminModuleManagement: React.FC = () => {
         orderIndex: parseInt(values.orderIndex) || 0
       };
       
-      console.log('Creating module data:', createData);
-      console.log('Available courses:', courses);
 
       createModuleMutation.mutate(createData);
     }
@@ -204,7 +186,6 @@ const AdminModuleManagement: React.FC = () => {
 
   // Handle edit module
   const handleEditModule = (module: any) => {
-    console.log('Editing module:', module);
     setEditingModule(module);
     form.setFieldsValue({
       title: module.title,

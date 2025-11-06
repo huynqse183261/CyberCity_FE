@@ -23,7 +23,6 @@ const StudentPricingPage: React.FC = () => {
   const plans = React.useMemo(() => {
     if (!data) return [];
     const raw = Array.isArray(data) ? data : (data as any)?.items || (data as any)?.data || [];
-    console.log('Pricing plans data:', raw);
     return raw.map((plan: any) => ({
       uid: plan.uid,
       planName: plan.planName || plan.plan_name || plan.name,

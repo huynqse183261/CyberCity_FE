@@ -736,7 +736,7 @@ const AdminOrderManagement: React.FC = () => {
         form.resetFields();
       }
     } catch (error) {
-      console.error('Edit order validation failed:', error);
+      // console.error('Edit order validation failed:', error);
     }
   };
 
@@ -749,7 +749,7 @@ const AdminOrderManagement: React.FC = () => {
         paymentForm.resetFields();
       }
     } catch (error) {
-      console.error('Payment processing validation failed:', error);
+      // console.error('Payment processing validation failed:', error);
     }
   };
 
@@ -766,7 +766,7 @@ const AdminOrderManagement: React.FC = () => {
         approvalForm.resetFields();
       }
     } catch (error) {
-      console.error('Approval validation failed:', error);
+      // console.error('Approval validation failed:', error);
     }
   };
 

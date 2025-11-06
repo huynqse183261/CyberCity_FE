@@ -124,7 +124,6 @@ export const getStatusColor = (status: string): string => {
 export const validateEnvVar = (key: string): string => {
   const value = import.meta.env[key];
   if (!value) {
-    console.warn(`Environment variable ${key} is not set`);
     return '';
   }
   return value;

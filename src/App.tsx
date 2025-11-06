@@ -21,12 +21,6 @@ import AdminPricingManagement from './pages/AdminPricingManagement';
 import AdminTeamManagement from './pages/AdminTeamManagement';
 import AccessDenied from './pages/AccessDenied';
 
-import TeacherDashboard from './pages/TeacherDashboard';
-import TeacherMessages from './pages/TeacherMessages';
-import TeacherStudents from './pages/TeacherStudents';
-import TeacherStudentDetail from './pages/TeacherStudentDetail';
-import TeacherStudentProgress from './pages/TeacherStudentProgress';
-import TeacherSettings from './pages/TeacherSettings';
 import StudentProfile from './pages/StudentProfile';
 import AdminSettings from './pages/AdminSettings';
 import AboutPage from './pages/AboutPage';
@@ -41,13 +35,14 @@ import StudentPricingPage from './pages/StudentPricingPage';
 import StudentCheckoutPage from './pages/StudentCheckoutPage';
 import StudentPaymentHistoryPage from './pages/StudentPaymentHistoryPage';
 import StudentConfirmOrderPage from './pages/StudentConfirmOrderPage';
+import MySubscriptionPage from './pages/MySubscriptionPage';
 import CheckoutPage from './pages/CheckoutPage';
 import DownloadVMPage from './pages/DownloadVMPage';
 
 // Import protected route components
-import { AdminRoute, TeacherRoute, StudentRoute, PublicRoute } from './components/ProtectedRoute';
-import AdminMessages from './pages/AdminMessages';
+import { AdminRoute, StudentRoute, PublicRoute } from './components/ProtectedRoute';
 import AdminOrderManagement from './pages/AdminOrderManagement';
+import AdminMessages from './pages/AdminMessages';
 import InvoiceManagement from './pages/InvoiceManagement';
 
 // Import PenTest Learning Pages
@@ -123,6 +118,14 @@ function App() {
                 element={
                   <StudentRoute>
                     <StudentPaymentHistoryPage />
+                  </StudentRoute>
+                } 
+              />
+              <Route 
+                path="/student/subscription" 
+                element={
+                  <StudentRoute>
+                    <MySubscriptionPage />
                   </StudentRoute>
                 } 
               />
@@ -225,18 +228,18 @@ function App() {
                 } 
               />
               <Route 
-                path="/admin/messages" 
-                element={
-                  <AdminRoute>
-                    <AdminMessages />
-                  </AdminRoute>
-                } 
-              />
-              <Route 
                 path="/admin/pricing" 
                 element={
                   <AdminRoute>
                     <AdminPricingManagement />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/messages" 
+                element={
+                  <AdminRoute>
+                    <AdminMessages />
                   </AdminRoute>
                 } 
               />
@@ -249,87 +252,6 @@ function App() {
                 } 
               />
 
-              {/* Teacher Protected Routes */}
-              <Route 
-                path="/teacher" 
-                element={
-                  <TeacherRoute>
-                    <TeacherDashboard />
-                  </TeacherRoute>
-                } 
-              />
-              <Route 
-                path="/teacher/classes" 
-                element={
-                  <TeacherRoute>
-                    <TeacherDashboard />
-                  </TeacherRoute>
-                } 
-              />
-              <Route 
-                path="/teacher/assignments" 
-                element={
-                  <TeacherRoute>
-                    <TeacherDashboard />
-                  </TeacherRoute>
-                } 
-              />
-              <Route 
-                path="/teacher/grading" 
-                element={
-                  <TeacherRoute>
-                    <TeacherDashboard />
-                  </TeacherRoute>
-                } 
-              />
-              <Route 
-                path="/teacher/reports" 
-                element={
-                  <TeacherRoute>
-                    <TeacherDashboard />
-                  </TeacherRoute>
-                } 
-              />
-              <Route 
-                path="/teacher/students" 
-                element={
-                  <TeacherRoute>
-                    <TeacherStudents />
-                  </TeacherRoute>
-                } 
-              />
-              <Route 
-                path="/teacher/students/:studentUid" 
-                element={
-                  <TeacherRoute>
-                    <TeacherStudentDetail />
-                  </TeacherRoute>
-                } 
-              />
-              <Route 
-                path="/teacher/students/:studentUid/progress" 
-                element={
-                  <TeacherRoute>
-                    <TeacherStudentProgress />
-                  </TeacherRoute>
-                } 
-              />
-              <Route 
-                path="/teacher/messages" 
-                element={
-                  <TeacherRoute>
-                    <TeacherMessages />
-                  </TeacherRoute>
-                } 
-              />
-              <Route 
-                path="/teacher/settings" 
-                element={
-                  <TeacherRoute>
-                    <TeacherSettings />
-                  </TeacherRoute>
-                } 
-              />
 
               {/* Admin Settings */}
               <Route 

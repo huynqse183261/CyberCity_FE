@@ -11,14 +11,14 @@ const CourseApiTest: React.FC = () => {
   const testGetCourses = async () => {
     setLoading(true);
     try {
-      console.log('Testing GET /api/courses...');
+      // console.log('Testing GET /api/courses...');
       const response = await courseService.getCourses({
         pageNumber: 1,
         pageSize: 10,
         descending: true
       });
       
-      console.log('Get courses response:', response);
+      // console.log('Get courses response:', response);
       
       if (response.success) {
         message.success(`Thành công! Tìm thấy ${response.data?.items?.length || 0} khóa học`);
@@ -26,7 +26,7 @@ const CourseApiTest: React.FC = () => {
         message.error(response.message || 'Lỗi khi lấy danh sách khóa học');
       }
     } catch (error) {
-      console.error('Test get courses error:', error);
+      // console.error('Test get courses error:', error);
       message.error('Lỗi kết nối API');
     } finally {
       setLoading(false);
@@ -36,7 +36,7 @@ const CourseApiTest: React.FC = () => {
   const testCreateCourse = async () => {
     setLoading(true);
     try {
-      console.log('Testing POST /api/courses...');
+      // console.log('Testing POST /api/courses...');
       
       const testCourse: CreateCourseRequest = {
         title: 'Test Course - ' + Date.now(),
@@ -48,10 +48,10 @@ const CourseApiTest: React.FC = () => {
         isActive: true
       };
       
-      console.log('Creating course with data:', testCourse);
+      // console.log('Creating course with data:', testCourse);
       const response = await courseService.createCourse(testCourse);
       
-      console.log('Create course response:', response);
+      // console.log('Create course response:', response);
       
       if (response.success) {
         message.success('Tạo khóa học test thành công!');
@@ -59,7 +59,7 @@ const CourseApiTest: React.FC = () => {
         message.error(response.message || 'Lỗi khi tạo khóa học');
       }
     } catch (error) {
-      console.error('Test create course error:', error);
+      // console.error('Test create course error:', error);
       message.error('Lỗi kết nối API');
     } finally {
       setLoading(false);

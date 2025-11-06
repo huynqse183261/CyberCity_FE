@@ -12,13 +12,6 @@ const axiosInstance = axios.create({
   },
 });
 
-if (DEBUG_MODE) {
-  console.log('🚀 Axios Config:', {
-    baseURL: axiosInstance.defaults.baseURL,
-    timeout: axiosInstance.defaults.timeout,
-  });
-}
-
 // 🧱 Request Interceptor
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
@@ -27,20 +20,9 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    if (DEBUG_MODE) {
-      console.log('📡 API Request:', {
-        method: config.method?.toUpperCase(),
-        url: `${config.baseURL || ''}${config.url || ''}`,
-        data: config.data,
-        params: config.params,
-        headers: config.headers?.Authorization ? { ...config.headers, Authorization: '[HIDDEN]' } : config.headers,
-      });
-    }
-
     return config;
   },
   (error: AxiosError) => {
-    console.error('❌ Request Error:', error);
     return Promise.reject(error);
   }
 );
@@ -48,13 +30,6 @@ axiosInstance.interceptors.request.use(
 // 🧱 Response Interceptor
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    if (DEBUG_MODE) {
-      console.log('✅ API Response:', {
-        status: response.status,
-        url: response.config.url,
-        data: response.data,
-      });
-    }
     return response;
   },
   (error: AxiosError) => {
@@ -71,28 +46,28 @@ axiosInstance.interceptors.response.use(
           break;
 
         case 403:
-          console.error('❌ Access denied');
+          // Access denied
           break;
 
         case 404:
-          console.error('❌ Resource not found');
+          // Resource not found
           break;
 
         case 422:
-          console.error('❌ Validation error:', data);
+          // Validation error
           break;
 
         case 500:
-          console.error('❌ Server error');
+          // Server error
           break;
 
         default:
-          console.error(`❌ HTTP Error ${status}:`, data);
+          // HTTP Error
       }
     } else if (error.request) {
-      console.error('❌ Network Error:', error.message);
+      // Network Error
     } else {
-      console.error('❌ Error:', error.message);
+      // Error
     }
 
     return Promise.reject(error);

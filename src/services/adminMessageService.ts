@@ -109,7 +109,6 @@ class AdminMessageService {
       const response = await axiosInstance.get<ConversationsListResponse>(url);
       return response.data;
     } catch (error: any) {
-      console.error('Error fetching conversations:', error);
       throw error;
     }
   }
@@ -132,7 +131,6 @@ class AdminMessageService {
       const response = await axiosInstance.get<MessagesListResponse>(url);
       return response.data;
     } catch (error: any) {
-      console.error('Error fetching messages:', error);
       throw error;
     }
   }
@@ -152,7 +150,6 @@ class AdminMessageService {
       
       return response.data;
     } catch (error: any) {
-      console.error('Error sending message:', error);
       throw error;
     }
   }
@@ -169,7 +166,6 @@ class AdminMessageService {
       
       return response.data;
     } catch (error: any) {
-      console.error('Error deleting message:', error);
       throw error;
     }
   }
@@ -186,7 +182,6 @@ class AdminMessageService {
       
       return response.data;
     } catch (error: any) {
-      console.error('Error fetching stats:', error);
       throw error;
     }
   }

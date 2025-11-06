@@ -327,15 +327,15 @@ class AIAssistantService extends BaseApiService {
     const ws = new WebSocket(`${wsUrl}?token=${token}`);
     
     ws.onopen = () => {
-      console.log('🤖 AI Chat WebSocket connected');
+      // AI Chat WebSocket connected
     };
     
     ws.onerror = (error) => {
-      console.error('❌ AI Chat WebSocket error:', error);
+      // AI Chat WebSocket error
     };
     
     ws.onclose = () => {
-      console.log('🔌 AI Chat WebSocket disconnected');
+      // AI Chat WebSocket disconnected
     };
     
     return ws;

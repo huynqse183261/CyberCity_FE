@@ -24,20 +24,6 @@ function loadEnvConfig(): EnvConfig {
   const debugMode = import.meta.env.VITE_DEBUG_MODE === 'true';
 
   // Cảnh báo nhưng luôn dùng giá trị mặc định để app không bị crash
-  if (!apiBaseUrl && (debugMode || mode !== 'production')) {
-    console.warn('⚠️ VITE_API_BASE_URL chưa thiết lập');
-  }
-  if (apiTimeout && isNaN(Number(apiTimeout))) {
-    console.warn('⚠️ VITE_API_TIMEOUT phải là số. Sử dụng mặc định 10000ms');
-  }
-  if (mode === 'production') {
-    if (!geminiApiKey) {
-      console.warn('⚠️ VITE_GEMINI_API_KEY chưa thiết lập ở production');
-    }
-    if (!googleClientId) {
-      console.warn('⚠️ VITE_GOOGLE_CLIENT_ID chưa thiết lập ở production');
-    }
-  }
 
   const config: EnvConfig = {
     API_BASE_URL: apiBaseUrl,
@@ -47,18 +33,6 @@ function loadEnvConfig(): EnvConfig {
     DEBUG_MODE: debugMode,
     MODE: mode,
   };
-
-  // Log config trong development mode
-  if (debugMode || mode === 'development') {
-    console.log('🌍 Environment Configuration Loaded:', {
-      MODE: config.MODE,
-      API_BASE_URL: config.API_BASE_URL,
-      API_TIMEOUT: config.API_TIMEOUT,
-      GEMINI_API_KEY: config.GEMINI_API_KEY ? '✅ Set (hidden)' : '❌ Not set',
-      GOOGLE_CLIENT_ID: config.GOOGLE_CLIENT_ID ? '✅ Set' : '❌ Not set',
-      DEBUG_MODE: config.DEBUG_MODE,
-    });
-  }
 
   return config;
 }
