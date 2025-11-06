@@ -1,60 +1,82 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import ReactQueryProvider from './providers/ReactQueryProvider';
 
-// Import components directly (not lazy loaded as requested)
+// Import protected route components
+import { AdminRoute, StudentRoute, PublicRoute } from './components/ProtectedRoute';
+
+// Lazy load pages để tối ưu code splitting
+// Critical pages - load ngay
 import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
-// import InboxPage from './pages/InboxPage';
 import HomeLogin from './pages/HomeLogin';
-import LinuxPage from './pages/LinuxPage';
-// import LinuxModule1 from './pages/LinuxModule1';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminCourseManagement from './pages/AdminCourseManagement';
-import AdminModuleManagement from './pages/AdminModuleManagement';
-import AdminLessonManagement from './pages/AdminLessonManagement';
-import AdminTopicManagement from './pages/AdminTopicManagement';
-import AdminSubtopicManagement from './pages/AdminSubtopicManagement';
-import AdminPricingManagement from './pages/AdminPricingManagement';
-import AdminTeamManagement from './pages/AdminTeamManagement';
 import AccessDenied from './pages/AccessDenied';
 
-import StudentProfile from './pages/StudentProfile';
-import AdminSettings from './pages/AdminSettings';
-import AboutPage from './pages/AboutPage';
-import ContactPage from './pages/ContactPage';
-import ServiceProcessPage from './pages/ServiceProcessPage';
-import PaymentGuidePage from './pages/PaymentGuidePage';
-import PrivacyPage from './pages/PrivacyPage';
-import TermsPage from './pages/TermsPage';
-import WarrantyPage from './pages/WarrantyPage';
-// import PricingPage from './pages/PricingPage';
-import StudentPricingPage from './pages/StudentPricingPage';
-import StudentCheckoutPage from './pages/StudentCheckoutPage';
-import StudentPaymentHistoryPage from './pages/StudentPaymentHistoryPage';
-import StudentConfirmOrderPage from './pages/StudentConfirmOrderPage';
-import MySubscriptionPage from './pages/MySubscriptionPage';
-import CheckoutPage from './pages/CheckoutPage';
-import DownloadVMPage from './pages/DownloadVMPage';
+// Student pages - lazy load
+const LinuxPage = lazy(() => import('./pages/LinuxPage'));
+const PenTestPage = lazy(() => import('./pages/PenTestPage'));
+const CourseDetailPage = lazy(() => import('./pages/CourseDetailPage'));
+const ModuleDetailPage = lazy(() => import('./pages/ModuleDetailPage'));
+const StudentPricingPage = lazy(() => import('./pages/StudentPricingPage'));
+const StudentCheckoutPage = lazy(() => import('./pages/StudentCheckoutPage'));
+const StudentPaymentHistoryPage = lazy(() => import('./pages/StudentPaymentHistoryPage'));
+const StudentConfirmOrderPage = lazy(() => import('./pages/StudentConfirmOrderPage'));
+const MySubscriptionPage = lazy(() => import('./pages/MySubscriptionPage'));
+const AIAssistantPage = lazy(() => import('./pages/AIAssistantPage'));
+const StudentProfile = lazy(() => import('./pages/StudentProfile'));
 
-// Import protected route components
-import { AdminRoute, StudentRoute, PublicRoute } from './components/ProtectedRoute';
-import AdminOrderManagement from './pages/AdminOrderManagement';
-import AdminMessages from './pages/AdminMessages';
-import InvoiceManagement from './pages/InvoiceManagement';
+// Admin pages - lazy load
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AdminCourseManagement = lazy(() => import('./pages/AdminCourseManagement'));
+const AdminModuleManagement = lazy(() => import('./pages/AdminModuleManagement'));
+const AdminLessonManagement = lazy(() => import('./pages/AdminLessonManagement'));
+const AdminTopicManagement = lazy(() => import('./pages/AdminTopicManagement'));
+const AdminSubtopicManagement = lazy(() => import('./pages/AdminSubtopicManagement'));
+const AdminPricingManagement = lazy(() => import('./pages/AdminPricingManagement'));
+const AdminTeamManagement = lazy(() => import('./pages/AdminTeamManagement'));
+const AdminOrderManagement = lazy(() => import('./pages/AdminOrderManagement'));
+const AdminMessages = lazy(() => import('./pages/AdminMessages'));
+const AdminSettings = lazy(() => import('./pages/AdminSettings'));
+const InvoiceManagement = lazy(() => import('./pages/InvoiceManagement'));
 
-// Import PenTest Learning Pages
-import PenTestPage from './pages/PenTestPage';
-// import PenTestModule1 from './pages/PenTestModule1';
+// Public pages - lazy load
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const ServiceProcessPage = lazy(() => import('./pages/ServiceProcessPage'));
+const PaymentGuidePage = lazy(() => import('./pages/PaymentGuidePage'));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
+const WarrantyPage = lazy(() => import('./pages/WarrantyPage'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const DownloadVMPage = lazy(() => import('./pages/DownloadVMPage'));
 
-// Import Module Detail Page
-import ModuleDetailPage from './pages/ModuleDetailPage';
-import CourseDetailPage from './pages/CourseDetailPage';
-
-// Import AI Assistant Page
-import AIAssistantPage from './pages/AIAssistantPage';
+// Loading component
+const LoadingFallback = () => (
+  <div style={{ 
+    display: 'flex', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)',
+    color: '#fff'
+  }}>
+    <div style={{ textAlign: 'center' }}>
+      <div style={{ 
+        width: '50px', 
+        height: '50px', 
+        border: '4px solid rgba(0, 212, 255, 0.3)',
+        borderTop: '4px solid #00d4ff',
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite',
+        margin: '0 auto 1rem'
+      }}></div>
+      <p>Đang tải...</p>
+    </div>
+  </div>
+);
 
 function App() {
   return (
@@ -62,7 +84,8 @@ function App() {
       <ReactQueryProvider>
         <AuthProvider>
           <Router>
-            <Routes>
+            <Suspense fallback={<LoadingFallback />}>
+              <Routes>
               {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />
@@ -341,7 +364,8 @@ function App() {
               <Route path="/chinh-sach-bao-hanh" element={<WarrantyPage />} />
               <Route path="/chinh-sach-bao-mat" element={<PrivacyPage />} />
               <Route path="/huong-dan-thanh-toan" element={<PaymentGuidePage />} />
-            </Routes>
+              </Routes>
+            </Suspense>
           </Router>
         </AuthProvider>
       </ReactQueryProvider>

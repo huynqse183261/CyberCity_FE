@@ -6,11 +6,11 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Stale time: Thời gian data được coi là "fresh"
+      // Stale time: Thời gian data được coi là "fresh" - tăng lên để giảm API calls
       staleTime: 5 * 60 * 1000, // 5 minutes
       
-      // Cache time: Thời gian data được giữ trong cache sau khi không dùng
-      gcTime: 10 * 60 * 1000, // 10 minutes (was cacheTime in v4)
+      // Cache time: Thời gian data được giữ trong cache sau khi không dùng - tăng lên
+      gcTime: 30 * 60 * 1000, // 30 minutes (was cacheTime in v4) - tăng từ 10 phút
       
       // Retry configuration
       retry: (failureCount, error: any) => {
@@ -20,17 +20,17 @@ const queryClient = new QueryClient({
             error?.response?.status === 404) {
           return false;
         }
-        // Retry tối đa 3 lần cho các lỗi khác
-        return failureCount < 3;
+        // Retry tối đa 2 lần cho các lỗi khác (giảm từ 3 để tăng tốc độ)
+        return failureCount < 2;
       },
       
-      // Refetch configuration
-      refetchOnWindowFocus: false, // Không refetch khi focus window
-      refetchOnMount: true,        // Refetch khi mount component
-      refetchOnReconnect: true,    // Refetch khi reconnect network
+      // Refetch configuration - tối ưu để giảm API calls
+      refetchOnWindowFocus: false, // Không refetch khi focus window - tiết kiệm bandwidth
+      refetchOnMount: false,        // Không refetch khi mount nếu data còn fresh - dùng cache
+      refetchOnReconnect: true,     // Vẫn refetch khi reconnect network
       
       // Background refetch
-      refetchInterval: false,      // Không auto refetch theo interval (trừ khi set riêng)
+      refetchInterval: false,       // Không auto refetch theo interval (trừ khi set riêng)
     },
     mutations: {
       // Retry configuration cho mutations

@@ -13,6 +13,7 @@ const LinuxLabNavigation: React.FC = () => {
         <li><Link to="/linux-lab">Linux Lab</Link></li>
         <li><Link to="/pentest-lab">PenTest Lab</Link></li>
         <li><Link to="/ai-assistant">AI Assistant</Link></li>
+        <li><Link to="/student/pricing">Mua gói học</Link></li>
       </ul>
     </div>
   );

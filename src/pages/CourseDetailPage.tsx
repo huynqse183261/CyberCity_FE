@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import LinuxLabNavigation from '../components/LinuxLabNavigation';
 import UserDropdown from '../components/UserDropdown';
 import { useAuth } from '../contexts/AuthContext';
 import type { User } from '../models/LinuxLabTypes';
-import contentService, { type CourseOutline, type Module as ModuleType } from '../services/contentService';
+import { type Module as ModuleType } from '../services/contentService';
+import { useCourseOutlineByUid, usePrefetchCourseOutline } from '../hooks/useCourseContent';
 import { useSubscriptionAccess } from '../hooks/useSubscriptionAccess';
 import '../styles/LinuxLabPage.css';
 import '../styles/CourseDetailPage.css';
@@ -24,43 +25,52 @@ const CourseDetailPage: React.FC = () => {
     avatar: currentUser?.fullName?.charAt(0).toUpperCase() || 'U'
   };
 
-  const [outline, setOutline] = useState<CourseOutline | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  // React Query hook cho course outline
+  const { data: outline, isLoading: loading, error: outlineError } = useCourseOutlineByUid(courseUid, !!courseUid);
+  
+  // Prefetch hook
+  const { prefetchByUid } = usePrefetchCourseOutline();
   
   // Use subscription access hook
   const { canViewAllModules, maxFreeModules, subscriptionInfo, loading: subscriptionLoading } = useSubscriptionAccess();
   const hasSubscription = canViewAllModules;
 
-  useEffect(() => {
+  // Memoized error
+  const error = useMemo(() => {
     if (!courseUid) {
-      setError('Không tìm thấy thông tin khóa học');
-      setLoading(false);
-      return;
+      return 'Không tìm thấy thông tin khóa học';
     }
+    if (outlineError) {
+      return 'Không thể tải dữ liệu khóa học';
+    }
+    if (!loading && !outline) {
+      return 'Không tìm thấy khóa học';
+    }
+    return null;
+  }, [courseUid, outlineError, loading, outline]);
 
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        
-        // Load course outline by courseUid
-        // Subscription access đã được load bởi useSubscriptionAccess hook
-        const courseOutline = await contentService.getCourseOutlineByUid(courseUid);
-        setOutline(courseOutline);
-      } catch (err) {
-        setError('Không thể tải dữ liệu khóa học');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Memoized filtered modules
+  const filteredModules = useMemo(() => {
+    if (!outline?.modules) {
+      return [];
+    }
+    return outline.modules.filter((_, idx: number) => hasSubscription || idx < maxFreeModules);
+  }, [outline, hasSubscription, maxFreeModules]);
 
-    loadData();
-  }, [courseUid]);
-
-  const handleModuleClick = (moduleIndex: number) => {
-    // Navigate to module detail page với courseUid
+  // Memoized handler
+  const handleModuleClick = useCallback((moduleIndex: number) => {
+    if (!courseUid) return;
+    // Prefetch module outline before navigation
+    prefetchByUid(courseUid);
     navigate(`/${courseSlug}/course/${courseUid}/module/${moduleIndex + 1}`);
-  };
+  }, [courseUid, courseSlug, navigate, prefetchByUid]);
+
+  // Prefetch module on hover
+  const handleModuleHover = useCallback(() => {
+    if (courseUid) {
+      prefetchByUid(courseUid);
+    }
+  }, [courseUid, prefetchByUid]);
 
   if (loading || subscriptionLoading) {
     return (
@@ -149,16 +159,19 @@ const CourseDetailPage: React.FC = () => {
       <div className="container">
         <div className="section">
           <h2>📚 Nội Dung Khóa Học</h2>
-          {outline.modules && outline.modules.length > 0 ? (
+          {outline?.modules && outline.modules.length > 0 ? (
             <>
               <div className="modules-list">
                 {/* Filter modules: chỉ hiển thị 2 module đầu nếu chưa mua gói */}
-                {outline.modules
-                  .filter((_, idx: number) => hasSubscription || idx < maxFreeModules)
-                  .map((module: ModuleType) => {
-                    const originalIndex = outline.modules.findIndex(m => m.uid === module.uid);
+                {filteredModules.map((module: ModuleType) => {
+                    const originalIndex = outline?.modules?.findIndex(m => m.uid === module.uid) ?? -1;
                     return (
-                      <div key={module.uid} className="module-card" onClick={() => handleModuleClick(originalIndex)}>
+                      <div 
+                        key={module.uid} 
+                        className="module-card" 
+                        onClick={() => handleModuleClick(originalIndex)}
+                        onMouseEnter={handleModuleHover}
+                      >
                         <div className="module-header">
                           <h3>Module {originalIndex + 1}: {module.title}</h3>
                           <button className="btn">Vào Module →</button>
@@ -182,7 +195,7 @@ const CourseDetailPage: React.FC = () => {
               </div>
               
               {/* Hiển thị thông báo nếu chưa mua gói và có nhiều hơn 2 modules */}
-              {!hasSubscription && outline.modules.length > maxFreeModules && (
+              {!hasSubscription && outline?.modules && outline.modules.length > maxFreeModules && (
                 <div style={{ 
                   marginTop: '2rem', 
                   padding: '1.5rem', 
@@ -193,7 +206,7 @@ const CourseDetailPage: React.FC = () => {
                 }}>
                   <h3 style={{ color: '#ff4444', marginBottom: '1rem' }}>🔒 Khóa học nâng cao</h3>
                   <p style={{ color: '#b8c5d1', marginBottom: '1rem' }}>
-                    Bạn đang xem {maxFreeModules} module đầu tiên miễn phí. Để xem toàn bộ {outline.modules.length} modules, vui lòng mua gói học.
+                    Bạn đang xem {maxFreeModules} module đầu tiên miễn phí. Để xem toàn bộ {outline?.modules?.length || 0} modules, vui lòng mua gói học.
                   </p>
                   <button 
                     className="btn pentest-btn" 

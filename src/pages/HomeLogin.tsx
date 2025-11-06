@@ -190,10 +190,6 @@ const HomeLogin: React.FC = () => {
                   <span className="mini-stat-label">Gói đề xuất</span>
                 </div>
                 <div className="mini-stat">
-                  <span className="mini-stat-value">-10%</span>
-                  <span className="mini-stat-label">Ưu đãi</span>
-                </div>
-                <div className="mini-stat">
                   <span className="mini-stat-value">24/7</span>
                   <span className="mini-stat-label">Hỗ trợ</span>
                 </div>
