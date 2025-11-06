@@ -3,8 +3,6 @@ import axiosInstance from '../api/axiosInstance';
 export type CreatePaymentLinkRequest = {
   userUid: string;
   planUid: string;
-  returnUrl: string;
-  cancelUrl: string;
 };
 
 export type CreatePaymentLinkResponse = {
