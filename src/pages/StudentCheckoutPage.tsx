@@ -64,42 +64,56 @@ const StudentCheckoutPage: React.FC = () => {
   const createPayment = async () => {
     const userUid = (currentUser as any)?.uid || (currentUser as any)?.userUid || (currentUser as any)?.id || (currentUser as any)?.userId;
     if (!userUid || !planUid) {
-      setError('Thông tin không hợp lệ.');
+      setError('Thông tin không hợp lệ. Vui lòng đăng nhập lại.');
+      console.error('Missing userUid or planUid:', { userUid, planUid, currentUser });
       return;
     }
+    
+    // Validate userUid format (should be UUID)
+    if (typeof userUid !== 'string' || userUid.length < 10) {
+      setError('Mã người dùng không hợp lệ.');
+      console.error('Invalid userUid format:', userUid);
+      return;
+    }
+    
+    const requestBody = {
+      userUid: String(userUid).trim(),
+      planUid: String(planUid).trim()
+    };
+    
     try {
       setError(null);
       setCreating(true);
-      const origin = window.location.origin;
-      // Có thể config từ env hoặc dùng mặc định
-      const returnUrl = import.meta.env.VITE_PAYMENT_RETURN_URL || `${origin}/student/payment/success`;
-      const cancelUrl = import.meta.env.VITE_PAYMENT_CANCEL_URL || `${origin}/student/payment/cancel`;
       
-      const requestBody = {
-        userUid,
-        planUid,
-        returnUrl,
-        cancelUrl
-      };
-      
-      console.log('Creating payment link with request:', requestBody);
+      console.log('Creating payment link with request:', JSON.stringify(requestBody, null, 2));
       
       const res = await paymentService.createPaymentLink(requestBody);
       if (res?.success && res.data) {
         setPaymentUid(res.data.uid);
         setOrderCode(res.data.orderCode);
         setCheckoutUrl(res.data.checkoutUrl);
-        setQrCode(res.data.qrCode);
+        setQrCode(res.data.qrCode || res.data.checkoutUrl); // Sepay: qrCode và checkoutUrl là cùng 1 URL
         setStatus(res.data.status);
-        // Mở trang PayOS ở tab mới cho người dùng
-        if (res.data.checkoutUrl) {
-          try { window.open(res.data.checkoutUrl, '_blank'); } catch {}
-        }
       } else {
-        setError(res?.message || 'Không thể tạo liên kết thanh toán.');
+        const errorMsg = res?.message || 'Không thể tạo liên kết thanh toán.';
+        setError(errorMsg);
+        console.error('Payment link creation failed:', res);
       }
     } catch (e: any) {
-      setError(e?.response?.data?.message || 'Lỗi khi tạo liên kết thanh toán.');
+      console.error('Payment link creation error:', e);
+      const errorMsg = e?.response?.data?.message 
+        || e?.response?.data?.error 
+        || e?.message 
+        || 'Lỗi khi tạo liên kết thanh toán. Vui lòng thử lại.';
+      setError(errorMsg);
+      
+      // Log chi tiết để debug
+      if (e?.response?.data) {
+        console.error('API Error Response:', e.response.data);
+      }
+      if (e?.response?.status === 400) {
+        console.error('Bad Request - Check request body format:', requestBody);
+      }
     } finally {
       setCreating(false);
     }
@@ -144,7 +158,7 @@ const StudentCheckoutPage: React.FC = () => {
       <section className="hero-section">
         <div className="hero-content">
           <h1 className="hero-title">Thanh toán gói học</h1>
-          <p className="hero-subtitle">Quét QR hoặc mở link để tiến hành thanh toán qua PayOS</p>
+          <p className="hero-subtitle">Quét QR Code để thanh toán qua ứng dụng ngân hàng (Sepay)</p>
         </div>
       </section>
 
@@ -163,15 +177,21 @@ const StudentCheckoutPage: React.FC = () => {
           ) : (
             <div className="main-features-grid">
               <div className="main-feature-card linux-card" style={{ alignItems: 'center', textAlign: 'center', padding: 24 }}>
-                <h3 className="feature-title">Bước 1: Quét QR</h3>
+                <h3 className="feature-title">Bước 1: Quét QR Code</h3>
                 {qrCode ? (
-                  <img src={qrCode} alt="QR Code thanh toán" style={{ width: 320, height: 320, borderRadius: 12 }} />
+                  <>
+                    <img src={qrCode} alt="QR Code thanh toán Sepay" style={{ width: 320, height: 320, borderRadius: 12, border: '2px solid #e5e7eb' }} />
+                    <p style={{ marginTop: 16, fontSize: 14, color: '#6b7280' }}>
+                      Mở ứng dụng ngân hàng và quét QR Code này để thanh toán
+                    </p>
+                    {checkoutUrl && (
+                      <a className="feature-btn linux-btn" href={checkoutUrl} target="_blank" rel="noreferrer" style={{ height: 48, lineHeight: '48px', fontSize: 14, marginTop: 12, display: 'inline-block' }}>
+                        Mở QR Code trong tab mới
+                      </a>
+                    )}
+                  </>
                 ) : (
-                  <p>Đang tải QR...</p>
-                )}
-                <p style={{ marginTop: 12 }}>Hoặc</p>
-                {checkoutUrl && (
-                  <a className="feature-btn linux-btn" href={checkoutUrl} target="_blank" rel="noreferrer" style={{ height: 52, lineHeight: '52px', fontSize: 16 }}>Mở trang thanh toán</a>
+                  <p>Đang tải QR Code...</p>
                 )}
               </div>
 
