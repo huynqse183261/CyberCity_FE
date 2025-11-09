@@ -13,7 +13,7 @@ export type CreatePaymentLinkResponse = {
     checkoutUrl: string;
     qrCode: string;
     orderCode: number;
-    status: 'PENDING' | 'PAID' | 'CANCELLED';
+    status: 'pending' | 'completed' | 'cancelled' | 'failed'; // lowercase theo API documentation
     amount: number;
     description?: string;
     userName?: string;
@@ -28,7 +28,7 @@ export type PaymentStatusResponse = {
     amount: number;
     amountPaid: string;
     amountRemaining: number;
-    status: 'PENDING' | 'PAID' | 'CANCELLED';
+    status: 'pending' | 'completed' | 'cancelled' | 'failed'; // lowercase theo API documentation
     createdAt: string;
     canceledAt?: string | null;
     cancellationReason?: string | null;
