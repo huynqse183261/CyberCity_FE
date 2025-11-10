@@ -460,7 +460,7 @@ const AdminTopicManagement: React.FC<AdminTopicManagementProps> = () => {
             }}
             footer={null}
             width={900}
-            destroyOnClose
+            destroyOnHidden
           >
             <Form
               form={form}

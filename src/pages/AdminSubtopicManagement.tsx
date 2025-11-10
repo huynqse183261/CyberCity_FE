@@ -431,7 +431,7 @@ const AdminSubtopicManagement: React.FC<AdminSubtopicManagementProps> = () => {
             }}
             footer={null}
             width={900}
-            destroyOnClose
+            destroyOnHidden
           >
             <Form
               form={form}

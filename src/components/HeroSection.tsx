@@ -17,6 +17,7 @@ const HeroSection: React.FC = () => {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, alpha: true });
+    let isDisposed = false;
     
     // Lấy kích thước thực của hero section
     const heroSection = canvasRef.current.parentElement;
@@ -53,6 +54,7 @@ const HeroSection: React.FC = () => {
 
     // Animation
     const animate = () => {
+        if (isDisposed) return; // dừng render sau khi dispose
         requestAnimationFrame(animate);
         
         particlesMesh.rotation.x += 0.001; // Tăng tốc độ xoay
@@ -78,6 +80,12 @@ const HeroSection: React.FC = () => {
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      isDisposed = true;
+      // Giải phóng tài nguyên WebGL để tránh lỗi INVALID_OPERATION khi hot reload/unmount
+      scene.remove(particlesMesh);
+      particlesGeometry.dispose();
+      particlesMaterial.dispose();
+      renderer.dispose();
     };
   }, []);
 

@@ -101,12 +101,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       onClick: () => navigate('/admin/orders'),
     },
     {
-      key: '/admin/invoices',
-      icon: <FileTextOutlined />,
-      label: 'Hóa đơn',
-      onClick: () => navigate('/admin/invoices'),
-    },
-    {
       key: '/admin/pricing',
       icon: <DollarOutlined />,
       label: 'Định giá',
@@ -208,39 +202,65 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         <Header 
           className={`admin-header ${collapsed ? 'collapsed' : ''}`}
           style={{ 
-            padding: '0 24px', 
+            padding: '0 16px', 
             background: '#fff', 
             display: 'flex', 
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
+            boxShadow: '0 1px 0 rgba(0,0,0,0.06)'
           }}
         >
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{ fontSize: '16px', width: 64, height: 64 }}
-          />
-          
-          <Space size="large">
-            <Input
-              placeholder="Tìm kiếm..."
-              prefix={<SearchOutlined />}
-              style={{ width: 300 }}
+          <div style={{ 
+            width: '100%', 
+            maxWidth: 1280, 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 16 
+          }}>
+            {/* Left: toggle */}
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed(!collapsed)}
+              style={{ fontSize: '18px', width: 48, height: 48 }}
             />
-            <Badge count={5}>
-              <Button type="text" icon={<BellOutlined />} />
-            </Badge>
-            <Space>
-              <Avatar style={{ background: '#e74c3c' }} src={user?.image}>
-                  {user?.fullName?.charAt(0) || 'A'}
-                </Avatar>
-              <div>
-                <div style={{ fontWeight: 500 }}>{user?.fullName || 'Admin'}</div>
-                <Text type="secondary" style={{ fontSize: '12px' }}>{user?.role || 'Admin'}</Text>
+
+            {/* Center: search (hide on mobile) */}
+            {!isMobile && (
+              <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                <Input
+                  placeholder="Tìm kiếm..."
+                  prefix={<SearchOutlined />}
+                  allowClear
+                  size="middle"
+                  style={{ width: '100%', maxWidth: 520 }}
+                />
               </div>
-            </Space>
-          </Space>
+            )}
+
+            {/* Right: actions */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 'auto' }}>
+              <Badge count={5} size="small" offset={[-2, 6]}>
+                <Button 
+                  type="text" 
+                  shape="circle" 
+                  icon={<BellOutlined />} 
+                  style={{ width: 40, height: 40 }}
+                />
+              </Badge>
+              <Space size={8}>
+                <Avatar style={{ background: '#e74c3c' }} src={user?.image}>
+                  {user?.fullName?.charAt(0)?.toUpperCase?.() || 'A'}
+                </Avatar>
+                {!isMobile && (
+                  <div style={{ lineHeight: 1.1 }}>
+                    <div style={{ fontWeight: 600 }}>{user?.fullName || 'Admin'}</div>
+                    <Text type="secondary" style={{ fontSize: '12px' }}>{(user?.role || 'Admin')}</Text>
+                  </div>
+                )}
+              </Space>
+            </div>
+          </div>
         </Header>
 
         <Content className={`admin-content ${collapsed ? 'collapsed' : ''}`}>

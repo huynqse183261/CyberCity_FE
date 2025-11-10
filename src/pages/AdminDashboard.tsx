@@ -20,8 +20,6 @@ import {
   UserOutlined,
   ShoppingOutlined,
   BookOutlined,
-  TeamOutlined,
-  CheckCircleOutlined,
 } from '@ant-design/icons';
 import { Line } from '@ant-design/charts';
 import { 
@@ -190,26 +188,6 @@ const AdminDashboard: React.FC = () => {
         suffix: 'Khóa học',
         icon: <BookOutlined />,
         color: '#f0f9ff',
-      },
-      {
-        title: 'Tổng đăng ký',
-        value: stats.totalEnrollments,
-        precision: 0,
-        valueStyle: { color: '#722ed1' },
-        prefix: <TeamOutlined />,
-        suffix: 'Đăng ký',
-        icon: <TeamOutlined />,
-        color: '#f9f0ff',
-      },
-      {
-        title: 'Chờ phê duyệt',
-        value: stats.totalApprovedPending,
-        precision: 0,
-        valueStyle: { color: '#fa8c16' },
-        prefix: <CheckCircleOutlined />,
-        suffix: 'Chờ xử lý',
-        icon: <CheckCircleOutlined />,
-        color: '#fff7e6',
       },
     ];
   }, [stats]);
@@ -420,10 +398,6 @@ const AdminDashboard: React.FC = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Text>Tổng khóa học</Text>
                   <Text strong>{stats?.totalCourses || 0}</Text>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Text>Chờ phê duyệt</Text>
-                  <Text strong style={{ color: '#fa8c16' }}>{stats?.totalApprovedPending || 0}</Text>
                 </div>
               </Space>
             </Card>

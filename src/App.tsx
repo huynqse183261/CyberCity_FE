@@ -39,7 +39,6 @@ const AdminTeamManagement = lazy(() => import('./pages/AdminTeamManagement'));
 const AdminOrderManagement = lazy(() => import('./pages/AdminOrderManagement'));
 const AdminMessages = lazy(() => import('./pages/AdminMessages'));
 const AdminSettings = lazy(() => import('./pages/AdminSettings'));
-const InvoiceManagement = lazy(() => import('./pages/InvoiceManagement'));
 
 // Public pages - lazy load
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
@@ -266,14 +265,7 @@ function App() {
                   </AdminRoute>
                 } 
               />
-              <Route 
-                path="/admin/invoices" 
-                element={
-                  <AdminRoute>
-                    <InvoiceManagement />
-                  </AdminRoute>
-                } 
-              />
+              
 
 
               {/* Admin Settings */}

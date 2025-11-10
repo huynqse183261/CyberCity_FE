@@ -80,7 +80,7 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
   };
 
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
       <GoogleLogin
         onSuccess={handleGoogleSuccess}
         onError={handleGoogleError}
@@ -90,7 +90,7 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
         text="signin_with"
         shape="rectangular"
         logo_alignment="left"
-        width="100%"
+        // GSI không chấp nhận width dạng %, bỏ để tự căn theo container
       />
     </div>
   );

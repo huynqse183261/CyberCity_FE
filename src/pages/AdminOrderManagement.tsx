@@ -14,14 +14,11 @@ import {
   Popconfirm,
   Row,
   Col,
-  Statistic,
   DatePicker,
   Descriptions,
   Drawer,
   Typography,
   Tooltip,
-  Badge,
-  Progress,
   Divider,
   List,
   Avatar
@@ -30,8 +27,6 @@ import {
   EyeOutlined,
   EditOutlined,
   DeleteOutlined,
-  SearchOutlined,
-  PrinterOutlined,
   ExportOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -39,18 +34,16 @@ import {
   DollarOutlined,
   ShoppingCartOutlined,
   ReloadOutlined,
-  FilterOutlined,
-  DownloadOutlined,
   CreditCardOutlined,
   BankOutlined,
   WalletOutlined,
-  UserOutlined,
-  CalendarOutlined,
   InfoCircleOutlined
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import '../styles/AdminProductManagement.css';
+import paymentOrderService from '../services/paymentOrderService';
+import adminMetricsService from '../services/adminMetricsService';
 
 // Mock data interfaces
 interface MockOrderItem {
@@ -92,236 +85,13 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { Title, Text } = Typography;
 
-// Mock data
-const mockOrders: MockOrder[] = [
-  {
-    uid: '1',
-    orderNumber: 'ORD-2024-001',
-    customerName: 'Nguyễn Văn An',
-    customerEmail: 'nguyenvanan@gmail.com',
-    customerPhone: '0123456789',
-    customerAddress: '123 Nguyễn Trãi, Quận 1, TP.HCM',
-    totalAmount: 1500000,
-    status: 'pending',
-    paymentStatus: 'pending',
-    paymentMethod: 'bank_transfer',
-    createdAt: '2024-01-20T09:30:00Z',
-    notes: 'Khách hàng yêu cầu giao hàng nhanh',
-    items: [
-      {
-        uid: '1-1',
-        productName: 'Khóa học Linux System Administration',
-        quantity: 1,
-        unitPrice: 1200000,
-        totalPrice: 1200000
-      },
-      {
-        uid: '1-2',
-        productName: 'Lab Environment - 3 tháng',
-        quantity: 1,
-        unitPrice: 300000,
-        totalPrice: 300000
-      }
-    ],
-    payments: []
-  },
-  {
-    uid: '2',
-    orderNumber: 'ORD-2024-002',
-    customerName: 'Trần Thị Bình',
-    customerEmail: 'tranthibinh@gmail.com',
-    customerPhone: '0987654321',
-    customerAddress: '456 Lê Lợi, Quận 3, TP.HCM',
-    totalAmount: 2500000,
-    status: 'completed',
-    paymentStatus: 'paid',
-    paymentMethod: 'credit_card',
-    createdAt: '2024-01-18T14:20:00Z',
-    updatedAt: '2024-01-18T14:25:00Z',
-    notes: 'Đã hoàn thành',
-    items: [
-      {
-        uid: '2-1',
-        productName: 'Khóa học Penetration Testing Advanced',
-        quantity: 1,
-        unitPrice: 2000000,
-        totalPrice: 2000000
-      },
-      {
-        uid: '2-2',
-        productName: 'Chứng chỉ Security+',
-        quantity: 1,
-        unitPrice: 500000,
-        totalPrice: 500000
-      }
-    ],
-    payments: [
-      {
-        uid: 'pay-2-1',
-        amount: 2500000,
-        paymentMethod: 'credit_card',
-        status: 'completed',
-        createdAt: '2024-01-18T14:22:00Z',
-        transactionId: 'TXN-20240118-002'
-      }
-    ]
-  },
-  {
-    uid: '3',
-    orderNumber: 'ORD-2024-003',
-    customerName: 'Lê Minh Cường',
-    customerEmail: 'leminhcuong@gmail.com',
-    customerPhone: '0912345678',
-    customerAddress: '789 Võ Văn Tần, Quận 10, TP.HCM',
-    totalAmount: 800000,
-    status: 'processing',
-    paymentStatus: 'paid',
-    paymentMethod: 'e_wallet',
-    createdAt: '2024-01-19T16:45:00Z',
-    updatedAt: '2024-01-19T16:50:00Z',
-    notes: 'Đang xử lý',
-    items: [
-      {
-        uid: '3-1',
-        productName: 'Khóa học Docker & Kubernetes',
-        quantity: 1,
-        unitPrice: 800000,
-        totalPrice: 800000
-      }
-    ],
-    payments: [
-      {
-        uid: 'pay-3-1',
-        amount: 800000,
-        paymentMethod: 'e_wallet',
-        status: 'completed',
-        createdAt: '2024-01-19T16:47:00Z',
-        transactionId: 'TXN-20240119-003'
-      }
-    ]
-  },
-  {
-    uid: '4',
-    orderNumber: 'ORD-2024-004',
-    customerName: 'Phạm Thu Hương',
-    customerEmail: 'phamthuhuong@gmail.com',
-    customerPhone: '0934567890',
-    customerAddress: '321 Điện Biên Phủ, Quận Bình Thạnh, TP.HCM',
-    totalAmount: 3000000,
-    status: 'cancelled',
-    paymentStatus: 'refunded',
-    paymentMethod: 'bank_transfer',
-    createdAt: '2024-01-15T10:15:00Z',
-    updatedAt: '2024-01-16T09:30:00Z',
-    notes: 'Khách hàng hủy đơn, đã hoàn tiền',
-    items: [
-      {
-        uid: '4-1',
-        productName: 'Gói Premium - 12 tháng',
-        quantity: 1,
-        unitPrice: 3000000,
-        totalPrice: 3000000
-      }
-    ],
-    payments: [
-      {
-        uid: 'pay-4-1',
-        amount: 3000000,
-        paymentMethod: 'bank_transfer',
-        status: 'refunded',
-        createdAt: '2024-01-15T10:20:00Z',
-        transactionId: 'TXN-20240115-004'
-      }
-    ]
-  },
-  {
-    uid: '5',
-    orderNumber: 'ORD-2024-005',
-    customerName: 'Hoàng Văn Đức',
-    customerEmail: 'hoangvanduc@gmail.com',
-    customerPhone: '0945678901',
-    customerAddress: '654 Nguyễn Thị Minh Khai, Quận 1, TP.HCM',
-    totalAmount: 1800000,
-    status: 'completed',
-    paymentStatus: 'paid',
-    paymentMethod: 'credit_card',
-    createdAt: '2024-01-17T13:00:00Z',
-    updatedAt: '2024-01-17T13:05:00Z',
-    items: [
-      {
-        uid: '5-1',
-        productName: 'Khóa học Ethical Hacking',
-        quantity: 1,
-        unitPrice: 1500000,
-        totalPrice: 1500000
-      },
-      {
-        uid: '5-2',
-        productName: 'Tools & Lab Access',
-        quantity: 1,
-        unitPrice: 300000,
-        totalPrice: 300000
-      }
-    ],
-    payments: [
-      {
-        uid: 'pay-5-1',
-        amount: 1800000,
-        paymentMethod: 'credit_card',
-        status: 'completed',
-        createdAt: '2024-01-17T13:02:00Z',
-        transactionId: 'TXN-20240117-005'
-      }
-    ]
-  },
-  {
-    uid: '6',
-    orderNumber: 'ORD-2024-006',
-    customerName: 'Vũ Thị Mai',
-    customerEmail: 'vuthimai@gmail.com',
-    customerPhone: '0956789012',
-    totalAmount: 600000,
-    status: 'pending',
-    paymentStatus: 'failed',
-    paymentMethod: 'credit_card',
-    createdAt: '2024-01-21T11:20:00Z',
-    notes: 'Thanh toán thất bại, đang chờ khách hàng xử lý',
-    items: [
-      {
-        uid: '6-1',
-        productName: 'Khóa học Network Security',
-        quantity: 1,
-        unitPrice: 600000,
-        totalPrice: 600000
-      }
-    ],
-    payments: [
-      {
-        uid: 'pay-6-1',
-        amount: 600000,
-        paymentMethod: 'credit_card',
-        status: 'failed',
-        createdAt: '2024-01-21T11:22:00Z',
-        transactionId: 'TXN-20240121-006'
-      }
-    ]
-  }
-];
-
-const mockStats = {
-  totalOrders: mockOrders.length,
-  pendingOrders: mockOrders.filter(o => o.status === 'pending').length,
-  completedOrders: mockOrders.filter(o => o.status === 'completed').length,
-  cancelledOrders: mockOrders.filter(o => o.status === 'cancelled').length,
-  totalRevenue: mockOrders.filter(o => o.status === 'completed').reduce((sum, o) => sum + o.totalAmount, 0)
-};
-
 const AdminOrderManagement: React.FC = () => {
-  // State thay thế cho hooks
+   // State
   const [loading, setLoading] = useState(false);
-  const [orders, setOrders] = useState<MockOrder[]>(mockOrders);
-  const [filteredOrders, setFilteredOrders] = useState<MockOrder[]>(mockOrders);
-  const [stats] = useState(mockStats);
+   const [orders, setOrders] = useState<MockOrder[]>([]);
+   const [filteredOrders, setFilteredOrders] = useState<MockOrder[]>([]);
+  const [totalOrdersApi, setTotalOrdersApi] = useState<number | null>(null);
+  const [totalAmountApi, setTotalAmountApi] = useState<number | null>(null);
   const [searchText, setSearchText] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPaymentStatus, setFilterPaymentStatus] = useState('all');
@@ -340,7 +110,7 @@ const AdminOrderManagement: React.FC = () => {
 
   // Filter function
   const filterOrders = () => {
-    let filtered = mockOrders;
+    let filtered = orders;
 
     // Search filter
     if (searchText) {
@@ -367,7 +137,67 @@ const AdminOrderManagement: React.FC = () => {
   // Effect to filter orders when filters change
   useEffect(() => {
     filterOrders();
-  }, [searchText, filterStatus, filterPaymentStatus]);
+  }, [orders, searchText, filterStatus, filterPaymentStatus]);
+
+   // Load orders from Payment API
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        const res = await paymentOrderService.getAllOrdersAdmin();
+        const mapped: MockOrder[] = (res.data || []).map((o: any) => ({
+          uid: o.uid,
+          orderNumber: o.uid?.slice(0, 8)?.toUpperCase?.() || o.uid,
+          customerName: o.userName,
+          customerEmail: o.userEmail,
+          customerPhone: '',
+          totalAmount: o.amount,
+          // Map approvalStatus to generic status for current UI
+          status: o.approvalStatus === 'approved' ? 'completed'
+                : o.approvalStatus === 'rejected' ? 'cancelled'
+                : 'pending',
+          paymentStatus: o.paymentStatus,
+          paymentMethod: '', // not provided in list API
+          createdAt: o.createdAt,
+          updatedAt: o.paidAt || o.createdAt,
+          notes: '',
+          items: [],
+          payments: []
+        }));
+         setOrders(mapped);
+         setFilteredOrders(mapped);
+      } catch (e: any) {
+         setOrders([]);
+         setFilteredOrders([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  // Load aggregated stats (total orders, total amount) from admin endpoints
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const [totalOrders, totalRevenue] = await Promise.all([
+          adminMetricsService.getTotalOrders(),
+          adminMetricsService.getTotalRevenue()
+        ]);
+        setTotalOrdersApi(typeof totalOrders === 'number' ? totalOrders : null);
+        setTotalAmountApi(typeof totalRevenue === 'number' ? totalRevenue : null);
+        return;
+      } catch {
+        // fallback compute from current orders
+      }
+      // Fallback: compute from currently loaded orders
+      const totalOrders = orders.length;
+      const totalAmount = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+      setTotalOrdersApi(totalOrders);
+      setTotalAmountApi(totalAmount);
+    };
+    loadStats();
+  }, [orders]);
 
   // Mock functions to replace API calls
   const handleSearch = (value: string) => {
@@ -576,7 +406,7 @@ const AdminOrderManagement: React.FC = () => {
       dataIndex: 'paymentStatus',
       key: 'paymentStatus',
       width: 120,
-      render: (paymentStatus: string, record: OrderDto) => (
+      render: (paymentStatus: string, record: MockOrder) => (
         <Space direction="vertical" size={0}>
           <Tag color={getPaymentStatusColor(paymentStatus)}>
             {getPaymentStatusLabel(paymentStatus)}
@@ -790,58 +620,7 @@ const AdminOrderManagement: React.FC = () => {
           </Title>
         </div>
 
-        {/* Statistics Cards */}
-        {stats && (
-          <Row gutter={16} style={{ marginBottom: 24 }}>
-            <Col xs={24} sm={12} lg={6}>
-              <Card>
-                <Statistic
-                  title="Tổng đơn hàng"
-                  value={stats.totalOrders}
-                  prefix={<ShoppingCartOutlined />}
-                  valueStyle={{ color: '#1890ff' }}
-                />
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} lg={6}>
-              <Card>
-                <Statistic
-                  title="Chờ xử lý"
-                  value={stats.pendingOrders}
-                  prefix={<ClockCircleOutlined />}
-                  valueStyle={{ color: '#fa8c16' }}
-                />
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} lg={6}>
-              <Card>
-                <Statistic
-                  title="Hoàn thành"
-                  value={stats.completedOrders}
-                  prefix={<CheckCircleOutlined />}
-                  valueStyle={{ color: '#52c41a' }}
-                />
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} lg={6}>
-              <Card>
-                <Statistic
-                  title="Doanh thu"
-                  value={stats.totalRevenue}
-                  prefix={<DollarOutlined />}
-                  valueStyle={{ color: '#52c41a' }}
-                  formatter={(value) => 
-                    new Intl.NumberFormat('vi-VN', {
-                      style: 'currency',
-                      currency: 'VND',
-                      maximumFractionDigits: 0
-                    }).format(Number(value))
-                  }
-                />
-              </Card>
-            </Col>
-          </Row>
-        )}
+         {/* Statistics Cards removed - using KPI row below */}
 
         {/* Filters */}
         <Card className="admin-filter-card">
@@ -911,6 +690,31 @@ const AdminOrderManagement: React.FC = () => {
             </Col>
           </Row>
         </Card>
+
+        {/* KPIs */}
+        <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+          <Col xs={24} md={12}>
+            <Card>
+              <Space direction="vertical">
+                <Text type="secondary">Tổng đơn hàng</Text>
+                <Typography.Title level={3} style={{ margin: 0 }}>
+                  {typeof totalOrdersApi === 'number' ? totalOrdersApi : orders.length}
+                </Typography.Title>
+              </Space>
+            </Card>
+          </Col>
+          <Col xs={24} md={12}>
+            <Card>
+              <Space direction="vertical">
+                <Text type="secondary">Tổng số tiền</Text>
+                <Typography.Title level={3} style={{ margin: 0, color: '#52c41a' }}>
+                  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
+                    .format(typeof totalAmountApi === 'number' ? totalAmountApi : orders.reduce((s, o) => s + o.totalAmount, 0))}
+                </Typography.Title>
+              </Space>
+            </Card>
+          </Col>
+        </Row>
 
         {/* Table */}
         <Card className="admin-table-card">

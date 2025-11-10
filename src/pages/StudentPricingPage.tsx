@@ -24,14 +24,24 @@ const StudentPricingPage: React.FC = () => {
     if (!data) return [];
     const raw = Array.isArray(data) ? data : (data as any)?.items || (data as any)?.data || [];
     return raw.map((plan: any) => ({
-      uid: plan.uid,
-      planName: plan.planName || plan.plan_name || plan.name,
-      price: plan.price || 0,
-      durationDays: plan.durationDays || plan.duration_days || plan.duration || 30,
-      features: typeof plan.features === 'string' && plan.features.startsWith('[')
-        ? JSON.parse(plan.features)
-        : plan.features?.split?.('\n') || (Array.isArray(plan.features) ? plan.features : []),
-      isFeatured: plan.planName?.toLowerCase?.().includes('premium') || plan.planName?.toLowerCase?.().includes('pro') || plan.plan_name?.toLowerCase?.().includes('premium') || plan.plan_name?.toLowerCase?.().includes('pro')
+      uid: plan.uid ?? plan.Uid ?? plan.id ?? plan.Id,
+      planName: plan.planName ?? plan.PlanName ?? plan.plan_name ?? plan.name ?? plan.Name,
+      price: plan.price ?? plan.Price ?? 0,
+      durationDays: plan.durationDays ?? plan.DurationDays ?? plan.duration_days ?? plan.duration ?? 30,
+      features: (() => {
+        const value = plan.features ?? plan.Features;
+        if (typeof value === 'string') {
+          if (value.trim().startsWith('[')) {
+            try { return JSON.parse(value); } catch { return []; }
+          }
+          return value.split('\n').filter(Boolean);
+        }
+        return Array.isArray(value) ? value : [];
+      })(),
+      isFeatured: (() => {
+        const name = (plan.planName ?? plan.PlanName ?? plan.plan_name ?? plan.name ?? plan.Name ?? '').toLowerCase?.() || '';
+        return name.includes('premium') || name.includes('pro');
+      })()
     }));
   }, [data]);
 
@@ -72,14 +82,14 @@ const StudentPricingPage: React.FC = () => {
 
           {!isLoading && !error && (
             <div className="main-features-grid">
-              {plans.map((p: any) => (
-                <div key={p.uid} className={`main-feature-card ${p.isFeatured ? 'pentest-card' : 'linux-card'}`}>
+              {plans.map((p: any, idxPlan: number) => (
+                <div key={p.uid ?? `${p.planName || 'plan'}-${idxPlan}`} className={`main-feature-card ${p.isFeatured ? 'pentest-card' : 'linux-card'}`}>
                   <div className="feature-icon-large">{p.isFeatured ? '🚀' : '🎓'}</div>
                   <h3 className="feature-title">{p.planName}</h3>
                   <p className="feature-description">Thời hạn {p.durationDays} ngày</p>
                   <ul className="feature-highlights">
                     {(p.features || []).map((f: string, idx: number) => (
-                      <li key={idx}>✓ {f}</li>
+                      <li key={`${p.uid ?? idxPlan}-${idx}`}>✓ {f}</li>
                     ))}
                   </ul>
                   <div className="feature-stats-row">

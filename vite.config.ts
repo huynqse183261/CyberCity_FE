@@ -19,6 +19,16 @@ export default defineConfig(({ mode }) => {
       // Có thể define thêm các giá trị mặc định nếu cần
       __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '1.0.0'),
     },
+    server: {
+      proxy: {
+        // Proxy API trong môi trường dev tới backend
+        '/api': {
+          target: env.VITE_API_PROXY_TARGET || 'http://localhost:7168',
+          changeOrigin: true,
+          secure: false
+        }
+      }
+    },
     build: {
       chunkSizeWarningLimit: 1600, // Giữ warning limit hợp lý
       rollupOptions: {
