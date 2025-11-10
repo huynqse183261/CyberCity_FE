@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
 import { 
   Table, 
@@ -36,7 +36,7 @@ import type {
   Module, 
   CreateModuleRequest,
   UpdateModuleRequest
-} from '../models';
+} from '../models/ModuleTypes';
 import '../styles/AdminProductManagement.css';
 
 const { Title } = Typography;
@@ -78,6 +78,22 @@ const AdminModuleManagement: React.FC = () => {
   // Handle course response - có thể là array trực tiếp hoặc wrapped trong items
   const courses = (coursesResponse?.data as any)?.items || coursesResponse?.data || [];
 
+  // Debug logs
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('[ADMIN Modules] fetch state', {
+      loadingModules,
+      paginationQuery: pagination,
+      modulesCount: allModules?.length,
+      paginationInfo,
+      coursesCount: Array.isArray(courses) ? courses.length : undefined,
+      modulesSuccess: (modulesResponse as any)?.success,
+    });
+    if (modulesResponse && (modulesResponse as any).success === false) {
+      // eslint-disable-next-line no-console
+      console.warn('[ADMIN Modules] response indicates failure', modulesResponse);
+    }
+  }, [loadingModules, modulesResponse, coursesResponse]);
 
   // Handle pagination change
   const handleTableChange = (page: number, pageSize?: number) => {
@@ -105,7 +121,7 @@ const AdminModuleManagement: React.FC = () => {
       // Reload data instead of full page
       refetchModules();
     },
-    onError: (error) => {
+    onError: (_error) => {
     }
   });
 
@@ -117,7 +133,7 @@ const AdminModuleManagement: React.FC = () => {
       // Reload data instead of full page
       refetchModules();
     },
-    onError: (error) => {
+    onError: (_error) => {
     }
   });
 
@@ -126,7 +142,7 @@ const AdminModuleManagement: React.FC = () => {
       // Reload data instead of full page
       refetchModules();
     },
-    onError: (error) => {
+    onError: (_error) => {
     }
   });
 
@@ -430,7 +446,7 @@ const AdminModuleManagement: React.FC = () => {
             }}
             footer={null}
             width={800}
-            destroyOnClose
+            destroyOnHidden
           >
             <Form
               form={form}

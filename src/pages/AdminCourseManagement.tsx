@@ -352,7 +352,7 @@ const AdminCourseManagement: React.FC<AdminCourseManagementProps> = () => {
             }}
             footer={null}
             width={900}
-            destroyOnClose
+            destroyOnHidden
           >
             <Form
               form={form}

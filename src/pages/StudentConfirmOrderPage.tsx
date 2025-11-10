@@ -9,11 +9,11 @@ import { usePricingPlans } from '../hooks/usePricing';
 import '../styles/LinuxLabPage.css';
 import '../styles/StudentConfirmOrderPage.css';
 
-const useQuery = () => new URLSearchParams(useLocation().search);
+const useUrlQuery = () => new URLSearchParams(useLocation().search);
 
 const StudentConfirmOrderPage: React.FC = () => {
   const navigate = useNavigate();
-  const query = useQuery();
+  const query = useUrlQuery();
   const planUid = query.get('planUid') || '';
   const { user: currentUser } = useAuth();
 

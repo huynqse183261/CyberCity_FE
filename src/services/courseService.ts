@@ -39,10 +39,25 @@ class CourseService {
       
       const raw = response.data as any;
       
-      // Xử lý response từ backend
+      // Xử lý nhiều dạng response phổ biến từ backend
+      // 1) Mảng trực tiếp: [ ... ]
+      if (Array.isArray(raw)) {
+        return {
+          success: true,
+          data: {
+            items: raw,
+            totalCount: raw.length,
+            pageNumber: params?.pageNumber || 1,
+            pageSize: params?.pageSize || raw.length || 10,
+            totalPages: 1,
+          },
+          message: 'Lấy danh sách khóa học thành công',
+        };
+      }
+
       if (raw && typeof raw === 'object') {
-        // Direct response format từ API
-        if (raw.items && Array.isArray(raw.items)) {
+        // 2) Dạng trực tiếp có items: { items, pageNumber, pageSize, totalItems, totalPages }
+        if (Array.isArray(raw.items)) {
           return {
             success: true,
             data: {
@@ -55,20 +70,52 @@ class CourseService {
             message: 'Lấy danh sách khóa học thành công',
           };
         }
-        
-        // Wrapped response format
-        if (raw.isSuccess && raw.data) {
-          const data = raw.data;
+
+        // 3) Dạng bọc: { isSuccess/success, data: { items, ... } } hoặc { isSuccess/success, data: [ ... ] }
+        if ((raw.isSuccess === true || raw.success === true) && raw.data) {
+          const d = raw.data;
+          if (Array.isArray(d)) {
+            return {
+              success: true,
+              data: {
+                items: d,
+                totalCount: d.length,
+                pageNumber: params?.pageNumber || 1,
+                pageSize: params?.pageSize || d.length || 10,
+                totalPages: 1,
+              },
+              message: raw.message || 'Lấy danh sách khóa học thành công',
+            };
+          }
+          if (d && typeof d === 'object') {
+            if (Array.isArray(d.items)) {
+              return {
+                success: true,
+                data: {
+                  items: d.items || [],
+                  totalCount: d.totalItems || d.totalCount || (d.items ? d.items.length : 0),
+                  pageNumber: d.pageNumber || 1,
+                  pageSize: d.pageSize || 10,
+                  totalPages: d.totalPages || Math.ceil((d.totalItems || d.totalCount || (d.items ? d.items.length : 0)) / (d.pageSize || 10)),
+                },
+                message: raw.message || 'Lấy danh sách khóa học thành công',
+              };
+            }
+          }
+        }
+
+        // 4) Một số biến thể khác: { records: [], total, page, size }
+        if (Array.isArray(raw.records)) {
           return {
             success: true,
             data: {
-              items: data.items || [],
-              totalCount: data.totalItems || data.totalCount || (data.items ? data.items.length : 0),
-              pageNumber: data.pageNumber || 1,
-              pageSize: data.pageSize || 10,
-              totalPages: data.totalPages || Math.ceil((data.totalItems || data.totalCount || (data.items ? data.items.length : 0)) / (data.pageSize || 10)),
+              items: raw.records,
+              totalCount: raw.total || raw.records.length,
+              pageNumber: raw.page || 1,
+              pageSize: raw.size || 10,
+              totalPages: raw.pages || Math.ceil((raw.total || raw.records.length) / (raw.size || 10)),
             },
-            message: raw.message || 'Lấy danh sách khóa học thành công',
+            message: 'Lấy danh sách khóa học thành công',
           };
         }
       }
