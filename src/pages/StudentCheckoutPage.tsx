@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { message } from 'antd';
 import LinuxLabNavigation from '../components/LinuxLabNavigation';
 import UserDropdown from '../components/UserDropdown';
 import ParticleBackground from '../components/ParticleBackground';
@@ -37,6 +38,7 @@ const StudentCheckoutPage: React.FC = () => {
   const [status, setStatus] = useState<PaymentStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [checking, setChecking] = useState<boolean>(false);
+  const [notified, setNotified] = useState<boolean>(false);
   
   // Payment details từ API response
   const [paymentAmount, setPaymentAmount] = useState<number | null>(null);
@@ -208,6 +210,17 @@ const StudentCheckoutPage: React.FC = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderCode, status]);
+
+  // Khi thanh toán thành công: thông báo và điều hướng về trang Student
+  useEffect(() => {
+    if (status === 'completed' && !notified) {
+      setNotified(true);
+      message.success('Thanh toán thành công! Chuyển về trang học viên...');
+      setTimeout(() => {
+        navigate('/student');
+      }, 1200);
+    }
+  }, [status, notified, navigate]);
 
   // Format số tiền
   const formatAmount = (amount: number | null): string => {

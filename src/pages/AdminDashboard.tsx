@@ -71,6 +71,44 @@ const AdminDashboard: React.FC = () => {
     }));
   };
 
+  // Stats data with real API data - PHẢI ĐẶT TRƯỚC ERROR HANDLING
+  const statsData = React.useMemo(() => {
+    if (!stats) return [];
+    
+    return [
+      {
+        title: 'Tổng số người dùng',
+        value: stats.totalUsers,
+        precision: 0,
+        valueStyle: { color: '#3f8600' },
+        prefix: <UserOutlined />,
+        suffix: 'Người dùng',
+        icon: <UserOutlined />,
+        color: '#e6f7ff',
+      },
+      {
+        title: 'Tổng số đơn hàng',
+        value: stats.totalOrders,
+        precision: 0,
+        valueStyle: { color: '#3f8600' },
+        prefix: <ShoppingOutlined />,
+        suffix: 'Đơn hàng',
+        icon: <ShoppingOutlined />,
+        color: '#f6ffed',
+      },
+      {
+        title: 'Tổng khóa học',
+        value: stats.totalCourses,
+        precision: 0,
+        valueStyle: { color: '#1890ff' },
+        prefix: <BookOutlined />,
+        suffix: 'Khóa học',
+        icon: <BookOutlined />,
+        color: '#f0f9ff',
+      },
+    ];
+  }, [stats]);
+
   // Table columns configuration for recent orders
   const tableColumns = [
     {
@@ -153,44 +191,6 @@ const AdminDashboard: React.FC = () => {
       render: (date: string) => new Date(date).toLocaleDateString('vi-VN'),
     },
   ];
-
-  // Stats data with real API data
-  const statsData = React.useMemo(() => {
-    if (!stats) return [];
-    
-    return [
-      {
-        title: 'Tổng số người dùng',
-        value: stats.totalUsers,
-        precision: 0,
-        valueStyle: { color: '#3f8600' },
-        prefix: <UserOutlined />,
-        suffix: 'Người dùng',
-        icon: <UserOutlined />,
-        color: '#e6f7ff',
-      },
-      {
-        title: 'Tổng số đơn hàng',
-        value: stats.totalOrders,
-        precision: 0,
-        valueStyle: { color: '#3f8600' },
-        prefix: <ShoppingOutlined />,
-        suffix: 'Đơn hàng',
-        icon: <ShoppingOutlined />,
-        color: '#f6ffed',
-      },
-      {
-        title: 'Tổng khóa học',
-        value: stats.totalCourses,
-        precision: 0,
-        valueStyle: { color: '#1890ff' },
-        prefix: <BookOutlined />,
-        suffix: 'Khóa học',
-        icon: <BookOutlined />,
-        color: '#f0f9ff',
-      },
-    ];
-  }, [stats]);
 
   // Error handling
   if (statsError || salesError || ordersError) {

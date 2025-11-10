@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import ReactQueryProvider from './providers/ReactQueryProvider';
+import SkeletonLoading from './components/SkeletonLoading';
 
 // Import protected route components
 import { AdminRoute, StudentRoute, PublicRoute } from './components/ProtectedRoute';
@@ -52,30 +53,8 @@ const WarrantyPage = lazy(() => import('./pages/WarrantyPage'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const DownloadVMPage = lazy(() => import('./pages/DownloadVMPage'));
 
-// Loading component
-const LoadingFallback = () => (
-  <div style={{ 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)',
-    color: '#fff'
-  }}>
-    <div style={{ textAlign: 'center' }}>
-      <div style={{ 
-        width: '50px', 
-        height: '50px', 
-        border: '4px solid rgba(0, 212, 255, 0.3)',
-        borderTop: '4px solid #00d4ff',
-        borderRadius: '50%',
-        animation: 'spin 1s linear infinite',
-        margin: '0 auto 1rem'
-      }}></div>
-      <p>Đang tải...</p>
-    </div>
-  </div>
-);
+// Loading component - Sử dụng SkeletonLoading component mới
+const LoadingFallback = () => <SkeletonLoading type="simple" />;
 
 function App() {
   return (
