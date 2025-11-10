@@ -16,7 +16,18 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('access_token');
-    if (token && config.headers) {
+    // Không gắn Authorization cho các endpoint xác thực công khai
+    const url = (config.url || '').toString();
+    const isAuthPublicEndpoint =
+      url.includes('/auth/login') ||
+      url.includes('/auth/register') ||
+      url.includes('/auth/google-login') ||
+      url.includes('/auth/forgot-password') ||
+      url.includes('/auth/reset-password') ||
+      url.includes('/auth/verify-email') ||
+      url.includes('/auth/refresh-token');
+
+    if (token && config.headers && !isAuthPublicEndpoint) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 

@@ -24,18 +24,34 @@ const StudentConfirmOrderPage: React.FC = () => {
   }), [currentUser]);
 
   const { data, isLoading, error } = usePricingPlans({ useStudentEndpoint: false });
-  const plan = useMemo(() => {
-    if (!data) return null;
+  const normalizedPlans = useMemo(() => {
+    if (!data) return [];
     const raw = Array.isArray(data) ? data : (data as any)?.items || (data as any)?.data || [];
-    const found = raw.find((p: any) => p.uid === planUid || p.id === planUid);
-    return found;
-  }, [data, planUid]);
+    return raw.map((plan: any) => ({
+      uid: plan.uid ?? plan.Uid ?? plan.id ?? plan.Id,
+      planName: plan.planName ?? plan.PlanName ?? plan.plan_name ?? plan.name ?? plan.Name,
+      price: plan.price ?? plan.Price ?? 0,
+      durationDays: plan.durationDays ?? plan.DurationDays ?? plan.duration_days ?? plan.duration ?? 30,
+      features: (() => {
+        const value = plan.features ?? plan.Features;
+        if (typeof value === 'string') {
+          if (value.trim().startsWith('[')) {
+            try { return JSON.parse(value); } catch { return []; }
+          }
+          return value.split('\n').filter(Boolean);
+        }
+        return Array.isArray(value) ? value : [];
+      })()
+    }));
+  }, [data]);
+  const plan = useMemo(() => {
+    if (!normalizedPlans.length) return null;
+    return normalizedPlans.find((p: any) => String(p.uid) === String(planUid)) || null;
+  }, [normalizedPlans, planUid]);
 
   const features: string[] = React.useMemo(() => {
     if (!plan) return [];
-    return typeof plan.features === 'string' && plan.features.startsWith('[')
-      ? JSON.parse(plan.features)
-      : plan.features?.split?.('\n') || [];
+    return Array.isArray(plan.features) ? plan.features : [];
   }, [plan]);
 
   return (
