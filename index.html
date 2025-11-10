@@ -1,13 +1,36 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    
+    <!-- DNS Prefetch cho các external domains -->
+    <link rel="dns-prefetch" href="https://accounts.google.com" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    
+    <!-- Preconnect cho critical third-party origins -->
+    <link rel="preconnect" href="https://accounts.google.com" crossorigin />
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="CyberCity - Nền tảng học tập bảo mật và Linux chuyên nghiệp" />
+    <meta name="theme-color" content="#0a0e27" />
+    
+    <title>CyberCity - Học Linux & Bảo mật</title>
+    
+    <!-- Preload critical CSS (sẽ được inject bởi Vite) -->
+    <!-- Preload critical fonts nếu có -->
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Fallback cho users không có JavaScript -->
+    <noscript>
+      <div style="text-align: center; padding: 50px; font-family: sans-serif;">
+        <h1>JavaScript Required</h1>
+        <p>Vui lòng bật JavaScript để sử dụng CyberCity.</p>
+      </div>
+    </noscript>
   </body>
 </html>
