@@ -20,6 +20,10 @@ export default defineConfig(({ mode }) => {
         jsxImportSource: 'react'
       })
     ],
+    // Đảm bảo chỉ có một instance của React
+    resolve: {
+      dedupe: ['react', 'react-dom', 'react-is', 'scheduler']
+    },
     // Đảm bảo env variables được expose đúng cách
     define: {
       // Có thể define thêm các giá trị mặc định nếu cần
@@ -60,15 +64,13 @@ export default defineConfig(({ mode }) => {
           manualChunks(id) {
             // Vendor chunks - tách các thư viện lớn
             if (id.includes('node_modules')) {
-              // React core
-              if (id.includes('react') || id.includes('react-dom')) {
-                return 'react-vendor';
-              }
-              // Ant Design và icons
-              if (id.includes('antd') || id.includes('@ant-design')) {
+              // Ant Design và React core - bundle together để đảm bảo shared React instance
+              if (id.includes('antd') || id.includes('@ant-design') || 
+                  id.includes('react/') || id.includes('react-dom/') ||
+                  id.includes('react-is') || id.includes('scheduler')) {
                 return 'antd-vendor';
               }
-              // Router
+              // Router (phụ thuộc React nhưng có thể tách riêng)
               if (id.includes('react-router')) {
                 return 'router-vendor';
               }
