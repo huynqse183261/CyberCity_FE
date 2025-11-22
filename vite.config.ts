@@ -63,56 +63,16 @@ export default defineConfig(({ mode }) => {
         },
         output: {
           manualChunks(id) {
-            // Simplified vendor chunking to avoid dependency issues
+            // Minimal chunking strategy - chỉ tách Three.js vì rất lớn
+            // Để Vite tự động xử lý các dependencies khác để tránh lỗi runtime
             if (id.includes('node_modules')) {
-              // Bundle all React ecosystem together (React, Ant Design, Router, Query, etc.)
-              if (id.includes('react') || 
-                  id.includes('antd') || 
-                  id.includes('@ant-design') ||
-                  id.includes('react-router') ||
-                  id.includes('@tanstack/react-query') ||
-                  id.includes('scheduler') ||
-                  id.includes('@radix-ui')) {
-                return 'react-vendor';
-              }
-              // Three.js - separate vì rất lớn
+              // Chỉ tách Three.js ra riêng vì nó rất lớn và độc lập
               if (id.includes('three')) {
                 return 'three-vendor';
               }
-              // Tất cả các vendor khác vào một chunk
+              // Tất cả các node_modules khác vào một chunk duy nhất
+              // để đảm bảo dependencies không bị tách rời
               return 'vendor';
-            }
-            
-            // Feature-based splitting cho pages (giữ nguyên vì ít rủi ro)
-            if (id.includes('/src/pages/Admin')) {
-              return 'admin-pages';
-            }
-            if (id.includes('/src/pages/Student') || 
-                id.includes('/src/pages/Linux') ||
-                id.includes('/src/pages/PenTest') ||
-                id.includes('/src/pages/Course') ||
-                id.includes('/src/pages/Module') ||
-                id.includes('/src/pages/MySubscription') ||
-                id.includes('/src/pages/AIAssistant')) {
-              return 'student-pages';
-            }
-            if (id.includes('/src/pages/Login') || 
-                id.includes('/src/pages/Register') ||
-                id.includes('/src/pages/HomeLogin') ||
-                id.includes('/src/pages/ForgotPassword')) {
-              return 'auth-pages';
-            }
-            if (id.includes('/src/pages/Home') ||
-                id.includes('/src/pages/About') ||
-                id.includes('/src/pages/Contact') ||
-                id.includes('/src/pages/Service') ||
-                id.includes('/src/pages/Payment') ||
-                id.includes('/src/pages/Privacy') ||
-                id.includes('/src/pages/Terms') ||
-                id.includes('/src/pages/Warranty') ||
-                id.includes('/src/pages/Checkout') ||
-                id.includes('/src/pages/Download')) {
-              return 'public-pages';
             }
           },
           // Đổi tên chunks để dễ debug
