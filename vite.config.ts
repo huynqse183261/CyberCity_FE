@@ -20,9 +20,9 @@ export default defineConfig(({ mode }) => {
         jsxImportSource: 'react'
       })
     ],
-    // Đảm bảo chỉ có một instance của React
+    // Đảm bảo chỉ có một instance của React và related libraries
     resolve: {
-      dedupe: ['react', 'react-dom', 'react-is', 'scheduler']
+      dedupe: ['react', 'react-dom', 'react-is', 'scheduler', '@radix-ui/react-context']
     },
     // Đảm bảo env variables được expose đúng cách
     define: {
@@ -56,45 +56,34 @@ export default defineConfig(({ mode }) => {
       // Tối ưu tree shaking và dead code elimination
       rollupOptions: {
         treeshake: {
-          moduleSideEffects: 'no-external', // Loại bỏ side effects không cần thiết
+          // Giữ side effects cho các thư viện external để tránh lỗi runtime
+          moduleSideEffects: true,
           propertyReadSideEffects: false,
           tryCatchDeoptimization: false
         },
         output: {
           manualChunks(id) {
-            // Vendor chunks - tách các thư viện lớn
+            // Simplified vendor chunking to avoid dependency issues
             if (id.includes('node_modules')) {
-              // Ant Design và React core - bundle together để đảm bảo shared React instance
-              if (id.includes('antd') || id.includes('@ant-design') || 
-                  id.includes('react/') || id.includes('react-dom/') ||
-                  id.includes('react-is') || id.includes('scheduler')) {
-                return 'antd-vendor';
+              // Bundle all React ecosystem together (React, Ant Design, Router, Query, etc.)
+              if (id.includes('react') || 
+                  id.includes('antd') || 
+                  id.includes('@ant-design') ||
+                  id.includes('react-router') ||
+                  id.includes('@tanstack/react-query') ||
+                  id.includes('scheduler') ||
+                  id.includes('@radix-ui')) {
+                return 'react-vendor';
               }
-              // Router (phụ thuộc React nhưng có thể tách riêng)
-              if (id.includes('react-router')) {
-                return 'router-vendor';
-              }
-              // React Query
-              if (id.includes('@tanstack/react-query')) {
-                return 'query-vendor';
-              }
-              // Utils (axios, dayjs)
-              if (id.includes('axios') || id.includes('dayjs')) {
-                return 'utils';
-              }
-              // Three.js nếu có
+              // Three.js - separate vì rất lớn
               if (id.includes('three')) {
                 return 'three-vendor';
               }
-              // Google libs nếu có
-              if (id.includes('@google') || id.includes('@react-oauth')) {
-                return 'google-vendor';
-              }
-              // Các vendor khác
+              // Tất cả các vendor khác vào một chunk
               return 'vendor';
             }
             
-            // Feature-based splitting cho pages
+            // Feature-based splitting cho pages (giữ nguyên vì ít rủi ro)
             if (id.includes('/src/pages/Admin')) {
               return 'admin-pages';
             }
